@@ -13,6 +13,8 @@
 		F63EE61223BFAE1300B155B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61123BFAE1300B155B8 /* Assets.xcassets */; };
 		F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61423BFAE1300B155B8 /* Preview Assets.xcassets */; };
 		F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */; };
+		F63EE62423BFB02400B155B8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F63EE62023BFB02400B155B8 /* README.md */; };
+		F63EE62523BFB02400B155B8 /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = F63EE62323BFB02400B155B8 /* OpenCVWrapper.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,10 @@
 		F63EE61423BFAE1300B155B8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F63EE61723BFAE1300B155B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F63EE61923BFAE1300B155B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F63EE62023BFB02400B155B8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		F63EE62123BFB02400B155B8 /* OpenCVWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
+		F63EE62223BFB02400B155B8 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		F63EE62323BFB02400B155B8 /* OpenCVWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +65,7 @@
 				F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */,
 				F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */,
 				F63EE60F23BFAE0D00B155B8 /* ContentView.swift */,
+				F63EE61F23BFB02400B155B8 /* OpenCVWrapper */,
 				F63EE61123BFAE1300B155B8 /* Assets.xcassets */,
 				F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */,
 				F63EE61923BFAE1300B155B8 /* Info.plist */,
@@ -73,6 +80,17 @@
 				F63EE61423BFAE1300B155B8 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		F63EE61F23BFB02400B155B8 /* OpenCVWrapper */ = {
+			isa = PBXGroup;
+			children = (
+				F63EE62023BFB02400B155B8 /* README.md */,
+				F63EE62123BFB02400B155B8 /* OpenCVWrapper.h */,
+				F63EE62223BFB02400B155B8 /* PrefixHeader.pch */,
+				F63EE62323BFB02400B155B8 /* OpenCVWrapper.mm */,
+			);
+			path = OpenCVWrapper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -135,6 +153,7 @@
 			files = (
 				F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */,
 				F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */,
+				F63EE62423BFB02400B155B8 /* README.md in Resources */,
 				F63EE61223BFAE1300B155B8 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -146,6 +165,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F63EE62523BFB02400B155B8 /* OpenCVWrapper.mm in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,
 				F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */,
