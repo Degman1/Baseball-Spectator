@@ -10,7 +10,8 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("\(OpenCVWrapper.openCVVersionString())")
+        Text("\(OpenCVWrapper.openCVVersionString()) Hello")
+        
     }
 }
 
