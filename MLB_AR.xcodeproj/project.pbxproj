@@ -14,7 +14,8 @@
 		F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61423BFAE1300B155B8 /* Preview Assets.xcassets */; };
 		F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */; };
 		F63EE62423BFB02400B155B8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F63EE62023BFB02400B155B8 /* README.md */; };
-		F63EE62523BFB02400B155B8 /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = F63EE62323BFB02400B155B8 /* OpenCVWrapper.mm */; };
+		F6CD4AC823C4DDEB00DA0E1E /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6CD4AC723C4DDEB00DA0E1E /* opencv2.framework */; };
+		F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,9 +28,11 @@
 		F63EE61723BFAE1300B155B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F63EE61923BFAE1300B155B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F63EE62023BFB02400B155B8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		F63EE62123BFB02400B155B8 /* OpenCVWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
-		F63EE62223BFB02400B155B8 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
-		F63EE62323BFB02400B155B8 /* OpenCVWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
+		F6CD4AC723C4DDEB00DA0E1E /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = SOURCE_ROOT; };
+		F6CD4ACF23C4E32800DA0E1E /* MLB_AR-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MLB_AR-Bridging-Header.h"; sourceTree = "<group>"; };
+		F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
+		F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
+		F6CD4AD323C4E37C00DA0E1E /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6CD4AC823C4DDEB00DA0E1E /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +50,8 @@
 		F63EE5FF23BFAE0D00B155B8 = {
 			isa = PBXGroup;
 			children = (
+				F6CD4AC723C4DDEB00DA0E1E /* opencv2.framework */,
+				F6CD4ACF23C4E32800DA0E1E /* MLB_AR-Bridging-Header.h */,
 				F63EE60A23BFAE0D00B155B8 /* MLB_AR */,
 				F63EE60923BFAE0D00B155B8 /* Products */,
 			);
@@ -86,9 +92,9 @@
 			isa = PBXGroup;
 			children = (
 				F63EE62023BFB02400B155B8 /* README.md */,
-				F63EE62123BFB02400B155B8 /* OpenCVWrapper.h */,
-				F63EE62223BFB02400B155B8 /* PrefixHeader.pch */,
-				F63EE62323BFB02400B155B8 /* OpenCVWrapper.mm */,
+				F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */,
+				F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */,
+				F6CD4AD323C4E37C00DA0E1E /* PrefixHeader.pch */,
 			);
 			path = OpenCVWrapper;
 			sourceTree = "<group>";
@@ -125,6 +131,7 @@
 				TargetAttributes = {
 					F63EE60723BFAE0D00B155B8 = {
 						CreatedOnToolsVersion = 11.1;
+						LastSwiftMigration = 1110;
 					};
 				};
 			};
@@ -165,9 +172,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F63EE62523BFB02400B155B8 /* OpenCVWrapper.mm in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,
+				F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */,
 				F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -304,10 +311,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"MLB_AR/Preview Content\"";
 				DEVELOPMENT_TEAM = XFW26PEUTK;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = MLB_AR/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -315,6 +327,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "come.JoeyCohen.MLB-AR";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MLB_AR-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -324,10 +338,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"MLB_AR/Preview Content\"";
 				DEVELOPMENT_TEAM = XFW26PEUTK;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = MLB_AR/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -335,6 +354,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "come.JoeyCohen.MLB-AR";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MLB_AR-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

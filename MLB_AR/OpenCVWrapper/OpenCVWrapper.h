@@ -1,9 +1,9 @@
 //
 //  OpenCVWrapper.h
-//  OpenCVTest
+//  MLB_AR
 //
-//  Created by David Gerard on 12/19/19.
-//  Copyright © 2019 David Gerard. All rights reserved.
+//  Created by Joey Cohen on 1/7/20.
+//  Copyright © 2020 Joey Cohen. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
