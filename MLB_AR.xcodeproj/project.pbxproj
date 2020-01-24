@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6326FA7523C8E73600A981FE /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6326FA7423C8E73600A981FE /* opencv2.framework */; };
 		F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */; };
 		F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */; };
 		F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60F23BFAE0D00B155B8 /* ContentView.swift */; };
@@ -14,11 +15,11 @@
 		F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61423BFAE1300B155B8 /* Preview Assets.xcassets */; };
 		F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */; };
 		F63EE62423BFB02400B155B8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F63EE62023BFB02400B155B8 /* README.md */; };
-		F6CD4AC823C4DDEB00DA0E1E /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6CD4AC723C4DDEB00DA0E1E /* opencv2.framework */; };
 		F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6326FA7423C8E73600A981FE /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		F63EE60823BFAE0D00B155B8 /* MLB_AR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLB_AR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -28,7 +29,6 @@
 		F63EE61723BFAE1300B155B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F63EE61923BFAE1300B155B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F63EE62023BFB02400B155B8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		F6CD4AC723C4DDEB00DA0E1E /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = SOURCE_ROOT; };
 		F6CD4ACF23C4E32800DA0E1E /* MLB_AR-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MLB_AR-Bridging-Header.h"; sourceTree = "<group>"; };
 		F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
 		F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
@@ -40,7 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6CD4AC823C4DDEB00DA0E1E /* opencv2.framework in Frameworks */,
+				6326FA7523C8E73600A981FE /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,7 +50,7 @@
 		F63EE5FF23BFAE0D00B155B8 = {
 			isa = PBXGroup;
 			children = (
-				F6CD4AC723C4DDEB00DA0E1E /* opencv2.framework */,
+				6326FA7423C8E73600A981FE /* opencv2.framework */,
 				F6CD4ACF23C4E32800DA0E1E /* MLB_AR-Bridging-Header.h */,
 				F63EE60A23BFAE0D00B155B8 /* MLB_AR */,
 				F63EE60923BFAE0D00B155B8 /* Products */,
