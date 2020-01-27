@@ -107,3 +107,4 @@ iOSInjectionProject/
 # Additional Files to Ignore
 
 opencv2.framework/
+.DS_Store
