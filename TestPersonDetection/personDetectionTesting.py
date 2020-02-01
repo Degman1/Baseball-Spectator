@@ -6,12 +6,11 @@ import numpy
 
 class PlayerFinder(object):
     def __init__(self):
-        # individual properties
-        self.lower_green = numpy.array((21, 126, 49), dtype=numpy.uint8)
-        self.upper_green = numpy.array((48, 208, 215), dtype=numpy.uint8)
+        self.lower_green = numpy.array((21, 45, 15), dtype=numpy.uint8)
+        self.upper_green = numpy.array((72, 255, 242), dtype=numpy.uint8)
 
-        self.lower_brown = numpy.array((5, 130, 146), dtype=numpy.uint8)
-        self.upper_brown = numpy.array((30, 235, 255), dtype=numpy.uint8)
+        self.lower_brown = numpy.array((5, 95, 25), dtype=numpy.uint8)
+        self.upper_brown = numpy.array((30, 255, 255), dtype=numpy.uint8)
 
         # pixel area of the bounding rectangle - just used to remove stupidly small regions
         self.contour_min_area = 100
@@ -52,14 +51,14 @@ class PlayerFinder(object):
         
         target = cv2.bitwise_and(image,image, mask=mask)
 
-        return target
-
-        """
         #Defining a kernel to do morphological operation in threshold image to 
         #get better output.
-        #kernel = numpy.ones((10,10), numpy.uint8)
-        #erosion = cv2.erode(res_gray, kernel, iterations = 1)
+        kernel = numpy.ones((5,5), numpy.uint8)
+        erosion = cv2.erode(target, kernel, iterations = 1)
 
+
+        return erosion
+        """
          #find contours in threshold image     
         _, self.contours, _ = cv2.findContours(res_gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         print(len(self.contours))

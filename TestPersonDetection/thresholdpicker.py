@@ -65,7 +65,7 @@ def process_files(image_files):
             _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
             numpy.copyto(draw_frame, bgr_frame)
-            cv2.drawContours(draw_frame, contours, -1, (0, 0, 255), 2)
+            cv2.drawContours(draw_frame, contours, -1, (255, 255, 0), 1)
             run = False
 
         height, width, channels = bgr_frame.shape
