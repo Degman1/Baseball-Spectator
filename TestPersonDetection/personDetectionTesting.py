@@ -6,11 +6,18 @@ import numpy
 
 class PlayerFinder(object):
     def __init__(self):
-        self.lower_green = numpy.array((21, 45, 15), dtype=numpy.uint8)
+        self.lower_green = numpy.array((10, 50, 15), dtype=numpy.uint8)
         self.upper_green = numpy.array((72, 255, 242), dtype=numpy.uint8)
 
-        self.lower_brown = numpy.array((5, 95, 25), dtype=numpy.uint8)
+        self.lower_brown = numpy.array((5, 110, 25), dtype=numpy.uint8)
         self.upper_brown = numpy.array((30, 255, 255), dtype=numpy.uint8)
+
+        """#turns a dark purple color sometimes, so try this:
+        self.lower_shadow_brown = numpy.array((122, 45, 33), dtype=numpy.uint8)
+        self.upper_shadow_brown = numpy.array((238, 130, 100), dtype=numpy.uint8)
+
+        self.lower_field = numpy.array((1, 45, 14), dtype=numpy.uint8)
+        self.upper_field = numpy.array((72, 255, 242), dtype=numpy.uint8)"""
 
         # pixel area of the bounding rectangle - just used to remove stupidly small regions
         self.contour_min_area = 100
@@ -43,21 +50,29 @@ class PlayerFinder(object):
         #Define a mask ranging from lower to uppper
         mask_green = cv2.inRange(hsv, self.lower_green, self.upper_green)
         mask_brown = cv2.inRange(hsv, self.lower_brown, self.upper_brown)
+        #mask_shadow_brown = cv2.inRange(hsv, self.lower_shadow_brown, self.upper_brown)
+        #mask_field = cv2.inRange(hsv, self.lower_field, self.upper_field)
         #Do masking
         #mask = cv2.bitwise_or(mask_green, mask_brown)
-        #convert to hsv to gray
 
         mask = cv2.bitwise_or(mask_green, mask_brown)#cv2.bitwise_and(image, image, mask=mask_green)
+        #mask = cv2.bitwise_or(mask, mask_shadow_brown)
         
-        target = cv2.bitwise_and(image,image, mask=mask)
+        res = cv2.bitwise_and(image,image, mask=mask)
+
+        #res_gray = cv2.cvtColor(res,cv2.COLOR_BGR2GRAY)
 
         #Defining a kernel to do morphological operation in threshold image to 
         #get better output.
-        kernel = numpy.ones((5,5), numpy.uint8)
-        erosion = cv2.erode(target, kernel, iterations = 1)
 
+        #dilate = cv2.dilate(res, numpy.ones((2,2), numpy.uint8), iterations = 1)
+        erosion = cv2.erode(res, numpy.ones((10,10), numpy.uint8), iterations = 2)
 
-        return erosion
+        #kernel = numpy.ones((13,13),numpy.uint8)
+        #hresh = cv2.threshold(res_gray, 127, 255, cv2.THRESH_BINARY_INV |  cv2.THRESH_OTSU)[1]
+        #thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+
+        return res
         """
          #find contours in threshold image     
         _, self.contours, _ = cv2.findContours(res_gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
