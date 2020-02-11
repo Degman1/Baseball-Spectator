@@ -12,10 +12,10 @@ class PlayerFinder(object):
         self.lower_brown = numpy.array((5, 110, 25), dtype=numpy.uint8)
         self.upper_brown = numpy.array((30, 255, 255), dtype=numpy.uint8)
 
-        """#turns a dark purple color sometimes, so try this:
-        self.lower_shadow_brown = numpy.array((122, 45, 33), dtype=numpy.uint8)
-        self.upper_shadow_brown = numpy.array((238, 130, 100), dtype=numpy.uint8)
-
+        
+        self.lower_dark_brown = numpy.array((0, 75, 0), dtype=numpy.uint8)
+        self.upper_dark_brown = numpy.array((9, 255, 144), dtype=numpy.uint8)
+        """
         self.lower_field = numpy.array((1, 45, 14), dtype=numpy.uint8)
         self.upper_field = numpy.array((72, 255, 242), dtype=numpy.uint8)"""
 
@@ -50,13 +50,13 @@ class PlayerFinder(object):
         #Define a mask ranging from lower to uppper
         mask_green = cv2.inRange(hsv, self.lower_green, self.upper_green)
         mask_brown = cv2.inRange(hsv, self.lower_brown, self.upper_brown)
+        mask_dark_brown = cv2.inRange(hsv, self.lower_dark_brown, self.upper_dark_brown)
         #mask_shadow_brown = cv2.inRange(hsv, self.lower_shadow_brown, self.upper_brown)
         #mask_field = cv2.inRange(hsv, self.lower_field, self.upper_field)
         #Do masking
-        #mask = cv2.bitwise_or(mask_green, mask_brown)
 
-        mask = cv2.bitwise_or(mask_green, mask_brown)#cv2.bitwise_and(image, image, mask=mask_green)
-        #mask = cv2.bitwise_or(mask, mask_shadow_brown)
+        mask = cv2.bitwise_or(mask_green, mask_brown)
+        mask = cv2.bitwise_or(mask, mask_dark_brown)
         
         res = cv2.bitwise_and(image,image, mask=mask)
 
@@ -65,12 +65,7 @@ class PlayerFinder(object):
         #Defining a kernel to do morphological operation in threshold image to 
         #get better output.
 
-        #dilate = cv2.dilate(res, numpy.ones((2,2), numpy.uint8), iterations = 1)
-        erosion = cv2.erode(res, numpy.ones((10,10), numpy.uint8), iterations = 2)
-
-        #kernel = numpy.ones((13,13),numpy.uint8)
-        #hresh = cv2.threshold(res_gray, 127, 255, cv2.THRESH_BINARY_INV |  cv2.THRESH_OTSU)[1]
-        #thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+        erosion = cv2.erode(mask, numpy.ones((7,7), numpy.uint8), iterations = 1)
 
         return res
         """
