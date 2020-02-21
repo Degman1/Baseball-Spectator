@@ -6,18 +6,17 @@ import numpy
 
 class PlayerFinder(object):
     def __init__(self):
-        self.lower_green = numpy.array((10, 50, 15), dtype=numpy.uint8)
+        self.lower_green = numpy.array((17, 50, 20), dtype=numpy.uint8)
         self.upper_green = numpy.array((72, 255, 242), dtype=numpy.uint8)
 
-        self.lower_brown = numpy.array((5, 110, 25), dtype=numpy.uint8)
-        self.upper_brown = numpy.array((30, 255, 255), dtype=numpy.uint8)
+        self.lower_brown = numpy.array((7, 80, 25), dtype=numpy.uint8)
+        self.upper_brown = numpy.array((27, 255, 255), dtype=numpy.uint8)
 
-        
-        self.lower_dark_brown = numpy.array((0, 75, 0), dtype=numpy.uint8)
-        self.upper_dark_brown = numpy.array((9, 255, 144), dtype=numpy.uint8)
+        self.lower_dark_brown = numpy.array((2, 93, 25), dtype=numpy.uint8)
+        self.upper_dark_brown = numpy.array((10, 175, 150), dtype=numpy.uint8)
         """
-        self.lower_field = numpy.array((1, 45, 14), dtype=numpy.uint8)
-        self.upper_field = numpy.array((72, 255, 242), dtype=numpy.uint8)"""
+        self.lower_dark_green = numpy.array((1, 45, 14), dtype=numpy.uint8)
+        self.upper_dark_green = numpy.array((72, 255, 242), dtype=numpy.uint8)"""
 
         # pixel area of the bounding rectangle - just used to remove stupidly small regions
         self.contour_min_area = 100
@@ -51,23 +50,15 @@ class PlayerFinder(object):
         mask_green = cv2.inRange(hsv, self.lower_green, self.upper_green)
         mask_brown = cv2.inRange(hsv, self.lower_brown, self.upper_brown)
         mask_dark_brown = cv2.inRange(hsv, self.lower_dark_brown, self.upper_dark_brown)
-        #mask_shadow_brown = cv2.inRange(hsv, self.lower_shadow_brown, self.upper_brown)
-        #mask_field = cv2.inRange(hsv, self.lower_field, self.upper_field)
-        #Do masking
 
         mask = cv2.bitwise_or(mask_green, mask_brown)
         mask = cv2.bitwise_or(mask, mask_dark_brown)
         
-        res = cv2.bitwise_and(image,image, mask=mask)
-
-        #res_gray = cv2.cvtColor(res,cv2.COLOR_BGR2GRAY)
-
-        #Defining a kernel to do morphological operation in threshold image to 
-        #get better output.
+        #res = cv2.bitwise_and(image,image, mask=mask)
 
         erosion = cv2.erode(mask, numpy.ones((7,7), numpy.uint8), iterations = 1)
 
-        return res
+        return erosion
         """
          #find contours in threshold image     
         _, self.contours, _ = cv2.findContours(res_gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
