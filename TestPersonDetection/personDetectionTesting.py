@@ -19,10 +19,11 @@ class PlayerFinder(object):
         self.upper_dark_green = numpy.array((72, 255, 242), dtype=numpy.uint8)"""
 
         # pixel area of the bounding rectangle - just used to remove stupidly small regions
-        self.contour_min_area = 100
+        self.contour_min_area = 400
 
         self.contours = None
         self.top_contours = None
+        self.found_players = None
 
         return
 
@@ -58,11 +59,11 @@ class PlayerFinder(object):
 
         erosion = cv2.erode(mask, numpy.ones((7,7), numpy.uint8), iterations = 1)
 
-        return erosion
-        """
-         #find contours in threshold image     
-        _, self.contours, _ = cv2.findContours(res_gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        print(len(self.contours))
+        #return erosion
+        
+        #find contours in threshold image     
+        _, self.contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        print("Before: " + str(len(self.contours)))
 
         contour_list = []
         for c in self.contours:
@@ -76,7 +77,18 @@ class PlayerFinder(object):
 
         self.top_contours = [x['contour'] for x in contour_list]
         
-        print(len(contour_list))"""
+        print("After 1: " + str(len(contour_list)))
+
+        self.found_players = []
+
+        for cnt in contour_list[0:3]:
+            result_cnt = self.test_candidate_contour(cnt)
+            if result_cnt is not None:
+                self.found_players.append(result_cnt)
+
+        print("After 2: " + str(len(self.found_players)) + "\n")
+
+        return erosion
     
     def contour_center_width(self, contour):
         '''Find boundingRect of contour, but return center and width/height'''
@@ -87,16 +99,15 @@ class PlayerFinder(object):
     def test_candidate_contour(self, contour_entry):
         cnt = contour_entry['contour']
 
-        real_area = cv2.contourArea(cnt)
-        # print('areas:', real_area, contour_entry['area'], real_area / contour_entry['area'])
-        if real_area / contour_entry['area'] > 0.5:
-            hull = cv2.convexHull(cnt)
-            # hull_fit contains the corners for the contour
-            hull_fit = PlayerFinder.quad_fit(hull, self.approx_polydp_error)
+        ratio = contour_entry['widths'][1] / contour_entry['widths'][0]
+        if ratio < 1 or ratio > 2.2:
+            return None
 
-            return hull_fit
+        ratio = cv2.contourArea(cnt) / contour_entry['area']
+        if ratio < 0.75 or ratio > 1.0:
+            return None
 
-        return None
+        return cnt
 
     def prepare_output_image(self, input_frame):
         '''Prepare output image for drive station. Draw the found target contour.'''
