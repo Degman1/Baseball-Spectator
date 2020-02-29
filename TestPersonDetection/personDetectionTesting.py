@@ -19,7 +19,8 @@ class PlayerFinder(object):
         self.upper_dark_green = numpy.array((72, 255, 242), dtype=numpy.uint8)"""
 
         # pixel area of the bounding rectangle - just used to remove stupidly small regions
-        self.contour_min_area = 400
+        self.contour_min_area = 100    # TODO MUST change these numbers based on the camera resolution that we choose for the iphone's camera!!
+        self.contour_max_area = 2000
 
         self.contours = None
         self.top_contours = None
@@ -43,7 +44,7 @@ class PlayerFinder(object):
 
     def process_image(self, image):
         '''Main image processing routine'''
-
+        
         #converting into hsv image
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -55,9 +56,9 @@ class PlayerFinder(object):
         mask = cv2.bitwise_or(mask_green, mask_brown)
         mask = cv2.bitwise_or(mask, mask_dark_brown)
         
-        #res = cv2.bitwise_and(image,image, mask=mask)
+        #res = cv2.bitwise_and(img,img, mask=mask)
 
-        erosion = cv2.erode(mask, numpy.ones((7,7), numpy.uint8), iterations = 1)
+        erosion = cv2.erode(mask, numpy.ones((8,8), numpy.uint8), iterations = 1)
 
         #return erosion
         
@@ -69,7 +70,8 @@ class PlayerFinder(object):
         for c in self.contours:
             center, widths = self.contour_center_width(c)
             area = widths[0] * widths[1]
-            if area > self.contour_min_area:
+
+            if area > self.contour_min_area and area < self.contour_max_area:
                 contour_list.append({'contour': c, 'center': center, 'widths': widths, 'area': area})
         
         # Sort the list of contours from biggest area to smallest
@@ -87,8 +89,8 @@ class PlayerFinder(object):
                 self.found_players.append(result_cnt)
 
         print("After 2: " + str(len(self.found_players)) + "\n")
-
-        return erosion
+        
+        return image
     
     def contour_center_width(self, contour):
         '''Find boundingRect of contour, but return center and width/height'''
@@ -116,11 +118,17 @@ class PlayerFinder(object):
 
         # Draw the contour on the image
 
+        #blue
         if self.contours is not None:
-            cv2.drawContours(output_frame, self.contours, -1, (255, 0, 0), 2)
+            cv2.drawContours(output_frame, self.contours, -1, (255, 0, 0), 1)
 
+        #green
         if self.top_contours is not None:
-            cv2.drawContours(output_frame, self.top_contours, -1, (0, 0, 255), 2)
+            cv2.drawContours(output_frame, self.top_contours, -1, (0, 255, 0), 2)
+
+        #red
+        if self.found_players is not None:
+            cv2.drawContours(output_frame, self.found_players, -1, (0, 0, 255), 3)
 
         return output_frame
 
@@ -129,16 +137,26 @@ def process_files(processor, input_files, output_dir):
     import os.path
 
     for image_file in input_files:
-        # print()
-        # print(image_file)
         bgr_frame = cv2.imread(image_file)
-        result = processor.process_image(bgr_frame)
 
-        markup = processor.prepare_output_image(bgr_frame)
+        #-----------------------------resize:
+        new_height = 1080   # This is the pixel dimensions of the standard iphone 8 camera setting (1080p HD)
+        # Makes sure all images are the same height --> same relative player sizes so that contour cuttoffs can be accurate
+
+        scale_percent = new_height / bgr_frame.shape[0]
+        width = int(bgr_frame.shape[1] * scale_percent)
+        height = int(bgr_frame.shape[0] * scale_percent)
+
+        resized = cv2.resize(bgr_frame, (width, height), interpolation = cv2.INTER_AREA)
+        #--------------------------------------------
+
+        _ = processor.process_image(resized)
+
+        markup = processor.prepare_output_image(resized)
 
         outfile = os.path.join(output_dir, os.path.basename(image_file))
         # print('{} -> {}'.format(image_file, outfile))
-        cv2.imwrite(outfile, result)
+        cv2.imwrite(outfile, markup)
 
         # cv2.imshow("Window", bgr_frame)
         # q = cv2.waitKey(-1) & 0xFF
