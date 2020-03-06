@@ -19,7 +19,7 @@ class PlayerFinder(object):
         self.upper_dark_green = numpy.array((72, 255, 242), dtype=numpy.uint8)"""
 
         # pixel area of the bounding rectangle - just used to remove stupidly small regions
-        self.contour_min_area = 100    # TODO MUST change these numbers based on the camera resolution that we choose for the iphone's camera!!
+        self.contour_min_area = 80    # TODO MUST change these numbers based on the camera resolution that we choose for the iphone's camera!!
         self.contour_max_area = 2000
 
         self.contours = None
@@ -75,7 +75,7 @@ class PlayerFinder(object):
                 contour_list.append({'contour': c, 'center': center, 'widths': widths, 'area': area})
         
         # Sort the list of contours from biggest area to smallest
-        contour_list.sort(key=lambda c: c['area'], reverse=True)
+        contour_list.sort(key=lambda c: cv2.contourArea(c['contour']), reverse=True)
 
         self.top_contours = [x['contour'] for x in contour_list]
         
@@ -83,11 +83,11 @@ class PlayerFinder(object):
 
         self.found_players = []
 
-        for cnt in contour_list[0:3]:
+        for cnt in contour_list[0:15]:        #[0:11]
             result_cnt = self.test_candidate_contour(cnt)
             if result_cnt is not None:
                 self.found_players.append(result_cnt)
-
+        self.found_players = self.found_players[0:15]
         print("After 2: " + str(len(self.found_players)) + "\n")
         
         return image
@@ -102,12 +102,13 @@ class PlayerFinder(object):
         cnt = contour_entry['contour']
 
         ratio = contour_entry['widths'][1] / contour_entry['widths'][0]
-        if ratio < 1 or ratio > 2.2:
+        print("ratio: " + str(ratio))
+        if ratio < 1.5 or ratio > 2.2:
             return None
 
-        ratio = cv2.contourArea(cnt) / contour_entry['area']
-        if ratio < 0.75 or ratio > 1.0:
-            return None
+        #ratio = cv2.contourArea(cnt) / contour_entry['area']
+        #if ratio < 0.75 or ratio > 1.0:
+        #    return None
 
         return cnt
 
@@ -117,7 +118,6 @@ class PlayerFinder(object):
         output_frame = input_frame.copy()
 
         # Draw the contour on the image
-
         #blue
         if self.contours is not None:
             cv2.drawContours(output_frame, self.contours, -1, (255, 0, 0), 1)
@@ -125,7 +125,7 @@ class PlayerFinder(object):
         #green
         if self.top_contours is not None:
             cv2.drawContours(output_frame, self.top_contours, -1, (0, 255, 0), 2)
-
+        
         #red
         if self.found_players is not None:
             cv2.drawContours(output_frame, self.found_players, -1, (0, 0, 255), 3)
