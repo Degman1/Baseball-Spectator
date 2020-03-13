@@ -19,12 +19,15 @@ class PlayerFinder(object):
         self.upper_dark_green = numpy.array((72, 255, 242), dtype=numpy.uint8)"""
 
         # pixel area of the bounding rectangle - just used to remove stupidly small regions
-        self.contour_min_area = 80    # TODO MUST change these numbers based on the camera resolution that we choose for the iphone's camera!!
+        self.contour_min_area = 300    # TODO MUST change these numbers based on the camera resolution that we choose for the iphone's camera!!
         self.contour_max_area = 2000
 
-        self.contours = None
-        self.top_contours = None
-        self.found_players = None
+        self.player_contours = None
+        self.top_players = None
+        self.players = None
+
+        self.infield_contours = None
+        self.infield = None
 
         return
 
@@ -58,59 +61,100 @@ class PlayerFinder(object):
         
         #res = cv2.bitwise_and(img,img, mask=mask)
 
-        erosion = cv2.erode(mask, numpy.ones((8,8), numpy.uint8), iterations = 1)
+        cnts = self.get_infield_cnrs(mask_green)
+        #self.get_player_contours(mask)
+ 
+        return image
+    
+    def get_infield_cnrs(self, mask):
+        erosion = cv2.erode(mask, numpy.ones((4,4), numpy.uint8), iterations = 1)
+        _, self.infield_contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        #return erosion
-        
-        #find contours in threshold image     
+        infield_contour_list = self.area_cut(self.infield_contours, 15000, 200000)
+        #self.infield = min(infield_contour_list, key=lambda x:x['area'])['contour']
+        self.infield = [x['contour'] for x in infield_contour_list][0]
+
+        # convexHull
+        hull = cv2.convexHull(self.infield)
+        #print(hull)
+        cnrs = [min(hull, key=lambda x: x[0][0]),
+                max(hull, key=lambda x: x[0][0]),
+                min(hull, key=lambda x: x[0][1]),
+                max(hull, key=lambda x: x[0][1])
+                ]
+        self.infield = cnrs
+
+        """rect = cv2.minAreaRect(self.infield)
+        box = cv2.boxPoints(rect)
+        self.infield = [numpy.int0(box)]"""
+        #print(self.infield)
+
+        return cnrs
+    
+    def get_player_contours(self, mask):
+        erosion = cv2.erode(mask, numpy.ones((7,7), numpy.uint8), iterations = 1)   
         _, self.contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         print("Before: " + str(len(self.contours)))
 
-        contour_list = []
-        for c in self.contours:
-            center, widths = self.contour_center_width(c)
-            area = widths[0] * widths[1]
+        contour_list = self.area_cut(self.contours, self.contour_min_area, self.contour_max_area)
 
-            if area > self.contour_min_area and area < self.contour_max_area:
-                contour_list.append({'contour': c, 'center': center, 'widths': widths, 'area': area})
-        
-        # Sort the list of contours from biggest area to smallest
-        contour_list.sort(key=lambda c: cv2.contourArea(c['contour']), reverse=True)
-
-        self.top_contours = [x['contour'] for x in contour_list]
+        self.top_players = [x['contour'] for x in contour_list]
         
         print("After 1: " + str(len(contour_list)))
 
-        self.found_players = []
+        self.players = self.ratio_H2W_cut(self.top_players, 0.8, 3.0)
 
-        for cnt in contour_list[0:15]:        #[0:11]
-            result_cnt = self.test_candidate_contour(cnt)
-            if result_cnt is not None:
-                self.found_players.append(result_cnt)
-        self.found_players = self.found_players[0:15]
-        print("After 2: " + str(len(self.found_players)) + "\n")
+        print("After 2: " + str(len(self.players)) + "\n")
+
+    """def area_cut(self, cnts, min_area, max_area, min_real_area = -1, max_real_area = -1):
+        contour_list = []
+        for c in cnts:
+            center, widths = self.contour_center_width(c)
+            area = widths[0] * widths[1]
+
+            if (min_real_area == -1 or max_real_area == -1) and area > min_area and area < max_area:
+                contour_list.append({'contour': c, 'center': center, 'widths': widths, 'area': area})
+            elif min_real_area != -1 and max_real_area != -1 and area > min_area and area < max_area and min_real_area > min_area and real_area < max_real_area:
+                contour_list.append({'contour': c, 'center': center, 'widths': widths, 'area': area})
         
-        return image
-    
+        # Sort the list of contours from biggest area to smallest
+        contour_list.sort(key=lambda c: c['widths'][0] * c['widths'][1], reverse=True)
+
+        return contour_list"""
+
+    def area_cut(self, cnts, min_area, max_area):
+        contour_list = []
+        for c in cnts:
+            center, widths = self.contour_center_width(c)
+            area = widths[0] * widths[1]
+
+            if area > min_area and area < max_area:
+                contour_list.append({'contour': c, 'center': center, 'widths': widths, 'area': area})
+            
+        # Sort the list of contours from biggest area to smallest
+        contour_list.sort(key=lambda c: c['widths'][0] * c['widths'][1], reverse=True)
+
+        return contour_list
+
+    def ratio_H2W_cut(self, cnts, min_ratio, max_ratio):
+        contour_list = []
+        for c in cnts:
+            height = contour_entry['widths'][1]
+            width = contour_entry['widths'][0]
+            ratio = height / width
+            #print("ratio: " + str(ratio))
+            #print("w, h: " + str(width) + ", " + str(height))
+            #print("------")
+            if ratio >= min_ratio and ratio <= max_ratio:
+                contour_list.append(c)
+        
+        return contour_list
+
     def contour_center_width(self, contour):
         '''Find boundingRect of contour, but return center and width/height'''
 
         x, y, w, h = cv2.boundingRect(contour)
         return (x + int(w / 2), y + int(h / 2)), (w, h)
-
-    def test_candidate_contour(self, contour_entry):
-        cnt = contour_entry['contour']
-
-        ratio = contour_entry['widths'][1] / contour_entry['widths'][0]
-        print("ratio: " + str(ratio))
-        if ratio < 1.5 or ratio > 2.2:
-            return None
-
-        #ratio = cv2.contourArea(cnt) / contour_entry['area']
-        #if ratio < 0.75 or ratio > 1.0:
-        #    return None
-
-        return cnt
 
     def prepare_output_image(self, input_frame):
         '''Prepare output image for drive station. Draw the found target contour.'''
@@ -119,16 +163,25 @@ class PlayerFinder(object):
 
         # Draw the contour on the image
         #blue
-        if self.contours is not None:
+        if self.player_contours is not None:
             cv2.drawContours(output_frame, self.contours, -1, (255, 0, 0), 1)
 
         #green
-        if self.top_contours is not None:
+        if self.top_players is not None:
             cv2.drawContours(output_frame, self.top_contours, -1, (0, 255, 0), 2)
         
         #red
-        if self.found_players is not None:
+        if self.players is not None:
             cv2.drawContours(output_frame, self.found_players, -1, (0, 0, 255), 3)
+        
+        #blue
+        if self.infield_contours is not None:
+            cv2.drawContours(output_frame, self.infield_contours, -1, (255, 0, 0), 1)
+
+        #red
+        if self.infield is not None:
+            for cnr in self.infield:
+                cv2.drawMarker(output_frame, tuple(cnr[0]), (0, 255, 0), cv2.MARKER_CROSS, 20, 5)
 
         return output_frame
 
@@ -150,7 +203,7 @@ def process_files(processor, input_files, output_dir):
         resized = cv2.resize(bgr_frame, (width, height), interpolation = cv2.INTER_AREA)
         #--------------------------------------------
 
-        _ = processor.process_image(resized)
+        testing_output = processor.process_image(resized)
 
         markup = processor.prepare_output_image(resized)
 
