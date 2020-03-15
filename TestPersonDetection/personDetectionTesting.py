@@ -27,6 +27,7 @@ class PlayerFinder(object):
         self.players = None
 
         self.infield_contours = None
+        self.top_infield = None
         self.infield = None
 
         return
@@ -61,7 +62,7 @@ class PlayerFinder(object):
         
         #res = cv2.bitwise_and(img,img, mask=mask)
 
-        cnts = self.get_infield_cnrs(mask_green)
+        self.get_infield_cnrs(mask_green)
         #self.get_player_contours(mask)
  
         return image
@@ -72,25 +73,30 @@ class PlayerFinder(object):
 
         infield_contour_list = self.area_cut(self.infield_contours, 15000, 200000)
         #self.infield = min(infield_contour_list, key=lambda x:x['area'])['contour']
-        self.infield = [x['contour'] for x in infield_contour_list][0]
+        self.top_infield = [x['contour'] for x in infield_contour_list]
 
-        # convexHull
-        hull = cv2.convexHull(self.infield)
-        #print(hull)
-        cnrs = [min(hull, key=lambda x: x[0][0]),
-                max(hull, key=lambda x: x[0][0]),
-                min(hull, key=lambda x: x[0][1]),
-                max(hull, key=lambda x: x[0][1])
-                ]
+        hulls = [cv2.convexHull(x) for x in self.top_infield]
+
+        #if len(hulls) == 1:  #already found the infield
+        cnrs = self.get_cnrs(hulls[0])
+        #print(self.infield)
+        #rect = cv2.minAreaRect(cnrs)
+        #self.infield = numpy.array(cv2.boxPoints(rect)).astype(int)
         self.infield = cnrs
 
-        """rect = cv2.minAreaRect(self.infield)
-        box = cv2.boxPoints(rect)
-        self.infield = [numpy.int0(box)]"""
         #print(self.infield)
 
-        return cnrs
-    
+        #return cnrs
+
+    def get_cnrs(self, hull):
+        formatted = numpy.zeros((4, 1, 2)).astype(int)
+        formatted[0] = min(hull, key=lambda x: x[0][0])[0]   #min x coord
+        formatted[1] = min(hull, key=lambda x: x[0][1])[0]   #min y coord (highest)
+        formatted[2] = max(hull, key=lambda x: x[0][0])[0]   #max x coord
+        formatted[3] = max(hull, key=lambda x: x[0][1])[0]   #max y coord (lowest)
+
+        return formatted
+            
     def get_player_contours(self, mask):
         erosion = cv2.erode(mask, numpy.ones((7,7), numpy.uint8), iterations = 1)   
         _, self.contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -139,8 +145,8 @@ class PlayerFinder(object):
     def ratio_H2W_cut(self, cnts, min_ratio, max_ratio):
         contour_list = []
         for c in cnts:
-            height = contour_entry['widths'][1]
-            width = contour_entry['widths'][0]
+            height = c['widths'][1]
+            width = c['widths'][0]
             ratio = height / width
             #print("ratio: " + str(ratio))
             #print("w, h: " + str(width) + ", " + str(height))
@@ -178,10 +184,17 @@ class PlayerFinder(object):
         if self.infield_contours is not None:
             cv2.drawContours(output_frame, self.infield_contours, -1, (255, 0, 0), 1)
 
+        #blue
+        if self.top_infield is not None:
+            cv2.drawContours(output_frame, self.top_infield, -1, (0, 255, 0), 2)
+
         #red
         if self.infield is not None:
-            for cnr in self.infield:
-                cv2.drawMarker(output_frame, tuple(cnr[0]), (0, 255, 0), cv2.MARKER_CROSS, 20, 5)
+            if len(self.infield[0]) <= 4:
+                for cnr in self.infield[0]:
+                    cv2.drawMarker(output_frame, tuple(cnr[0]), (0, 0, 255), cv2.MARKER_CROSS, 20, 5)
+            else:
+                cv2.drawContours(output_frame, self.infield, -1, (0, 0, 255), 3)
 
         return output_frame
 
