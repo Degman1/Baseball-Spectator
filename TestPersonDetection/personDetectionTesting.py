@@ -29,6 +29,7 @@ class PlayerFinder(object):
         self.infield_contours = None
         self.top_infield = None
         self.infield = None
+        self.infield_cnrs = None
 
         return
 
@@ -76,24 +77,24 @@ class PlayerFinder(object):
         self.top_infield = [x['contour'] for x in infield_contour_list]
 
         hulls = [cv2.convexHull(x) for x in self.top_infield]
-
+        self.infield = hulls[0]
         #if len(hulls) == 1:  #already found the infield
         cnrs = self.get_cnrs(hulls[0])
         #print(self.infield)
         #rect = cv2.minAreaRect(cnrs)
         #self.infield = numpy.array(cv2.boxPoints(rect)).astype(int)
-        self.infield = cnrs
+        self.infield_cnrs = cnrs
 
         #print(self.infield)
 
         #return cnrs
 
-    def get_cnrs(self, hull):
+    def get_cnrs(self, c):
         formatted = numpy.zeros((4, 1, 2)).astype(int)
-        formatted[0] = min(hull, key=lambda x: x[0][0])[0]   #min x coord
-        formatted[1] = min(hull, key=lambda x: x[0][1])[0]   #min y coord (highest)
-        formatted[2] = max(hull, key=lambda x: x[0][0])[0]   #max x coord
-        formatted[3] = max(hull, key=lambda x: x[0][1])[0]   #max y coord (lowest)
+        formatted[0] = min(c, key=lambda x: x[0][0])[0]   #min x coord
+        formatted[1] = min(c, key=lambda x: x[0][1])[0]   #min y coord (highest)
+        formatted[2] = max(c, key=lambda x: x[0][0])[0]   #max x coord
+        formatted[3] = max(c, key=lambda x: x[0][1])[0]   #max y coord (lowest)
 
         return formatted
             
@@ -190,12 +191,13 @@ class PlayerFinder(object):
 
         #red
         if self.infield is not None:
-            if len(self.infield[0]) <= 4:
-                for cnr in self.infield[0]:
-                    cv2.drawMarker(output_frame, tuple(cnr[0]), (0, 0, 255), cv2.MARKER_CROSS, 20, 5)
-            else:
-                cv2.drawContours(output_frame, self.infield, -1, (0, 0, 255), 3)
+            cv2.drawContours(output_frame, self.infield, -1, (0, 0, 255), 2)
 
+        #red
+        if self.infield_cnrs is not None:
+            for cnr in self.infield_cnrs:
+                cv2.drawMarker(output_frame, tuple(cnr[0]), (0, 0, 255), cv2.MARKER_CROSS, 20, 5)
+        
         return output_frame
 
 def process_files(processor, input_files, output_dir):
