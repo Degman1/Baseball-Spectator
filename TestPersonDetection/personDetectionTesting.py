@@ -3,7 +3,7 @@
 import os.path
 import cv2
 import numpy
-import hough_fit
+import infieldFittingRoutines
 
 class PlayerFinder(object):
     def __init__(self):
@@ -15,13 +15,6 @@ class PlayerFinder(object):
 
         self.lower_dark_brown = numpy.array((2, 93, 25), dtype=numpy.uint8)
         self.upper_dark_brown = numpy.array((10, 175, 150), dtype=numpy.uint8)
-        """
-        self.lower_dark_green = numpy.array((1, 45, 14), dtype=numpy.uint8)
-        self.upper_dark_green = numpy.array((72, 255, 242), dtype=numpy.uint8)"""
-
-        # pixel area of the bounding rectangle - just used to remove stupidly small regions
-        self.contour_min_area = 300    # TODO MUST change these numbers based on the camera resolution that we choose for the iphone's camera!!
-        self.contour_max_area = 2000
 
         self.player_contours = None
         self.top_players = None
@@ -59,16 +52,14 @@ class PlayerFinder(object):
         mask = cv2.bitwise_or(mask_green, mask_brown)
         mask = cv2.bitwise_or(mask, mask_dark_brown)
         
-        #res = cv2.bitwise_and(img,img, mask=mask)
-
-        self.get_infield_cnrs(mask_green)
-        #self.get_player_contours(mask)
+        image = self.get_infield_cnrs(mask_green, image)    #pass in image for quad fit debugging
+        self.get_player_contours(mask)
+        print("Thank you, next...")
  
         return image
     
-    def get_infield_cnrs(self, mask):
-        
-        erosion = cv2.erode(mask, numpy.ones((4,4), numpy.uint8), iterations = 1)
+    def get_infield_cnrs(self, mask, image):
+        erosion = cv2.erode(mask, numpy.ones((4, 4), numpy.uint8), iterations = 1)
         _, self.infield_contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         infield_contour_list = self.area_cut(self.infield_contours, 18500, 200000)
@@ -93,34 +84,34 @@ class PlayerFinder(object):
         self.infield = self.infield['contour']
 
         # to find quadrilateral using hough_fit method
-        cnrs = self.quad_fit(self.infield)
+        cnrs = self.quad_fit(self.infield, image_frame=image)
         if cnrs is not None:
-            cnrs = numpy.array(cnrs).astype(int)
-            self.infield_cnrs = cnrs
+            self.infield_cnrs = numpy.array(cnrs).astype(int)
+        
+        return image
             
     def get_player_contours(self, mask):
-        erosion = cv2.erode(mask, numpy.ones((7,7), numpy.uint8), iterations = 1)   
-        _, self.contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        print("Before: " + str(len(self.contours)))
+        erosion = cv2.erode(mask, numpy.ones((5,5), numpy.uint8), iterations = 1)   
+        _, self.player_contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        contour_list = self.area_cut(self.contours, self.contour_min_area, self.contour_max_area)
-
+        contour_list = self.area_cut(self.player_contours, 270, 2000)
         self.top_players = [x['contour'] for x in contour_list]
         
-        print("After 1: " + str(len(contour_list)))
+        self.players = []
 
-        self.players = self.ratio_H2W_cut(self.top_players, 0.8, 3.0)
+        for player in contour_list:
+            width = player['widths'][0]
+            height = player['widths'][1]
+            ratio = height / width
 
-        print("After 2: " + str(len(self.players)) + "\n")
+            if ratio >= 0.8 and ratio <= 3.0 and cv2.contourArea(player['contour']) > 200:
+                self.players.append(player)
 
-    """def get_extreme_cnrs(self, c):
-        formatted = numpy.zeros((4, 1, 2)).astype(int)
-        formatted[0] = min(c, key=lambda x: x[0][0])[0]   #min x coord
-        formatted[1] = min(c, key=lambda x: x[0][1])[0]   #min y coord (highest)
-        formatted[2] = max(c, key=lambda x: x[0][0])[0]   #max x coord
-        formatted[3] = max(c, key=lambda x: x[0][1])[0]   #max y coord (lowest)
-
-        return formatted"""
+        if len(self.players) == 0:
+            self.players = None
+            return
+        
+        self.players = [x['contour'] for x in self.players]
 
     def area_cut(self, cnts, min_area, max_area):
         contour_list = []
@@ -142,30 +133,32 @@ class PlayerFinder(object):
         x, y, w, h = cv2.boundingRect(contour)
         return (x + int(w / 2), y + int(h / 2)), (w, h)
 
-    def quad_fit(self, contour):
+    def quad_fit(self, contour, image_frame=None):
         '''Best fit of a quadrilateral to the contour'''
 
-        approx = hough_fit.approxPolyDP_adaptive(contour, nsides=4)
-        return hough_fit.hough_fit(contour, nsides=4, approx_fit=approx)
+        approx = infieldFittingRoutines.approxPolyDP_adaptive(contour, nsides=4)
+        return infieldFittingRoutines.hough_fit(contour, nsides=4, approx_fit=approx, image_frame=image_frame)
 
     def prepare_output_image(self, input_frame):
         '''Prepare output image for drive station. Draw the found target contour.'''
 
         output_frame = input_frame.copy()
 
-        # Draw the contour on the image
+        # Draw the contours on the image
+
+        """
         #blue
         if self.player_contours is not None:
-            cv2.drawContours(output_frame, self.contours, -1, (255, 0, 0), 1)
-
+            cv2.drawContours(output_frame, self.player_contours, -1, (255, 0, 0), 1)
+        
         #green
         if self.top_players is not None:
-            cv2.drawContours(output_frame, self.top_contours, -1, (0, 255, 0), 2)
-        
+            cv2.drawContours(output_frame, self.top_players, -1, (0, 255, 0), 2)
+        """
         #red
         if self.players is not None:
-            cv2.drawContours(output_frame, self.found_players, -1, (0, 0, 255), 3)
-        
+            cv2.drawContours(output_frame, self.players, -1, (0, 0, 255), 3)
+        """
         #blue
         if self.infield_contours is not None:
             cv2.drawContours(output_frame, self.infield_contours, -1, (255, 0, 0), 1)
@@ -173,12 +166,12 @@ class PlayerFinder(object):
         #green
         if self.top_infield is not None:
             cv2.drawContours(output_frame, self.top_infield, -1, (0, 255, 0), 2)
-
-        #red
+        """
+        #green
         if self.infield is not None:
-            cv2.drawContours(output_frame, self.infield, -1, (0, 0, 255), 3)
+            cv2.drawContours(output_frame, [self.infield], -1, (0, 255, 0), 3)
 
-        #red
+        #yellow
         if self.infield_cnrs is not None:
             for cnr in self.infield_cnrs:
                 cv2.drawMarker(output_frame, tuple(cnr), (0, 255, 255), cv2.MARKER_CROSS, 20, 5)
