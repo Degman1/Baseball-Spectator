@@ -25,6 +25,8 @@ class PlayerFinder(object):
         self.infield = None
         self.infield_cnrs = None
 
+        self.fieldDraw = None
+
         return
 
     def reset_variables(self):
@@ -52,34 +54,33 @@ class PlayerFinder(object):
         mask = cv2.bitwise_or(mask_green, mask_brown)
         mask = cv2.bitwise_or(mask, mask_dark_brown)
         
-        image = self.get_infield_cnrs(mask_green, image)    #pass in image for quad fit debugging
+        im = self.get_infield_cnrs(mask_green, image)    #pass in image for quad fit debugging
+        if im is not None:
+            image = im      #updates output for drawing debug
         self.get_player_contours(mask)
         print("Thank you, next...")
  
         return image
     
-    def get_infield_cnrs(self, mask, image):
+    def get_infield_cnrs(self, mask, image):    #array return order: home, first, second, third
         erosion = cv2.erode(mask, numpy.ones((4, 4), numpy.uint8), iterations = 1)
         _, self.infield_contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        infield_contour_list = self.area_cut(self.infield_contours, 18500, 200000)
+        infield_contour_list = self.area_cut(self.infield_contours, 18500, 2000000)
         #self.infield = min(infield_contour_list, key=lambda x:x['area'])['contour']
         
         self.top_infield = [x['contour'] for x in infield_contour_list]
 
-        #hulls = [cv2.convexHull(x) for x in self.top_infield]    # too little coordinates for quad_fit
-        #self.infield = self.top_infield[0]
-
-        for inf in infield_contour_list:
-            width = inf['widths'][0]
-            height = inf['widths'][1]
+        for cnt in infield_contour_list:
+            width = cnt['widths'][0]
+            height = cnt['widths'][1]
             ratio = height / width
 
-            if (ratio < 0.4) and (self.infield is None or width < self.infield['widths'][0]) and cv2.contourArea(inf['contour']) > 10000:
-                self.infield = inf
+            if (ratio < 0.4) and (self.infield is None or width < self.infield['widths'][0]) and cv2.contourArea(cnt['contour']) > 10000:
+                self.infield = cnt
 
         if self.infield is None:
-            return
+            return None
         
         self.infield = self.infield['contour']
 
@@ -93,8 +94,25 @@ class PlayerFinder(object):
     def get_player_contours(self, mask):
         erosion = cv2.erode(mask, numpy.ones((5,5), numpy.uint8), iterations = 1)   
         _, self.player_contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        
+        field = None
 
-        contour_list = self.area_cut(self.player_contours, 270, 2000)
+        contour_list = []
+        for c in self.player_contours:
+            center, widths = self.contour_center_width(c)
+            area = widths[0] * widths[1]
+
+            if area > 270 and area < 2000:
+                contour_list.append({'contour': c, 'center': center, 'widths': widths, 'area': area})
+
+            if field is None or field['area'] < area:
+                field = {'contour': c, 'center': center, 'widths': widths, 'area': area}
+            
+        # Sort the list of contours from biggest area to smallest
+        contour_list.sort(key=lambda c: c['widths'][0] * c['widths'][1], reverse=True)
+
+        self.fieldDraw = field['contour']
+
         self.top_players = [x['contour'] for x in contour_list]
         
         self.players = []
@@ -104,7 +122,7 @@ class PlayerFinder(object):
             height = player['widths'][1]
             ratio = height / width
 
-            if ratio >= 0.8 and ratio <= 3.0 and cv2.contourArea(player['contour']) > 200:
+            if ratio >= 0.8 and ratio <= 3.0:# and cv2.contourArea(player['contour']) > 200:
                 self.players.append(player)
 
         if len(self.players) == 0:
@@ -112,6 +130,30 @@ class PlayerFinder(object):
             return
         
         self.players = [x['contour'] for x in self.players]
+
+    def isCandidatePlayerOnField(self, candidateCenterPt, fieldInfo):
+        width = fieldInfo['widths'][0] / 2
+        height = fieldInfo['widths'][1] / 2
+        centerx = fieldInfo['center'][0]
+        centery = fieldInfo['center'][1]
+
+        #if center of candidate player is not even in the field's bounding box, definitely is not inside the contour -- more effiecient in best cases
+        if candidateCenterPt[0] >= centerx + width or candidateCenterPt[0] <= centerx - width or candidateCenterPt[1] <= centery - height and candidateCenterPt[1] >= centery + height:
+            return False
+        
+        sameXvalue = []     #array of x values that lie at the same y value as the candidate
+        sameYvalue = []     #array of y values that lie at the same x value as the candidate
+
+        for pt in fieldInfo['contour']:
+            if pt[0][1] == centerx:
+                sameXvalue.append(pt[0][0])
+            if pt[0][0] == centery:
+                sameYvalue.append(pt[0][1])
+
+        if len(sameXvalue) >= 2 and len(sameYvalue) >= 2 and centerx > min(sameXvalue) and centerx < max(sameXvalue) and centery > min(sameYvalue) and centery < max(sameYvalue):
+            return True
+        
+        return False
 
     def area_cut(self, cnts, min_area, max_area):
         contour_list = []
@@ -175,6 +217,9 @@ class PlayerFinder(object):
         if self.infield_cnrs is not None:
             for cnr in self.infield_cnrs:
                 cv2.drawMarker(output_frame, tuple(cnr), (0, 255, 255), cv2.MARKER_CROSS, 20, 5)
+
+        if self.fieldDraw is not None:
+            cv2.drawContours(output_frame, [self.fieldDraw], -1, (255, 255, 0), 2)
         
         return output_frame
 
