@@ -134,11 +134,7 @@ class PlayerFinder(object):
         for candidate in self.players:
             if self.isCandidatePlayerOnField(candidate['center'], field):
                 final_players.append(candidate)
-            break
-
-        print(len(final_players))
-        
-        self.players = [x['contour'] for x in self.players]
+        self.players = [x['contour'] for x in final_players]
 
     def isCandidatePlayerOnField(self, candidateCenterPt, fieldInfo):
         width = int( fieldInfo['widths'][0] / 2 ) + 1   # +1 to round up
@@ -146,40 +142,16 @@ class PlayerFinder(object):
         centerx = fieldInfo['center'][0]
         centery = fieldInfo['center'][1]
 
-        #print("centerx: " + str(candidateCenterPt[0]) + " -- between: " + str(centerx - width) + " and " + str(centerx + width))
-        #print("centery: " + str(candidateCenterPt[1]) + " -- between: " + str(centery - height) + " and " + str(centery + height))
-
         #if center of candidate player is not even in the field's bounding box, definitely is not inside the contour
         if candidateCenterPt[0] >= centerx + width or candidateCenterPt[0] <= centerx - width or candidateCenterPt[1] <= centery - height and candidateCenterPt[1] >= centery + height:
             return False
         
-        sameXvalue = []     #array of x values that lie at the same y value as the candidate
-        sameYvalue = []     #array of y values that lie at the same x value as the candidate
-
-        for pt in fieldInfo['contour']:
-            if pt[0][0] == 1080:
-                print(pt)
-            if pt[0][1] == candidateCenterPt[1]:
-                sameXvalue.append(pt[0][0])
-            if pt[0][0] == candidateCenterPt[0]:
-                sameYvalue.append(pt[0][1])
+        distance = cv2.pointPolygonTest(fieldInfo['contour'], candidateCenterPt, True)
         
-        print(candidateCenterPt)
-        print("sameXvalues: " + str(sameXvalue))
-        print("sameYvalues: " + str(sameYvalue))
-
-        if len(sameXvalue) >= 2 and len(sameYvalue) >= 2:
-            print(min(sameXvalue))
-            print(max(sameXvalue))
-            print(min(sameYvalue))
-            print(max(sameYvalue))
-        else:
-            print("NOT A REAL PLAYER")
-        print()
-        if len(sameXvalue) >= 2 and len(sameYvalue) >= 2 and centerx > min(sameXvalue) and centerx < max(sameXvalue) and centery > min(sameYvalue) and centery < max(sameYvalue):
-            return True
+        if distance <= 0:   #outside of contour or on edge of contour
+            return False
         
-        return False
+        return True
 
     def area_cut(self, cnts, min_area, max_area):
         contour_list = []
