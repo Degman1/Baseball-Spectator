@@ -2,19 +2,19 @@
 
 import os.path
 import cv2
-import numpy
+from numpy import array, uint8, ones
 import infieldFittingRoutines
 
 class PlayerFinder(object):
     def __init__(self):
-        self.lower_green = numpy.array((17, 50, 20), dtype=numpy.uint8)
-        self.upper_green = numpy.array((72, 255, 242), dtype=numpy.uint8)
+        self.lower_green = array((17, 50, 20), dtype=uint8)
+        self.upper_green = array((72, 255, 242), dtype=uint8)
 
-        self.lower_brown = numpy.array((7, 80, 25), dtype=numpy.uint8)
-        self.upper_brown = numpy.array((27, 255, 255), dtype=numpy.uint8)
+        self.lower_brown = array((7, 80, 25), dtype=uint8)
+        self.upper_brown = array((27, 255, 255), dtype=uint8)
 
-        self.lower_dark_brown = numpy.array((2, 93, 25), dtype=numpy.uint8)
-        self.upper_dark_brown = numpy.array((10, 175, 150), dtype=numpy.uint8)
+        self.lower_dark_brown = array((2, 93, 25), dtype=uint8)
+        self.upper_dark_brown = array((10, 175, 150), dtype=uint8)
 
         self.player_contours = None
         self.top_players = None
@@ -24,8 +24,6 @@ class PlayerFinder(object):
         self.top_infield = None
         self.infield = None
         self.infield_cnrs = None
-
-        self.fieldDraw = None
 
         return
 
@@ -40,10 +38,21 @@ class PlayerFinder(object):
         self.infield_cnrs = None
 
     def process_image(self, image):
-        '''Main image processing routine'''
+        '''Main image processing routine
         
-        #converting into hsv image
+        1. Reset all central class variables to make sure the last image's processing data is cleared out
+        2. Convert color from BGR to HSV
+        3. Find all the pixels in the image that are a specific shade of green or brown to identify the field and dirt
+        4. Find the location of the bases
+        5. Find the location of the players
+        6. Calculate the ideal location of each of the players' positions
+        7. Assign each player an expected position
+        8. RETURN each players' bottom point and their corresponding position
+        '''
+        
         self.reset_variables()
+
+        #converting into hsv image
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
         #Define a mask ranging from lower to uppper
@@ -62,8 +71,19 @@ class PlayerFinder(object):
  
         return image
     
-    def get_infield_cnrs(self, mask, image):    #array return order: home, first, second, third
-        erosion = cv2.erode(mask, numpy.ones((4, 4), numpy.uint8), iterations = 1)
+    def get_infield_cnrs(self, mask, image):
+        '''Sub-processing routine to find the location of the bases
+
+        1. Erode the image to get rid of small impurities
+        2. Find all contours that are formed by the green mask
+        3. Choose the contours that are between a certain bounding box area
+        4. Choose the contours that have a certain (height/width) ratio, the smallest bounding box width, and an exact area above a certain threshold
+                --> the expected infield outline
+        5. Fit a quadrilateral around the infield grass
+        6. RETURN the corners of the quadrilateral (TODO: array return order: home, first, second, third)
+        '''
+
+        erosion = cv2.erode(mask, ones((4, 4), uint8), iterations = 1)
         _, self.infield_contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         infield_contour_list = self.area_cut(self.infield_contours, 18500, 2000000)
@@ -87,12 +107,21 @@ class PlayerFinder(object):
         # to find quadrilateral using hough_fit method
         cnrs = self.quad_fit(self.infield, image_frame=image)
         if cnrs is not None:
-            self.infield_cnrs = numpy.array(cnrs).astype(int)
+            self.infield_cnrs = array(cnrs).astype(int)
         
         return image
             
     def get_player_contours(self, mask):
-        erosion = cv2.erode(mask, numpy.ones((5,5), numpy.uint8), iterations = 1)   
+        '''Sub-processing routine to find the location of the players on the field
+
+        1. Erode the image to get rid of small impurities
+        2. Find all contours that are formed by the green mask
+        3. Choose the contours that are between a certain bounding box area
+        4. Choose the contours that have a certain (height/width) ratio and actually are located on the field
+        '''
+
+
+        erosion = cv2.erode(mask, ones((5,5), uint8), iterations = 1)   
         _, self.player_contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         
         field = None
@@ -110,35 +139,40 @@ class PlayerFinder(object):
             
         # Sort the list of contours from biggest area to smallest
         contour_list.sort(key=lambda c: c['widths'][0] * c['widths'][1], reverse=True)
-
-        self.fieldDraw = field['contour']
-
-        self.top_players = [x['contour'] for x in contour_list]
         
-        self.players = []
+        self.top_players = []
 
         for player in contour_list:
             width = player['widths'][0]
             height = player['widths'][1]
             ratio = height / width
 
-            if ratio >= 0.8 and ratio <= 3.0:# and cv2.contourArea(player['contour']) > 200:
-                self.players.append(player)
+            if ratio >= 0.8 and ratio <= 3.0:
+                self.top_players.append(player)
 
-        if len(self.players) == 0:
-            self.players = None
+        if len(self.top_players) == 0:
+            self.top_players = None
             return
 
-        final_players = []
+        self.players = []
 
-        for candidate in self.players:
+        for candidate in self.top_players:
             if self.isCandidatePlayerOnField(candidate['center'], field):
-                final_players.append(candidate)
-        self.players = [x['contour'] for x in final_players]
+                self.players.append(candidate['contour'])
+
+        self.top_players = [x['contour'] for x in self.top_players]
 
     def isCandidatePlayerOnField(self, candidateCenterPt, fieldInfo):
-        width = int( fieldInfo['widths'][0] / 2 ) + 1   # +1 to round up
-        height = int( fieldInfo['widths'][1] / 2 ) + 1
+        '''Helper method to check is a candidate player is located on the field
+
+        1. Check if the candidate player's center point is within the field's bounding box 
+            (much faster than the opencv method, so if it isn't in the bounding box it's a quick reliable way to return false)
+        2. Check if the center point is actually inside the field contour
+        3. RETURN true if the result is positive
+        '''
+
+        width = int( fieldInfo['widths'][0] / 2 )
+        height = int( fieldInfo['widths'][1] / 2 )
         centerx = fieldInfo['center'][0]
         centery = fieldInfo['center'][1]
 
@@ -154,6 +188,8 @@ class PlayerFinder(object):
         return True
 
     def area_cut(self, cnts, min_area, max_area):
+        '''Helper method for a generic contour area cut according to its bounding box'''
+
         contour_list = []
         for c in cnts:
             center, widths = self.contour_center_width(c)
@@ -215,12 +251,8 @@ class PlayerFinder(object):
         if self.infield_cnrs is not None:
             for cnr in self.infield_cnrs:
                 cv2.drawMarker(output_frame, tuple(cnr), (0, 255, 255), cv2.MARKER_CROSS, 20, 5)
-
-        if self.fieldDraw is not None:
-            cv2.drawContours(output_frame, [self.fieldDraw], -1, (255, 255, 0), 2)
         
         return output_frame
-
 
 def process_files(processor, input_files, output_dir):
     '''Process the files and output the marked up image'''
@@ -229,7 +261,7 @@ def process_files(processor, input_files, output_dir):
     for image_file in input_files:
         bgr_frame = cv2.imread(image_file)
 
-        #-----------------------------resize:
+        #-----------------------------resize original image:
         new_height = 1080   # This is the pixel dimensions of the standard iphone 8 camera setting (1080p HD)
         # Makes sure all images are the same height --> same relative player sizes so that contour cuttoffs can be accurate
 
@@ -246,13 +278,9 @@ def process_files(processor, input_files, output_dir):
         markup = processor.prepare_output_image(resized)
 
         outfile = os.path.join(output_dir, os.path.basename(image_file))
-        # print('{} -> {}'.format(image_file, outfile))
+
         cv2.imwrite(outfile, markup)
 
-        # cv2.imshow("Window", bgr_frame)
-        # q = cv2.waitKey(-1) & 0xFF
-        # if q == ord('q'):
-        #     break
     return
 
 def main():

@@ -2,17 +2,15 @@
 
 # Use the Hough line algorithm to fix a contour
 
-# See bottom of this file for some timing results
-
-import cv2
+from cv2 import boundingRect, drawContours, HoughLines, arcLength, approxPolyDP, line
 
 # it is faster if you import the needed functions directly
 # these are used a lot, so it helps, a little
 from math import sin, cos, atan2, degrees
-import numpy
+from numpy import pi, array, zeros, uint8, sqrt
 
-two_pi = 2.0 * numpy.pi
-pi_by_2 = numpy.pi / 2.0
+two_pi = 2.0 * pi
+pi_by_2 = pi / 2.0
 
 
 def hough_fit(contour, nsides=None, approx_fit=None, image_frame=None):
@@ -25,15 +23,15 @@ def hough_fit(contour, nsides=None, approx_fit=None, image_frame=None):
     
     nsides = len(approx_fit)
 
-    x, y, w, h = cv2.boundingRect(contour)
-    offset_vec = numpy.array((x, y))
+    x, y, w, h = boundingRect(contour)
+    offset_vec = array((x, y))
 
     shifted_con = contour - offset_vec
 
     # the binning does affect the speed, so tune it....
-    contour_plot = numpy.zeros(shape=(h, w), dtype=numpy.uint8)
-    cv2.drawContours(contour_plot, [shifted_con, ], -1, 255, 1)
-    lines = cv2.HoughLines(contour_plot, 1, numpy.pi / 180, threshold=8)
+    contour_plot = zeros(shape=(h, w), dtype=uint8)
+    drawContours(contour_plot, [shifted_con, ], -1, 255, 1)
+    lines = HoughLines(contour_plot, 1, pi / 180, threshold=8)
 
     """if image_frame is not None:      #for debugging
         print('hough lines:')
@@ -54,7 +52,8 @@ def hough_fit(contour, nsides=None, approx_fit=None, image_frame=None):
 
     if res is None:
         return get_cnrs_using_extreme_pts(contour)
-    return numpy.array(res) + offset_vec
+    
+    return array(res) + offset_vec
 
 
 def approxPolyDP_adaptive(contour, nsides, max_dp_error=0.1):
@@ -63,10 +62,10 @@ def approxPolyDP_adaptive(contour, nsides, max_dp_error=0.1):
     The results seem to often be a little wrong, but they are a quick starting point.'''
 
     step = 0.0005
-    peri = cv2.arcLength(contour, True)
+    peri = arcLength(contour, True)
     dp_err = step
     while dp_err <= max_dp_error:
-        res = cv2.approxPolyDP(contour, dp_err * peri, True)
+        res = approxPolyDP(contour, dp_err * peri, True)
         if len(res) <= nsides:
             # print('approxPolyDP_adaptive found at step', step)
             return res
@@ -88,17 +87,14 @@ def plot_hough_line(frame, rho, theta, color=(0, 0, 255), thickness=1, offset=No
         pt1[1] += offset[1]
         pt2[0] += offset[0]
         pt2[1] += offset[1]
-    cv2.line(frame, tuple(pt1), tuple(pt2), color, thickness)
+    line(frame, tuple(pt1), tuple(pt2), color, thickness)
     return
-
-
-
 
 def _match_lines_to_fit(approx_fit, hough_lines, w, h):
     '''Given the approximate shape and a set of lines from the Hough algorithm
     find the matching lines and rebuild the fit'''
 
-    theta_thres = numpy.pi / 9  # 20 degrees
+    theta_thres = pi / 9  # 20 degrees
     nsides = len(approx_fit)
     fit_sides = []
     hough_used = set()
@@ -121,7 +117,7 @@ def _match_lines_to_fit(approx_fit, hough_lines, w, h):
             # So test them both.
 
             if (abs(rho - line[0]) < 10 and abs(_delta_angle(theta, line[1])) < theta_thres) or \
-               (abs(rho + line[0]) < 10 and abs(_delta_angle(theta, line[1] - numpy.pi)) < theta_thres):
+               (abs(rho + line[0]) < 10 and abs(_delta_angle(theta, line[1] - pi)) < theta_thres):
                 fit_sides.append(line)
                 hough_used.add(ih)
                 # print('  matched:', ih, line[0], degrees(line[1]))
@@ -144,7 +140,7 @@ def _match_lines_to_fit(approx_fit, hough_lines, w, h):
 
 def _delta_angle(a, b):
     d = a - b
-    return (d + numpy.pi) % two_pi - numpy.pi
+    return (d + pi) % two_pi - pi
 
 def _intersection(line1, line2):
     """Finds the intersection of two lines given in Hesse normal form.
@@ -167,9 +163,8 @@ def _intersection(line1, line2):
     denom = cos1*sin2 - sin1*cos2
     x = (sin2*rho1 - sin1*rho2) / denom
     y = (cos1*rho2 - cos2*rho1) / denom
-    res = numpy.array((x, y))
+    res = array((x, y))
     return res
-
 
 def _hesse_form(pt1, pt2):
     '''Compute the Hesse form for the line through the points'''
@@ -178,7 +173,7 @@ def _hesse_form(pt1, pt2):
     mag2 = delta.dot(delta)
     vec = pt2 - pt2.dot(delta) * delta / mag2
 
-    rho = numpy.sqrt(vec.dot(vec))
+    rho = sqrt(vec.dot(vec))
     if abs(rho) < 1e-6:
         # through 0. Need to compute theta differently
         theta = atan2(delta[1], delta[0]) + pi_by_2
@@ -189,13 +184,13 @@ def _hesse_form(pt1, pt2):
 
     return rho, theta
 
-def get_cnrs_using_extreme_pts(contour):
+def get_cnrs_using_extreme_pts(contour):    #works if on lower 1st base or 3rd base side of the stands
     miny = min(contour, key=lambda x: x[0][1])[0]   #min y coord (highest)
     maxy = max(contour, key=lambda x: x[0][1])[0]    #max y coord (lowest)
     height = maxy[1] - miny[1]
 
     #order: top left, top right, bottom right, bottom left
-    cnrs = numpy.array([maxy, maxy, miny, miny])        #array shape is [[0, 0], [0, 0], [0, 0], [0, 0]]
+    cnrs = array([maxy, maxy, miny, miny])        #array shape is [[0, 0], [0, 0], [0, 0], [0, 0]]
 
     dy_top = int(height / 5.5)  #for image7: 10
     dy_bottom = int(height / 2.75)  #for image7: 20
@@ -256,8 +251,6 @@ class SlopeInfo:        #TODO include at least one pt to find the line equation
     def slope(pt_a, pt_b):
         return (pt_a[1] - pt_b[1]) / (pt_a[0] - pt_b[0])
 """
-
-
 
 
 
