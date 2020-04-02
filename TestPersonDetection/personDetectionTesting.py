@@ -5,6 +5,8 @@ import cv2
 from numpy import array, uint8, ones
 import infieldFittingRoutines
 
+import time
+
 class PlayerFinder(object):
     def __init__(self):
         self.lower_green = array((17, 50, 20), dtype=uint8)
@@ -273,9 +275,13 @@ def process_files(processor, input_files, output_dir):
         resized = cv2.resize(bgr_frame, (width, height), interpolation = cv2.INTER_AREA)
         #--------------------------------------------
 
+        t0 = time.time()
+        
         testing_output = processor.process_image(resized)
-
         markup = processor.prepare_output_image(resized)
+
+        t1 = time.time()
+        print("Processing took: " + str(t1-t0) + " sec")
 
         outfile = os.path.join(output_dir, os.path.basename(image_file))
 
