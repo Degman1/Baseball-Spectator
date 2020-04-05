@@ -2,10 +2,27 @@
 
 import os.path
 import cv2
-from numpy import array, uint8, ones
+from numpy import array, uint8, ones, append
+from math import atan2, pi
 import infieldFittingRoutines
 
 import time
+
+
+HOME_PLATE_ANGLES = [       #in degrees
+    -2.47896732471227,      #image1.jpg
+    -157.19834043383372,    #image2.jpg
+    -145.90439732553747,    #image3.jpg
+    -139.65636091098264,    #...
+    -116.89130389332098,
+    -100.62383203858792,
+    -178.07661082248038,
+    10.105372086090268,
+    -129.54996512403113,
+    8.259332720696968,
+    None
+]
+
 
 class PlayerFinder(object):
     def __init__(self):
@@ -39,7 +56,7 @@ class PlayerFinder(object):
         self.infield = None
         self.infield_cnrs = None
 
-    def process_image(self, image):
+    def process_image(self, image, angle):
         '''Main image processing routine
         
         1. Reset all central class variables to make sure the last image's processing data is cleared out
@@ -65,16 +82,16 @@ class PlayerFinder(object):
         mask = cv2.bitwise_or(mask_green, mask_brown)
         mask = cv2.bitwise_or(mask, mask_dark_brown)
         
-        im = self.get_infield_cnrs(mask_green, image)    #pass in image for quad fit debugging
+        im = self.get_players_position_locations(mask_green, image, angle)    #pass in image for quad fit debugging
         if im is not None:
-            image = im      #updates output for drawing debug
+            image = im      #updates output for drawing debug of quad_fit
         self.get_player_contours(mask)
         print("Thank you, next...")
  
         return image
     
-    def get_infield_cnrs(self, mask, image):
-        '''Sub-processing routine to find the location of the bases
+    def get_players_position_locations(self, mask, image, expected_home_plate_angle):
+        '''Sub-processing routine to find the location of each of the game positions
 
         1. Erode the image to get rid of small impurities
         2. Find all contours that are formed by the green mask
@@ -82,7 +99,9 @@ class PlayerFinder(object):
         4. Choose the contours that have a certain (height/width) ratio, the smallest bounding box width, and an exact area above a certain threshold
                 --> the expected infield outline
         5. Fit a quadrilateral around the infield grass
-        6. RETURN the corners of the quadrilateral (TODO: array return order: home, first, second, third)
+        6. 
+        7. RETURN the image locations corresponding the positions in the following order:
+                (pitcher, home, first, second, third, shortstop, left field, center field, right field)
         '''
 
         erosion = cv2.erode(mask, ones((4, 4), uint8), iterations = 1)
@@ -108,20 +127,41 @@ class PlayerFinder(object):
 
         # to find quadrilateral using hough_fit method
         cnrs = self.quad_fit(self.infield, image_frame=image)
-        if cnrs is not None:
-            self.infield_cnrs = array(cnrs).astype(int)
+
+        if cnrs is None:
+            return None
+
+        pitcher_mound_x = (cnrs[0][0] + cnrs[1][0] + cnrs[2][0] + cnrs[3][0]) / 4
+        pitcher_mound_y = (cnrs[0][1] + cnrs[1][1] + cnrs[2][1] + cnrs[3][1]) / 4
+
+        da = 361    #delta angle
+        home_plate = None
+
+        for cnr in cnrs:
+            x = cnr[0] - pitcher_mound_x
+            y = pitcher_mound_y - cnr[1] #flip because y goes up as the pixel location goes down
+            angle = atan2(y, x) * (180 / pi)
+            da_temp = abs(angle - expected_home_plate_angle)
+
+            if da_temp < da:
+                da = da_temp
+                home_plate = cnr
+        print(expected_home_plate_angle)
+        print("Loc of home: " + str(home_plate))
         
+        self.infield_cnrs = append(cnrs, [[pitcher_mound_x, pitcher_mound_y]], axis=0).astype(int)
+
         return image
             
     def get_player_contours(self, mask):
         '''Sub-processing routine to find the location of the players on the field
 
         1. Erode the image to get rid of small impurities
-        2. Find all contours that are formed by the green mask
+        2. Find all contours that are formed by the green and brown masks
         3. Choose the contours that are between a certain bounding box area
         4. Choose the contours that have a certain (height/width) ratio and actually are located on the field
+        5. RETURN an array of the players' center pixel location
         '''
-
 
         erosion = cv2.erode(mask, ones((5,5), uint8), iterations = 1)   
         _, self.player_contours, _ = cv2.findContours(erosion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -261,6 +301,13 @@ def process_files(processor, input_files, output_dir):
     import os.path
 
     for image_file in input_files:
+        image_index = ""
+        for char in image_file:
+            if char.isdigit():
+                image_index += char
+        
+        image_index = int(image_index) - 1  #bc array indices
+
         bgr_frame = cv2.imread(image_file)
 
         #-----------------------------resize original image:
@@ -277,11 +324,11 @@ def process_files(processor, input_files, output_dir):
 
         t0 = time.time()
         
-        testing_output = processor.process_image(resized)
+        testing_output = processor.process_image(resized, HOME_PLATE_ANGLES[image_index])
         markup = processor.prepare_output_image(resized)
 
         t1 = time.time()
-        print("Processing took: " + str(t1-t0) + " sec")
+        print("Processing took: " + str(t1-t0) + " sec\n")
 
         outfile = os.path.join(output_dir, os.path.basename(image_file))
 
