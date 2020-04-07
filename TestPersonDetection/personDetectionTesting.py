@@ -10,7 +10,7 @@ import time
 
 
 HOME_PLATE_ANGLES = [       #in degrees
-    -2.47896732471227,      #image1.jpg
+    176.740300712375,       #image1.jpg
     -157.19834043383372,    #image2.jpg
     -145.90439732553747,    #image3.jpg
     -139.65636091098264,    #...
@@ -44,6 +44,8 @@ class PlayerFinder(object):
         self.infield = None
         self.infield_cnrs = None
 
+        self.positions = []  #order: (pitcher, home, first, second, third, shortstop, left field, center field, right field)
+
         return
 
     def reset_variables(self):
@@ -55,6 +57,8 @@ class PlayerFinder(object):
         self.top_infield = None
         self.infield = None
         self.infield_cnrs = None
+
+        self.positions = []
 
     def process_image(self, image, angle):
         '''Main image processing routine
@@ -86,7 +90,6 @@ class PlayerFinder(object):
         if im is not None:
             image = im      #updates output for drawing debug of quad_fit
         self.get_player_contours(mask)
-        print("Thank you, next...")
  
         return image
     
@@ -126,7 +129,7 @@ class PlayerFinder(object):
         self.infield = self.infield['contour']
 
         # to find quadrilateral using hough_fit method
-        cnrs = self.quad_fit(self.infield, image_frame=image)
+        cnrs = self.quad_fit(self.infield, image_frame=image)   # returns corner array in counterclockwise order
 
         if cnrs is None:
             return None
@@ -135,21 +138,37 @@ class PlayerFinder(object):
         pitcher_mound_y = (cnrs[0][1] + cnrs[1][1] + cnrs[2][1] + cnrs[3][1]) / 4
 
         da = 361    #delta angle
-        home_plate = None
+        home_plate_index = None
 
-        for cnr in cnrs:
-            x = cnr[0] - pitcher_mound_x
-            y = pitcher_mound_y - cnr[1] #flip because y goes up as the pixel location goes down
-            angle = atan2(y, x) * (180 / pi)
-            da_temp = abs(angle - expected_home_plate_angle)
+        if expected_home_plate_angle is None:
+            return None
+
+        for i in range(0, len(cnrs)):
+            x = cnrs[i][0] - pitcher_mound_x
+            y = pitcher_mound_y - cnrs[i][1]        #flip because y goes up as the pixel location goes down
+            angle = atan2(y, x) * (180 / pi)    #change to degrees b/c its a more readable format for debugging
+            
+            da_temp = abs(angle - expected_home_plate_angle)   #TODO use the device's gyroscope to adjust the expected angle based on the device's rotation
 
             if da_temp < da:
                 da = da_temp
-                home_plate = cnr
-        print(expected_home_plate_angle)
-        print("Loc of home: " + str(home_plate))
+                home_plate_index = i
+
+        if home_plate_index is None:
+            return None
         
-        self.infield_cnrs = append(cnrs, [[pitcher_mound_x, pitcher_mound_y]], axis=0).astype(int)
+        self.infield_cnrs = cnrs.astype(int)
+
+        first = (home_plate_index + 1) % 4
+        second = (home_plate_index + 2) % 4
+        third = (home_plate_index + 3) % 4
+
+        self.positions.append([int(pitcher_mound_x), int(pitcher_mound_y)])
+        self.positions.append(self.infield_cnrs[home_plate_index])
+        self.positions.append(self.infield_cnrs[first])
+        self.positions.append(self.infield_cnrs[second])
+        self.positions.append(self.infield_cnrs[third])
+        print(self.positions)
 
         return image
             
@@ -284,23 +303,35 @@ class PlayerFinder(object):
         #green
         if self.top_infield is not None:
             cv2.drawContours(output_frame, self.top_infield, -1, (0, 255, 0), 2)
-        """
+        
         #green
         if self.infield is not None:
             cv2.drawContours(output_frame, [self.infield], -1, (0, 255, 0), 3)
-
+        
         #yellow
         if self.infield_cnrs is not None:
             for cnr in self.infield_cnrs:
                 cv2.drawMarker(output_frame, tuple(cnr), (0, 255, 255), cv2.MARKER_CROSS, 20, 5)
-        
+        """
+
+        #Shades of blue
+        if self.positions is not None and len(self.positions) != 0:
+            b = 0
+            add = int(255 / len(self.positions))
+            for pos in self.positions:
+                cv2.drawMarker(output_frame, tuple(pos), (b, 0, 0), cv2.MARKER_CROSS, 20, 5)
+                b+=add
+
         return output_frame
 
 def process_files(processor, input_files, output_dir):
     '''Process the files and output the marked up image'''
     import os.path
 
+    print()
+
     for image_file in input_files:
+        print("   ** Process image " + str(image_file))
         image_index = ""
         for char in image_file:
             if char.isdigit():
@@ -317,7 +348,7 @@ def process_files(processor, input_files, output_dir):
         scale_percent = new_height / bgr_frame.shape[0]
         width = int(bgr_frame.shape[1] * scale_percent)
         height = int(bgr_frame.shape[0] * scale_percent)
-        print("New Image Size: " + str(width) + "x" + str(height))
+        print("   ** New Image Size: " + str(width) + "x" + str(height))
 
         resized = cv2.resize(bgr_frame, (width, height), interpolation = cv2.INTER_AREA)
         #--------------------------------------------
@@ -328,7 +359,7 @@ def process_files(processor, input_files, output_dir):
         markup = processor.prepare_output_image(resized)
 
         t1 = time.time()
-        print("Processing took: " + str(t1-t0) + " sec\n")
+        print("   ** Processing took: " + str(t1-t0) + " sec\n")
 
         outfile = os.path.join(output_dir, os.path.basename(image_file))
 
