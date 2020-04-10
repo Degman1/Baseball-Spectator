@@ -8,7 +8,7 @@ import infieldFittingRoutines
 
 import time
 
-
+# This data represents initial user input to tell which corner of the infield represents home plate
 HOME_PLATE_ANGLES = [       #in degrees
     176.740300712375,       #image1.jpg
     -157.19834043383372,    #image2.jpg
