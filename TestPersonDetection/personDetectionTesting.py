@@ -102,7 +102,7 @@ class PlayerFinder(object):
         4. Choose the contours that have a certain (height/width) ratio, the smallest bounding box width, and an exact area above a certain threshold
                 --> the expected infield outline
         5. Fit a quadrilateral around the infield grass
-        6. 
+        6. Compute ideal position locations based on the infield corners
         7. RETURN the image locations corresponding the positions in the following order:
                 (pitcher, home, first, second, third, shortstop, left field, center field, right field)
         '''
