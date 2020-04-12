@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString *)openCVVersionString;
 + (UIImage *)convertToGrayscale:(UIImage *)image;
++ (UIImage *)blur:(UIImage *)image radius:(double)radius;
++ (UIImage *)convertRGBtoHSV:(UIImage *)image;
 
 @end
 

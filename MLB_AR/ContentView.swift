@@ -11,16 +11,20 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         ZStack{
-            toGray()
+            blur(uiimage: UIImage(named: "image1.jpg")!, radius: 10.0)
             Text("\(OpenCVWrapper.openCVVersionString())")
                 .background(Color.white)
         }
     }
     
-    func toGray() -> some View {
-        let source = UIImage(named: "image1.jpg")!
-        let gray = OpenCVWrapper.convert(toGrayscale: source)
+    func toGray(uiimage: UIImage) -> some View {
+        let gray = OpenCVWrapper.convert(toGrayscale: uiimage)
         return Image(uiImage: gray)
+    }
+    
+    func blur(uiimage: UIImage, radius: Double) -> some View {
+        let blurred = OpenCVWrapper.blur(uiimage, radius: radius)
+        return Image(uiImage: blurred)
     }
 }
 

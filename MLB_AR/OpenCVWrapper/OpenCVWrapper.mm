@@ -36,4 +36,13 @@ using namespace std;
     return blurredImage;
 }
 
++ (UIImage *)convertRGBtoHSV:(UIImage *)image {
+    cv::Mat mat;
+    UIImageToMat(image, mat);
+    cv::Mat hsv;
+    cv::cvtColor(mat, hsv, cv::COLOR_RGB2HSV);
+    UIImage *result = MatToUIImage(hsv);
+    return result;
+}
+
 @end
