@@ -11,6 +11,8 @@
 #import <opencv2/imgcodecs/ios.h>
 #import <UIKit/UIKit.h>
 
+using namespace std;
+
 @implementation OpenCVWrapper
 
 + (NSString *)openCVVersionString {

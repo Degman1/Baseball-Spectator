@@ -6,6 +6,7 @@
 //  Copyright © 2020 Joey Cohen. All rights reserved.
 //
 
+#import "OpenCVWrapper.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 

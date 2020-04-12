@@ -10,8 +10,17 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("\(OpenCVWrapper.openCVVersionString()) Hello")
-        
+        ZStack{
+            toGray()
+            Text("\(OpenCVWrapper.openCVVersionString())")
+                .background(Color.white)
+        }
+    }
+    
+    func toGray() -> some View {
+        let source = UIImage(named: "image1.jpg")!
+        let gray = OpenCVWrapper.convert(toGrayscale: source)
+        return Image(uiImage: gray)
     }
 }
 
