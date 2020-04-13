@@ -31,7 +31,7 @@ def hough_fit(contour, nsides=None, approx_fit=None, image_frame=None):
     # the binning does affect the speed, so tune it....
     contour_plot = zeros(shape=(h, w), dtype=uint8)
     drawContours(contour_plot, [shifted_con, ], -1, 255, 1)
-    lines = HoughLines(contour_plot, 2, pi / 180, threshold=75)
+    lines = HoughLines(contour_plot, 2, pi / 180, threshold=80)
 
     if image_frame is not None:      #for debugging
         #print('hough lines:')
@@ -94,7 +94,9 @@ def _match_lines_to_fit(approx_fit, hough_lines, w, h):
     '''Given the approximate shape and a set of lines from the Hough algorithm
     find the matching lines and rebuild the fit'''
 
-    theta_thres = pi / 9  # 20 degrees
+    theta_thres = pi / 6  # 30 degrees
+    rho_thres = 125
+
     nsides = len(approx_fit)
     fit_sides = []
     hough_used = set()
@@ -104,7 +106,7 @@ def _match_lines_to_fit(approx_fit, hough_lines, w, h):
         pt2 = approx_fit[ivrtx2][0]
 
         rho, theta = _hesse_form(pt1, pt2)
-        # print('approx line', rho, degrees(theta))
+        print('approx line', rho, degrees(theta))
 
         # Hough lines are in order of confidence, so look for the first unused one
         #  which matches the line
@@ -116,11 +118,14 @@ def _match_lines_to_fit(approx_fit, hough_lines, w, h):
             # There is an ambiguity of -rho and adding 180deg to theta
             # So test them both.
 
-            if (abs(rho - line[0]) < 10 and abs(_delta_angle(theta, line[1])) < theta_thres) or \
-               (abs(rho + line[0]) < 10 and abs(_delta_angle(theta, line[1] - pi)) < theta_thres):
+            print("matching", abs(rho - line[0]), degrees(abs(_delta_angle(theta, line[1]))),
+                  abs(rho + line[0]), degrees(abs(_delta_angle(theta, line[1] - pi))))
+            
+            if (abs(rho - line[0]) < rho_thres and abs(_delta_angle(theta, line[1])) < theta_thres) or \
+               (abs(rho + line[0]) < rho_thres and abs(_delta_angle(theta, line[1] - pi)) < theta_thres):
                 fit_sides.append(line)
                 hough_used.add(ih)
-                # print('  matched:', ih, line[0], degrees(line[1]))
+                print('  matched:', ih, line[0], degrees(line[1]))
                 break
 
     if len(fit_sides) != nsides:
@@ -217,7 +222,7 @@ def _find_sides(nsides, hough_lines, w, h):
     #  each cluster.
 
     contour_center = (w / 2, h / 2)
-    boundaries = (-5, w+5, -5, h+5)
+    boundaries = (-50, w+50, -50, h+50)
 
     dist_thres = 10
     theta_thres = pi / 36  # 5 degrees
@@ -283,9 +288,8 @@ def _find_sides(nsides, hough_lines, w, h):
 
     # remember to unshift the resulting contour
     return vertices
-"""
 
-"""
+
 def _compute_line_near_reference(line, ref_point):
     rho, theta = line
 
