@@ -37,11 +37,26 @@ using namespace std;
 }
 
 + (UIImage *)convertRGBtoHSV:(UIImage *)image {
-    cv::Mat mat;
+    cv::Mat mat, hsv, greenMask, brownMask, darkBrownMask, fieldMask;
+    
+    //Convert to HSV colorspace
     UIImageToMat(image, mat);
-    cv::Mat hsv;
     cv::cvtColor(mat, hsv, cv::COLOR_RGB2HSV);
-    UIImage *result = MatToUIImage(hsv);
+    
+    //Green mask
+    cv::inRange(hsv, cv::Scalar(17, 50, 20), cv::Scalar(72, 255, 242), greenMask);
+    
+    //Brown Mask
+    cv::inRange(hsv, cv::Scalar(7, 80, 25), cv::Scalar(27, 255, 255), brownMask);
+    
+    //Dark Brown Mask
+    cv::inRange(hsv, cv::Scalar(2, 93, 25), cv::Scalar(10, 175, 150), darkBrownMask);
+    
+    //Combine each mask to get a mask of the entire playing field
+    cv::bitwise_or(greenMask, brownMask, fieldMask);
+    cv::bitwise_or(fieldMask, darkBrownMask, fieldMask);
+    
+    UIImage *result = MatToUIImage(fieldMask);
     return result;
 }
 

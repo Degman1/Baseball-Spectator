@@ -10,21 +10,30 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        ZStack{
-            blur(uiimage: UIImage(named: "image1.jpg")!, radius: 10.0)
-            Text("\(OpenCVWrapper.openCVVersionString())")
-                .background(Color.white)
+        GeometryReader { geo in
+            ZStack {
+                self.testProcessing(uiimage: UIImage(named: "image5.jpg")!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                Text("\(OpenCVWrapper.openCVVersionString())")
+                    .background(Color.white)
+            }
         }
     }
     
-    func toGray(uiimage: UIImage) -> some View {
+    func toGray(uiimage: UIImage) -> Image {
         let gray = OpenCVWrapper.convert(toGrayscale: uiimage)
         return Image(uiImage: gray)
     }
     
-    func blur(uiimage: UIImage, radius: Double) -> some View {
+    func blur(uiimage: UIImage, radius: Double) -> Image {
         let blurred = OpenCVWrapper.blur(uiimage, radius: radius)
         return Image(uiImage: blurred)
+    }
+    
+    func testProcessing(uiimage: UIImage) -> Image {
+        let res = OpenCVWrapper.convertRGBtoHSV(uiimage)
+        return Image(uiImage: res)
     }
 }
 
