@@ -18,10 +18,10 @@ def hough_fit(contour, nsides=None, approx_fit=None, image_frame=None):
     It is faster if you can provide an decent initial fit - see approxPolyDP_adaptive().
     Pass in image_frame to see the lines found from HoughLines (use for debug only).'''
 
-    if approx_fit is None:
-        return None
-    
-    nsides = len(approx_fit)
+    if approx_fit is not None:
+        nsides = len(approx_fit)
+    if not nsides:
+        raise Exception("You need to set nsides or pass approx_fit")
 
     x, y, w, h = boundingRect(contour)
     offset_vec = array((x, y))
@@ -31,15 +31,15 @@ def hough_fit(contour, nsides=None, approx_fit=None, image_frame=None):
     # the binning does affect the speed, so tune it....
     contour_plot = zeros(shape=(h, w), dtype=uint8)
     drawContours(contour_plot, [shifted_con, ], -1, 255, 1)
-    lines = HoughLines(contour_plot, 1, pi / 180, threshold=8)
+    lines = HoughLines(contour_plot, 2, pi / 180, threshold=75)
 
-    """if image_frame is not None:      #for debugging
-        print('hough lines:')
+    if image_frame is not None:      #for debugging
+        #print('hough lines:')
         # trim the list if you get too many
         for l in lines:
             rho, theta = l[0]
-            print('   ', rho, degrees(theta))
-            plot_hough_line(image_frame,  rho, theta, offset=offset_vec)"""
+            #print('   ', rho, degrees(theta))
+            plot_hough_line(image_frame,  rho, theta, offset=offset_vec)
 
     if lines is None or len(lines) < nsides:
         # print("HoughLines found too few lines")
@@ -47,8 +47,8 @@ def hough_fit(contour, nsides=None, approx_fit=None, image_frame=None):
 
     if approx_fit is not None:
         res = _match_lines_to_fit(approx_fit - offset_vec, lines, w, h)
-    #else:   #Should hopefully not get here...
-    #    res = _find_sides(nsides, lines, w, h)
+    else:   #Should hopefully not get here...
+        res = _find_sides(nsides, lines, w, h)
 
     if res is None:
         return get_cnrs_using_extreme_pts(contour)
@@ -210,52 +210,7 @@ def get_cnrs_using_extreme_pts(contour):    #works if on lower 1st base or 3rd b
 
 
 
-"""
 
-If have time once finished with bare minimum, try using this method:
-
-
-def get_cnrs_using_common_slope(contour):
-    slopes = []
-    
-    for i in range(len(contour)):
-        slopes.append( SlopeInfo(contour[i], contour[(i + 1) % len(contour)]) )
-
-
-    commonSlopes = []
-    
-    for i in range(len(slopes) - 1):
-        for j in range(i + 1, len(slopes)):
-            if slopes[i].hasCommonSlopeAs(slopes[j]):
-                commonSlopes.append(slopes[i].combineSlopeInfos(slopes[j]))
-    
-    #sort according to highest count (choose top four lines)
-    #return intersecting pts of the lines
-
-class SlopeInfo:        #TODO include at least one pt to find the line equation
-    def __init__(self, pt_a, pt_b):
-        self.count = 1
-        self.total = SlopeInfo.slope(pt_a, pt_b)
-    
-    def getAverageSlope(self):
-        return self.total / self.count
-
-    def combineSlopeInfos(self, slopeInfo):
-        self.count += slopeInfo.count
-        self.total += slopeInfo.total
-
-    def hasCommonSlopeAs(self, slopeInfo):
-        return abs(slopeInfo.getAverageSlope() - self.getAverageSlope()) <= (1/20)
-
-    @staticmethod
-    def slope(pt_a, pt_b):
-        return (pt_a[1] - pt_b[1]) / (pt_a[0] - pt_b[0])
-"""
-
-
-
-
-"""
 def _find_sides(nsides, hough_lines, w, h):
     # The returned lines from HoughLines() are ordered by confidence, but there may/will be
     #  many variants of the best lines. Loop through the lines and pick the best from
@@ -382,4 +337,3 @@ def _is_close(best_lines, candidate, coord_near_ref, dist_thres, theta_thres):
         if delta_dist <= dist_thres and delta_theta <= theta_thres:
             return True
     return False
-"""
