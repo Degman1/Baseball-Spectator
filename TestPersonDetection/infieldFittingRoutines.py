@@ -223,10 +223,12 @@ def _find_sides(nsides, hough_lines, w, h):
 
     contour_center = (w / 2, h / 2)
     boundaries = (-50, w+50, -50, h+50)
-
+    #print("boundaries", boundaries)
+    
     dist_thres = 10
     theta_thres = pi / 36  # 5 degrees
     best_lines = []
+    
     for linelist in hough_lines:
         line = linelist[0]
         if line[0] < 0:
@@ -236,19 +238,19 @@ def _find_sides(nsides, hough_lines, w, h):
         coord_near_ref = _compute_line_near_reference(line, contour_center)
 
         if not best_lines or not _is_close(best_lines, line, coord_near_ref, dist_thres, theta_thres):
-            # print('best line:', line[0], math.degrees(line[1]))
+            print('best line:', line[0], degrees(line[1]))
             best_lines.append((line, coord_near_ref))
 
         if len(best_lines) == nsides:
             break
 
     if len(best_lines) != nsides:
-        # print("hough_fit: found %s lines" % len(best_lines))
+        print("hough_fit: found %s lines" % len(best_lines))
         return None
 
-    # print('best')
-    # for l in best_lines:
-    #     print('   ', l[0][0], degrees(l[0][1]))
+    print('best')
+    for l in best_lines:
+        print('   ', l[0][0], degrees(l[0][1]))
 
     # Find the nsides vertices which are inside the bounding box (with a little slop).
     # There will be extra intersections. Assume the right ones (and only those) are within the bounding box.
@@ -263,6 +265,7 @@ def _find_sides(nsides, hough_lines, w, h):
                 continue
 
             inter = _intersection(best_lines[iline1][0], best_lines[iline2][0])
+            print("inter", iline2, inter)
             if inter is not None and \
                inter[0] >= boundaries[0] and inter[0] <= boundaries[1] and \
                inter[1] >= boundaries[2] and inter[1] <= boundaries[3]:
@@ -272,7 +275,7 @@ def _find_sides(nsides, hough_lines, w, h):
                 found = True
                 break
         if not found:
-            # print("No intersection with %s and available lines" % iline1)
+            print("No intersection with %s and available lines" % iline1)
             return None
 
     # add in the last pair
@@ -283,7 +286,7 @@ def _find_sides(nsides, hough_lines, w, h):
         vertices.append(inter)
 
     if len(vertices) != nsides:
-        # print('Not correct number of vertices:', len(vertices))
+        print('Not correct number of vertices:', len(vertices))
         return None
 
     # remember to unshift the resulting contour
@@ -296,7 +299,7 @@ def _compute_line_near_reference(line, ref_point):
     # remember: theta is actually perpendicular to the line, so there is a sign flip
     cos_theta = cos(theta)
     sin_theta = sin(theta)
-    x0 = cos_theta * rho
+    x0 = cos_theta * rho        # now we have an (x, y) coordinate that lies on the line
     y0 = sin_theta * rho
 
     if abs(cos_theta) < 1e-6:

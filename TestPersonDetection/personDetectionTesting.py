@@ -127,7 +127,7 @@ class PlayerFinder(object):
             return None
         
         self.infield = cv2.convexHull(self.infield['contour'])
-
+        
         # to find quadrilateral using hough_fit method
         cnrs = self.quad_fit(self.infield, image_frame=image)   # returns corner array in counterclockwise order
 
@@ -274,7 +274,7 @@ class PlayerFinder(object):
         '''Best fit of a quadrilateral to the contour'''
 
         approx = infieldFittingRoutines.approxPolyDP_adaptive(contour, nsides=4)
-        return infieldFittingRoutines.hough_fit(contour, nsides=4, approx_fit=approx, image_frame=image_frame)
+        return infieldFittingRoutines.hough_fit(contour, nsides=4, approx_fit=None, image_frame=image_frame)
 
     def prepare_output_image(self, input_frame):
         '''Prepare output image for drive station. Draw the found target contour.'''
