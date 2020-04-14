@@ -21,18 +21,8 @@ struct ContentView: View {
         }
     }
     
-    func toGray(uiimage: UIImage) -> Image {
-        let gray = OpenCVWrapper.convert(toGrayscale: uiimage)
-        return Image(uiImage: gray)
-    }
-    
-    func blur(uiimage: UIImage, radius: Double) -> Image {
-        let blurred = OpenCVWrapper.blur(uiimage, radius: radius)
-        return Image(uiImage: blurred)
-    }
-    
     func testProcessing(uiimage: UIImage) -> Image {
-        let res = OpenCVWrapper.convertRGBtoHSV(uiimage)
+        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: 176.74)
         return Image(uiImage: res)
     }
 }
