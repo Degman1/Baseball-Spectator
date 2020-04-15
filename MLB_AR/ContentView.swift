@@ -9,15 +9,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var imageID = 2;
+    
     var body: some View {
-        GeometryReader { geo in
-            ZStack {
-                self.testProcessing(uiimage: UIImage(named: "image5.jpg")!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                Text("\(OpenCVWrapper.openCVVersionString())")
-                    .background(Color.white)
-            }
+        ZStack {
+            self.testProcessing(uiimage: UIImage(named: "image\(imageID).jpg")!)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+            //Text("\(OpenCVWrapper.openCVVersionString())")
+            //    .background(Color.white)
+            Stepper("ImageID: \(imageID)", value: $imageID, in: 1...11)
         }
     }
     

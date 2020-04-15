@@ -89,22 +89,28 @@ class PlayerFinder {
         cv::bitwise_or(fieldMask, darkBrownMask, fieldMask);
         
         // Get the location of the standard position of each of the fielders
-        getPositionLocations(greenMask, expectedHomePlateAngle);
+        vector<cv::Point> infieldContour = getPositionLocations(greenMask, expectedHomePlateAngle);
         
         // Get the location of each of the actual players on the field
         getPlayerContourLocations(fieldMask);
         
-        //Convert the Mat image to a UIImage
-        UIImage *result = MatToUIImage(fieldMask);
+        vector<vector<cv::Point>> contoursToDraw;
+        contoursToDraw.push_back(infieldContour);
         
-        return image;
+        cv::drawContours(mat, contoursToDraw, -1, cv::Scalar(255, 255, 0), 10);
+        
+        //Convert the Mat image to a UIImage
+        UIImage *result = MatToUIImage(mat);
+        
+        return result;
     }
     
-    void getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle) {
+    vector<cv::Point> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle) {
         cv::Mat erosion;
         
         // Erode the image to remove impurities
-        cv::erode(greenMask, erosion, getStructuringElement(cv::MORPH_RECT, cv::Size(4, 4)));
+        cv::erode(greenMask, erosion, getStructuringElement(cv::CHAIN_APPROX_SIMPLE, cv::Size(4, 4)));
+
         
         // Find all contours in the image
         vector<vector<cv::Point>> contours;     // contains the array of contours
@@ -129,8 +135,32 @@ class PlayerFinder {
             }
         }
         
+        ContourInfo infield = ContourInfo();
+        infield.x = -1;
+        
         // Sort the list of contours from biggest area to smallest
         sort(infieldContours.begin(), infieldContours.end(), sortByArea);
+        
+        // DEBUG
+        for (ContourInfo c : infieldContours) {
+            c.printDescription();
+        }
+        cout << "\n";
+        
+        for (ContourInfo cnt : infieldContours) {
+            double ratio = cnt.height / cnt.width;
+            
+            if (ratio < 0.4 and (infield.x == -1 or cnt.width < infield.width) and cv::contourArea(cnt.contour) > 10000) {
+                infield = cnt;
+            }
+        }
+        
+        if (infield.x == -1) {  }
+        
+        vector<cv::Point> infieldHull;
+        cv::convexHull(infield.contour, infieldHull);
+        
+        return infieldHull;
     }
     
     void getPlayerContourLocations(cv::Mat fieldMask) {

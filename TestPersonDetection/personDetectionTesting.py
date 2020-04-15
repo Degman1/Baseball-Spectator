@@ -262,6 +262,14 @@ class PlayerFinder(object):
         # Sort the list of contours from biggest area to smallest
         contour_list.sort(key=lambda c: c['widths'][0] * c['widths'][1], reverse=True)
 
+        print("HERE:")
+        for cnt in contour_list:
+            print()
+            print(cnt['area'])
+            print(cnt['widths'][0])
+            print(cnt['widths'][1])
+
+
         return contour_list
 
     def contour_center_width(self, contour):
