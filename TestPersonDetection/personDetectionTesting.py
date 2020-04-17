@@ -168,7 +168,7 @@ class PlayerFinder(object):
         self.positions.append(self.infield_cnrs[first])
         self.positions.append(self.infield_cnrs[second])
         self.positions.append(self.infield_cnrs[third])
-        print(self.positions)
+        #print(self.positions)
 
         return image
             
@@ -220,6 +220,8 @@ class PlayerFinder(object):
         for candidate in self.top_players:
             if self.isCandidatePlayerOnField(candidate['center'], field):
                 self.players.append(candidate['contour'])
+        
+        print("#: " + str(len(self.players)))
 
         self.top_players = [x['contour'] for x in self.top_players]
 
@@ -236,7 +238,7 @@ class PlayerFinder(object):
         height = int( fieldInfo['widths'][1] / 2 )
         centerx = fieldInfo['center'][0]
         centery = fieldInfo['center'][1]
-
+        
         #if center of candidate player is not even in the field's bounding box, definitely is not inside the contour
         if candidateCenterPt[0] >= centerx + width or candidateCenterPt[0] <= centerx - width or candidateCenterPt[1] <= centery - height and candidateCenterPt[1] >= centery + height:
             return False
