@@ -57,9 +57,20 @@ Timer timer;
 
 + (UIImage *)processImage:(UIImage *)image expectedHomePlateAngle:(double)expectedHomePlateAngle {
     ImageProcessor processor = ImageProcessor();
-    UIImage* output = processor.processImage(image, expectedHomePlateAngle);
-    timer.stop();
-    cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds." << endl;
+    
+    int nRepeats = 1000;
+    UIImage* output;
+    int total = 0;
+    
+    for (int i = 0; i < nRepeats; i++) {
+        output = processor.processImage(image, expectedHomePlateAngle);
+        timer.stop();
+        total += timer.elapsedMilliseconds();
+    }
+    
+    total /= nRepeats;
+    
+    cout << "Processing took " << total << " milliseconds on average after " << nRepeats << " repeats." << endl;
     return output;
 }
 
