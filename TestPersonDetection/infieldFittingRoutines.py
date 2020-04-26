@@ -52,7 +52,7 @@ def hough_fit(contour, nsides=None, approx_fit=None, image_frame=None):
 
     if res is None:
         return get_cnrs_using_extreme_pts(contour)
-    
+
     return array(res) + offset_vec
 
 
@@ -222,15 +222,15 @@ def _find_sides(nsides, hough_lines, w, h):
     #  each cluster.
 
     contour_center = (w / 2, h / 2)
-    boundaries = (-50, w+50, -50, h+50)
+    boundaries = (-100, w+100, -100, h+100)
 
     dist_thres = 10
-    theta_thres = pi / 36  # 5 degrees
+    theta_thres = pi / 9  # 5 degrees
     best_lines = []
     for linelist in hough_lines:
         line = linelist[0]
         if line[0] < 0:
-            line[0] *= -1
+            line[0] *= -1       #flip the line to be a positive distance
             line[1] -= pi
 
         coord_near_ref = _compute_line_near_reference(line, contour_center)
@@ -277,11 +277,13 @@ def _find_sides(nsides, hough_lines, w, h):
 
     # add in the last pair
     inter = _intersection(best_lines[0][0], best_lines[iline1][0])
+
     if inter is not None and \
        inter[0] >= boundaries[0] and inter[0] <= boundaries[1] and \
        inter[1] >= boundaries[2] and inter[1] <= boundaries[3]:
         vertices.append(inter)
-
+    
+    #return vertices
     if len(vertices) != nsides:
         # print('Not correct number of vertices:', len(vertices))
         return None
