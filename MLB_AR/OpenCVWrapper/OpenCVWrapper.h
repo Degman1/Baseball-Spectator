@@ -6,6 +6,7 @@
 //  Copyright © 2020 Joey Cohen. All rights reserved.
 //
 
+#import "OpenCVWrapper.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
@@ -14,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface OpenCVWrapper : NSObject
 
 + (NSString *)openCVVersionString;
-+ (UIImage *)convertToGrayscale:(UIImage *)image;
++ (UIImage *)processImage:(UIImage *)image expectedHomePlateAngle:(double)expectedHomePlateAngle;
 
 @end
 
