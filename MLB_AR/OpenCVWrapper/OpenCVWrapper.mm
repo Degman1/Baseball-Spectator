@@ -57,8 +57,10 @@ Timer timer;
 
 + (UIImage *)processImage:(UIImage *)image expectedHomePlateAngle:(double)expectedHomePlateAngle {
     ImageProcessor processor = ImageProcessor();
+    UIImage* output = processor.processImage(image, expectedHomePlateAngle);
+    timer.stop();
     
-    int nRepeats = 1000;
+    /*int nRepeats = 1000;  //use this code to get an average processing time over n repeats
     UIImage* output;
     int total = 0;
     
@@ -70,7 +72,9 @@ Timer timer;
     
     total /= nRepeats;
     
-    cout << "Processing took " << total << " milliseconds on average after " << nRepeats << " repeats." << endl;
+    cout << "Processing took " << total << " milliseconds on average after " << nRepeats << " repeats." << endl;*/
+    
+    cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
     return output;
 }
 
