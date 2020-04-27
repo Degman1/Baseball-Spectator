@@ -15,6 +15,7 @@
 		F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61423BFAE1300B155B8 /* Preview Assets.xcassets */; };
 		F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */; };
 		F63EE62423BFB02400B155B8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F63EE62023BFB02400B155B8 /* README.md */; };
+		F65B72052457331E00BA6900 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65B72042457331E00BA6900 /* SwiftUIView.swift */; };
 		F663C2132417E2CB00D88B17 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F663C2122417E2CB00D88B17 /* ImageView.swift */; };
 		F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */; };
 /* End PBXBuildFile section */
@@ -30,6 +31,7 @@
 		F63EE61723BFAE1300B155B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F63EE61923BFAE1300B155B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F63EE62023BFB02400B155B8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		F65B72042457331E00BA6900 /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
 		F663C2122417E2CB00D88B17 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		F6CD4ACF23C4E32800DA0E1E /* MLB_AR-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MLB_AR-Bridging-Header.h"; sourceTree = "<group>"; };
 		F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 				F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */,
 				F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */,
 				F63EE60F23BFAE0D00B155B8 /* ContentView.swift */,
+				F65B72042457331E00BA6900 /* SwiftUIView.swift */,
 				F663C2122417E2CB00D88B17 /* ImageView.swift */,
 				F63EE61F23BFB02400B155B8 /* OpenCVWrapper */,
 				F63EE61123BFAE1300B155B8 /* Assets.xcassets */,
@@ -177,6 +180,7 @@
 			files = (
 				F663C2132417E2CB00D88B17 /* ImageView.swift in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
+				F65B72052457331E00BA6900 /* SwiftUIView.swift in Sources */,
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,
 				F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */,
 				F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */,
