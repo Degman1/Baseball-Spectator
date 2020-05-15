@@ -134,9 +134,7 @@ class PlayerFinder(object):
         if cnrs is None:
             return None
 
-        self.positions = cnrs.astype(int)
-
-        """pitcher_mound_x = (cnrs[0][0] + cnrs[1][0] + cnrs[2][0] + cnrs[3][0]) / 4
+        pitcher_mound_x = (cnrs[0][0] + cnrs[1][0] + cnrs[2][0] + cnrs[3][0]) / 4
         pitcher_mound_y = (cnrs[0][1] + cnrs[1][1] + cnrs[2][1] + cnrs[3][1]) / 4
 
         da = 361    #delta angle
@@ -161,16 +159,19 @@ class PlayerFinder(object):
         
         self.infield_cnrs = cnrs.astype(int)
 
-        first = (home_plate_index + 1) % 4
+        first = (home_plate_index + 1) % 4  #corners are already in counter-clockwise order, so just do this
         second = (home_plate_index + 2) % 4
         third = (home_plate_index + 3) % 4
 
         self.positions.append([int(pitcher_mound_x), int(pitcher_mound_y)])
+        
+
+
+        #TODO: delete these.
         self.positions.append(self.infield_cnrs[home_plate_index])
         self.positions.append(self.infield_cnrs[first])
         self.positions.append(self.infield_cnrs[second])
         self.positions.append(self.infield_cnrs[third])
-        #print(self.positions)"""
 
         return image
             
@@ -276,7 +277,7 @@ class PlayerFinder(object):
         '''Best fit of a quadrilateral to the contour'''
 
         approx = infieldFittingRoutines.approxPolyDP_adaptive(contour, nsides=4)
-        return infieldFittingRoutines.hough_fit(contour, nsides=4, approx_fit=None, image_frame=image_frame)
+        return infieldFittingRoutines.hough_fit(contour, nsides=4, approx_fit=None, image_frame=None)
 
     def prepare_output_image(self, input_frame):
         '''Prepare output image for drive station. Draw the found target contour.'''
