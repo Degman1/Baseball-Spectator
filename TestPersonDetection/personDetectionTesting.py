@@ -3,7 +3,7 @@
 import os.path
 import cv2
 from numpy import array, uint8, ones, append
-from math import atan2, pi
+from math import atan2, pi, degrees
 import infieldFittingRoutines
 
 import time
@@ -104,7 +104,7 @@ class PlayerFinder(object):
         5. Fit a quadrilateral around the infield grass
         6. Compute ideal position locations based on the infield corners
         7. RETURN the image locations corresponding the positions in the following order:
-                (pitcher, home, first, second, third, shortstop, left field, center field, right field)
+                (pitcher, catcher, first, second, third, shortstop, left field, center field, right field)
         '''
 
         erosion = cv2.erode(mask, ones((4, 4), uint8), iterations = 1)
@@ -146,7 +146,7 @@ class PlayerFinder(object):
         for i in range(0, len(cnrs)):
             x = cnrs[i][0] - pitcher_mound_x
             y = pitcher_mound_y - cnrs[i][1]        #flip because y goes up as the pixel location goes down
-            angle = atan2(y, x) * (180 / pi)    #change to degrees b/c its a more readable format for debugging
+            angle = atan2(y, x) * (180 / pi)    #change to degrees -- more readable format for debugging
             
             da_temp = abs(angle - expected_home_plate_angle)   #TODO use the device's gyroscope to adjust the expected angle based on the device's rotation
 
@@ -159,21 +159,53 @@ class PlayerFinder(object):
         
         self.infield_cnrs = cnrs.astype(int)
 
-        first = (home_plate_index + 1) % 4  #corners are already in counter-clockwise order, so just do this
-        second = (home_plate_index + 2) % 4
-        third = (home_plate_index + 3) % 4
+        homePlate = self.infield_cnrs[home_plate_index]
+        secondBase = self.infield_cnrs[(home_plate_index + 2) % 4]  #can do this since the corners are in order, either clockwise or counter-clockwise
+
+        #Find which is first base and which is third base:
+        testBaseIndex = (home_plate_index + 1) % 4
+        x = self.infield_cnrs[testBaseIndex][0] - pitcher_mound_x
+        y = pitcher_mound_y - cnrs[testBaseIndex][1]
+        angle = atan2(y, x) * (180 / pi)
+
+        if angle < 0:
+            angle += 360
+        if expected_home_plate_angle < 0:
+            expected_home_plate_angle += 360
+        
+        if (angle > expected_home_plate_angle and angle < expected_home_plate_angle + 180)  or (angle + 360 > expected_home_plate_angle and angle + 360 < expected_home_plate_angle + 180):
+            firstBase = self.infield_cnrs[(home_plate_index + 1) % 4]
+            thirdBase = self.infield_cnrs[(home_plate_index + 3) % 4]
+        else:
+            firstBase = self.infield_cnrs[(home_plate_index + 3) % 4]
+            thirdBase = self.infield_cnrs[(home_plate_index + 1) % 4]
+
+        expectedPositions = self.calculateExpectedPositionsFrom(homePlate, firstBase, secondBase, thirdBase)
 
         self.positions.append([int(pitcher_mound_x), int(pitcher_mound_y)])
-        
-
-
         #TODO: delete these.
-        self.positions.append(self.infield_cnrs[home_plate_index])
-        self.positions.append(self.infield_cnrs[first])
-        self.positions.append(self.infield_cnrs[second])
-        self.positions.append(self.infield_cnrs[third])
+        self.positions.append(homePlate)
+        #self.positions.append(firstBase)
+        self.positions.append(secondBase)
+        self.positions.append(thirdBase)
 
         return image
+
+    def calculateExpectedPositionsFrom(self, homePlate, firstBase, secondBase, thirdBase):
+        '''Helper method to calculate the expected pixel location of each player position 
+        provided the base coordinates'''
+
+        #ang = degrees(atan2(first[1]-home[1], first[0]-home[0]) - atan2(third[1]-home[1], third[0]-home[0]))
+        #infieldCornerAngle = ang + 360 if ang < 0 else ang
+        #print(infieldCornerAngle)
+        """print(homePlate)
+        print(firstBase)
+        print(secondBase)
+        print(thirdBase)
+        first = firstBase - homePlate"""
+        #print(first)
+        return []
+
             
     def get_player_contours(self, mask):
         '''Sub-processing routine to find the location of the players on the field
