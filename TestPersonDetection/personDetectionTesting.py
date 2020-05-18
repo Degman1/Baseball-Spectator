@@ -3,7 +3,7 @@
 import os.path
 import cv2
 from numpy import array, uint8, ones, append
-from math import atan2, pi, degrees
+from math import atan2, pi, degrees, sqrt
 import infieldFittingRoutines
 
 import time
@@ -44,7 +44,8 @@ class PlayerFinder(object):
         self.infield = None
         self.infield_cnrs = None
 
-        self.positions = []  #order: (pitcher, home, first, second, third, shortstop, left field, center field, right field)
+        self.positions = []         # order: (pitcher, home, first, second, third, shortstop, left field, center field, right field)
+        self.expectedPositions = [] # same order
 
         return
 
@@ -59,6 +60,7 @@ class PlayerFinder(object):
         self.infield_cnrs = None
 
         self.positions = []
+        self.expectedPositions = []
 
     def process_image(self, image, angle):
         '''Main image processing routine
@@ -180,32 +182,52 @@ class PlayerFinder(object):
             firstBase = self.infield_cnrs[(home_plate_index + 3) % 4]
             thirdBase = self.infield_cnrs[(home_plate_index + 1) % 4]
 
-        expectedPositions = self.calculateExpectedPositionsFrom(homePlate, firstBase, secondBase, thirdBase)
+        self.expectedPositions = self.calculateExpectedPositions(homePlate, firstBase, secondBase, thirdBase)
 
         self.positions.append([int(pitcher_mound_x), int(pitcher_mound_y)])
         #TODO: delete these.
         self.positions.append(homePlate)
-        #self.positions.append(firstBase)
+        self.positions.append(firstBase)
         self.positions.append(secondBase)
         self.positions.append(thirdBase)
 
         return image
 
-    def calculateExpectedPositionsFrom(self, homePlate, firstBase, secondBase, thirdBase):
-        '''Helper method to calculate the expected pixel location of each player position 
+    def calculateExpectedPositions(self, homePlate, firstBase, secondBase, thirdBase):
+        '''Helper method to calculate the expected location of each player position in the image
         provided the base coordinates'''
 
-        #ang = degrees(atan2(first[1]-home[1], first[0]-home[0]) - atan2(third[1]-home[1], third[0]-home[0]))
-        #infieldCornerAngle = ang + 360 if ang < 0 else ang
-        #print(infieldCornerAngle)
-        """print(homePlate)
-        print(firstBase)
-        print(secondBase)
-        print(thirdBase)
-        first = firstBase - homePlate"""
-        #print(first)
-        return []
+        homeToFirstDist = sqrt( ((firstBase[0] - homePlate[0]) ** 2) + ((firstBase[1] - homePlate[1]) ** 2) )       # pythagorian theorem to calculate distance between bases
+        firstToSecondDist = sqrt( ((secondBase[0] - firstBase[0]) ** 2) + ((secondBase[1] - firstBase[1]) ** 2) )
+        secondToThirdDist = sqrt( ((thirdBase[0] - secondBase[0]) ** 2) + ((thirdBase[1] - secondBase[1]) ** 2) )
+        thirdToHomeDist = sqrt( ((homePlate[0] - thirdBase[0]) ** 2) + ((homePlate[1] - thirdBase[1]) ** 2) )
+        # TODO: could potentially do more with this since we know each of these in real life should be around 90 ft
 
+        side1 = (homeToFirstDist + secondToThirdDist) / 2   #average the two sides of the infield out to get a more consistent elevation multiplier
+        side2 = (firstToSecondDist + thirdToHomeDist) / 2   #represents side1 and side2 of a parallelogram fitted around the infield grass
+        
+        distRatio = side1 / side2
+        print(str(homeToFirstDist) + " / " + str(thirdToHomeDist) + " = " + str(distRatio))
+
+        betweenBaseElevationMultiplier = 1.0        # these multipliers are to adapt the expected player position 
+        distanceFromHomeElevationMultiplier = 1.0   # based on the camera elevation (makes expected position more accurate)
+
+        #use vector operations to calculate expected positions from the coordinates of the bases and the elevation multipliers
+        first = self.calculatePosition(homePlate, firstBase, secondBase, 0.15 * betweenBaseElevationMultiplier, 1.25 * distanceFromHomeElevationMultiplier)
+        second = self.calculatePosition(homePlate, firstBase, secondBase, 0.6 * betweenBaseElevationMultiplier, 1.25 * distanceFromHomeElevationMultiplier)
+        shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.3 * betweenBaseElevationMultiplier, 1.2 * distanceFromHomeElevationMultiplier)
+        third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8 * betweenBaseElevationMultiplier, 1.2 * distanceFromHomeElevationMultiplier)
+        leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.7 * betweenBaseElevationMultiplier, 1.7 * distanceFromHomeElevationMultiplier)
+        centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+        rightfield = self.calculatePosition(homePlate, firstBase, secondBase, 0.3 * betweenBaseElevationMultiplier, 1.7 * distanceFromHomeElevationMultiplier)
+
+        return [first, second, shortstop, third, leftfield, centerfield, rightfield]
+
+    def calculatePosition(self, homePlate, base1, base2, betweenBaseMultiplier, distanceToHomeMultiplier):
+        '''Calculate the expected postition of a player a certain percent of the way between two bases and
+        a certain percent of the way from home using vector operations'''
+
+        return (homePlate + ((base1 + (betweenBaseMultiplier * (base2 - base1))) - homePlate ) * distanceToHomeMultiplier).astype(int)
             
     def get_player_contours(self, mask):
         '''Sub-processing routine to find the location of the players on the field
@@ -356,6 +378,10 @@ class PlayerFinder(object):
             for pos in self.positions:
                 cv2.drawMarker(output_frame, tuple(pos), (b, 0, 0), cv2.MARKER_CROSS, 20, 5)
                 b+=add
+        
+        if self.expectedPositions is not None and len(self.expectedPositions) != 0:
+            for pos in self.expectedPositions:
+                cv2.drawMarker(output_frame, tuple(pos), (0, 255, 0), cv2.MARKER_CROSS, 20, 5)
 
         return output_frame
 
