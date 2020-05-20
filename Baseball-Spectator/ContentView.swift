@@ -14,15 +14,17 @@ struct ContentView: View {
     var body: some View {
         //Text("\(OpenCVWrapper.openCVVersionString()) Hello")
         //ImageViewViewController()
-
-        ZStack {
-            self.testProcessing(uiimage: UIImage(named: "image\(imageID).jpg")!)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-            //Text("\(OpenCVWrapper.openCVVersionString())")
-            //    .background(Color.white)
-            Stepper("ImageID: \(imageID)", value: $imageID, in: 1...11)
+        VStack {
+            MainView()
         }
+//        ZStack {
+//            self.testProcessing(uiimage: UIImage(named: "image\(imageID).jpg")!)
+//                .resizable()
+//                .aspectRatio(contentMode: .fit)
+//            //Text("\(OpenCVWrapper.openCVVersionString())")
+//            //    .background(Color.white)
+//            Stepper("ImageID: \(imageID)", value: $imageID, in: 1...11)
+//        }
     }
     
     func testProcessing(uiimage: UIImage) -> Image {

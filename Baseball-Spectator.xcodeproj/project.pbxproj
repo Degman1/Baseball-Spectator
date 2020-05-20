@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6326FA7523C8E73600A981FE /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6326FA7423C8E73600A981FE /* opencv2.framework */; };
+		F604822B247591A900F71A68 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F604822A247591A900F71A68 /* MainView.swift */; };
+		F604822D2475920900F71A68 /* Scoreboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F604822C2475920900F71A68 /* Scoreboard.swift */; };
+		F60482392475992700F71A68 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F60482382475992700F71A68 /* opencv2.framework */; };
+		F60482402475A44400F71A68 /* CameraFrameExtraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F604823F2475A44400F71A68 /* CameraFrameExtraction.swift */; };
 		F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */; };
 		F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */; };
 		F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60F23BFAE0D00B155B8 /* ContentView.swift */; };
@@ -20,7 +23,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6326FA7423C8E73600A981FE /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		F604822A247591A900F71A68 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		F604822C2475920900F71A68 /* Scoreboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoreboard.swift; sourceTree = "<group>"; };
+		F60482382475992700F71A68 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		F604823A2475994900F71A68 /* opencv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = opencv.hpp; path = opencv2.framework/Versions/A/Headers/opencv.hpp; sourceTree = SOURCE_ROOT; };
+		F604823F2475A44400F71A68 /* CameraFrameExtraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraFrameExtraction.swift; sourceTree = "<group>"; };
 		F63EE60823BFAE0D00B155B8 /* Baseball-Spectator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Baseball-Spectator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -42,7 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6326FA7523C8E73600A981FE /* opencv2.framework in Frameworks */,
+				F60482392475992700F71A68 /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,7 +59,7 @@
 		F63EE5FF23BFAE0D00B155B8 = {
 			isa = PBXGroup;
 			children = (
-				6326FA7423C8E73600A981FE /* opencv2.framework */,
+				F60482382475992700F71A68 /* opencv2.framework */,
 				F6CD4ACF23C4E32800DA0E1E /* Baseball-Spectator-Bridging-Header.h */,
 				F63EE60A23BFAE0D00B155B8 /* Baseball-Spectator */,
 				F63EE60923BFAE0D00B155B8 /* Products */,
@@ -73,6 +80,9 @@
 				F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */,
 				F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */,
 				F63EE60F23BFAE0D00B155B8 /* ContentView.swift */,
+				F604822A247591A900F71A68 /* MainView.swift */,
+				F604822C2475920900F71A68 /* Scoreboard.swift */,
+				F604823F2475A44400F71A68 /* CameraFrameExtraction.swift */,
 				F663C2122417E2CB00D88B17 /* ImageView.swift */,
 				F63EE61F23BFB02400B155B8 /* OpenCVWrapper */,
 				F63EE61123BFAE1300B155B8 /* Assets.xcassets */,
@@ -95,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				F63EE62023BFB02400B155B8 /* README.md */,
+				F604823A2475994900F71A68 /* opencv.hpp */,
 				F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */,
 				F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */,
 				F6CD4AD323C4E37C00DA0E1E /* PrefixHeader.pch */,
@@ -176,6 +187,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F663C2132417E2CB00D88B17 /* ImageView.swift in Sources */,
+				F604822B247591A900F71A68 /* MainView.swift in Sources */,
+				F604822D2475920900F71A68 /* Scoreboard.swift in Sources */,
+				F60482402475A44400F71A68 /* CameraFrameExtraction.swift in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,
 				F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */,
