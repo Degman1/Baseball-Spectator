@@ -1,6 +1,6 @@
 //
 //  PreviewHolder.swift
-//  MLB_AR
+//  Baseball-Spectator
 //
 //  Created by Joey Cohen on 4/28/20.
 //  Copyright © 2020 Joey Cohen. All rights reserved.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct PreviewHolder: UIViewRepresentable {
+/*struct PreviewHolder: UIViewRepresentable {
     func makeUIView(context: UIViewRepresentableContext<PreviewHolder>) -> PreviewView {
         PreviewView()
     }
@@ -18,3 +18,4 @@ struct PreviewHolder: UIViewRepresentable {
 
     typealias UIViewType = PreviewView
 }
+*/

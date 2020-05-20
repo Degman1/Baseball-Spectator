@@ -1,6 +1,6 @@
 //
 //  PreviewView.swift
-//  MLB_AR
+//  Baseball-Spectator
 //
 //  Created by Joey Cohen on 4/28/20.
 //  Copyright © 2020 Joey Cohen. All rights reserved.

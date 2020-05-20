@@ -25,7 +25,7 @@
 
 /* Begin PBXFileReference section */
 		6326FA7423C8E73600A981FE /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
-		F63EE60823BFAE0D00B155B8 /* MLB_AR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLB_AR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F63EE60823BFAE0D00B155B8 /* Baseball-Spectator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Baseball-Spectator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		F63EE60F23BFAE0D00B155B8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -39,7 +39,7 @@
 		F6892A1A24588BBD00FEA591 /* PreviewHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewHolder.swift; sourceTree = "<group>"; };
 		F6892A1C24588BCB00FEA591 /* DemoVideoStreaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoVideoStreaming.swift; sourceTree = "<group>"; };
 		F6892A1E24588BDC00FEA591 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
-		F6CD4ACF23C4E32800DA0E1E /* MLB_AR-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MLB_AR-Bridging-Header.h"; sourceTree = "<group>"; };
+		F6CD4ACF23C4E32800DA0E1E /* Baseball-Spectator-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Baseball-Spectator-Bridging-Header.h"; sourceTree = "<group>"; };
 		F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
 		F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
 		F6CD4AD323C4E37C00DA0E1E /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
@@ -61,8 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				6326FA7423C8E73600A981FE /* opencv2.framework */,
-				F6CD4ACF23C4E32800DA0E1E /* MLB_AR-Bridging-Header.h */,
-				F63EE60A23BFAE0D00B155B8 /* MLB_AR */,
+				F6CD4ACF23C4E32800DA0E1E /* Baseball-Spectator-Bridging-Header.h */,
+				F63EE60A23BFAE0D00B155B8 /* Baseball-Spectator */,
 				F63EE60923BFAE0D00B155B8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -70,12 +70,12 @@
 		F63EE60923BFAE0D00B155B8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F63EE60823BFAE0D00B155B8 /* MLB_AR.app */,
+				F63EE60823BFAE0D00B155B8 /* Baseball-Spectator.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F63EE60A23BFAE0D00B155B8 /* MLB_AR */ = {
+		F63EE60A23BFAE0D00B155B8 /* Baseball-Spectator */ = {
 			isa = PBXGroup;
 			children = (
 				F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */,
@@ -90,7 +90,7 @@
 				F63EE61923BFAE1300B155B8 /* Info.plist */,
 				F63EE61323BFAE1300B155B8 /* Preview Content */,
 			);
-			path = MLB_AR;
+			path = "Baseball-Spectator";
 			sourceTree = "<group>";
 		};
 		F63EE61323BFAE1300B155B8 /* Preview Content */ = {
@@ -125,9 +125,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F63EE60723BFAE0D00B155B8 /* MLB_AR */ = {
+		F63EE60723BFAE0D00B155B8 /* Baseball-Spectator */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F63EE61C23BFAE1300B155B8 /* Build configuration list for PBXNativeTarget "MLB_AR" */;
+			buildConfigurationList = F63EE61C23BFAE1300B155B8 /* Build configuration list for PBXNativeTarget "Baseball-Spectator" */;
 			buildPhases = (
 				F63EE60423BFAE0D00B155B8 /* Sources */,
 				F63EE60523BFAE0D00B155B8 /* Frameworks */,
@@ -137,9 +137,9 @@
 			);
 			dependencies = (
 			);
-			name = MLB_AR;
+			name = "Baseball-Spectator";
 			productName = MLB_AR;
-			productReference = F63EE60823BFAE0D00B155B8 /* MLB_AR.app */;
+			productReference = F63EE60823BFAE0D00B155B8 /* Baseball-Spectator.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -158,7 +158,7 @@
 					};
 				};
 			};
-			buildConfigurationList = F63EE60323BFAE0D00B155B8 /* Build configuration list for PBXProject "MLB_AR" */;
+			buildConfigurationList = F63EE60323BFAE0D00B155B8 /* Build configuration list for PBXProject "Baseball-Spectator" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -171,7 +171,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F63EE60723BFAE0D00B155B8 /* MLB_AR */,
+				F63EE60723BFAE0D00B155B8 /* Baseball-Spectator */,
 			);
 		};
 /* End PBXProject section */
@@ -341,21 +341,21 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"MLB_AR/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Baseball-Spectator/Preview Content\"";
 				DEVELOPMENT_TEAM = XFW26PEUTK;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = MLB_AR/Info.plist;
+				INFOPLIST_FILE = "Baseball-Spectator/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "come.JoeyCohen.MLB-AR";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "MLB_AR-Bridging-Header.h";
+				PRODUCT_NAME = "Baseball-Spectator";
+				SWIFT_OBJC_BRIDGING_HEADER = "Baseball-Spectator-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -368,21 +368,21 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"MLB_AR/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Baseball-Spectator/Preview Content\"";
 				DEVELOPMENT_TEAM = XFW26PEUTK;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = MLB_AR/Info.plist;
+				INFOPLIST_FILE = "Baseball-Spectator/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "come.JoeyCohen.MLB-AR";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "MLB_AR-Bridging-Header.h";
+				PRODUCT_NAME = "Baseball-Spectator";
+				SWIFT_OBJC_BRIDGING_HEADER = "Baseball-Spectator-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -391,7 +391,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F63EE60323BFAE0D00B155B8 /* Build configuration list for PBXProject "MLB_AR" */ = {
+		F63EE60323BFAE0D00B155B8 /* Build configuration list for PBXProject "Baseball-Spectator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F63EE61A23BFAE1300B155B8 /* Debug */,
@@ -400,7 +400,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F63EE61C23BFAE1300B155B8 /* Build configuration list for PBXNativeTarget "MLB_AR" */ = {
+		F63EE61C23BFAE1300B155B8 /* Build configuration list for PBXNativeTarget "Baseball-Spectator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F63EE61D23BFAE1300B155B8 /* Debug */,
