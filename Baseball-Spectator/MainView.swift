@@ -13,7 +13,7 @@ struct MainView: View {
         
         NavigationView {
             HStack {
-                Scoreboard
+//                Scoreboard
                 
                 Spacer()
                 
