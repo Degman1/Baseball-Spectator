@@ -188,29 +188,33 @@ class PlayerFinder(object):
 
         self.positions.append([int(pitcher_mound_x), int(pitcher_mound_y)])
         #TODO: delete these. should be replaced with actual position coordinates
-        self.positions.append(homePlate)
+        """self.positions.append(homePlate)
         self.positions.append(firstBase)
         self.positions.append(secondBase)
-        self.positions.append(thirdBase)
+        self.positions.append(thirdBase)"""
+        for pos in self.expectedPositions:
+            self.positions.append(pos)
 
         return image
+    
+    def getDistBetweenPoints(self, pt1, pt2):
+        return sqrt( ((pt1[0] - pt2[0]) ** 2) + ((pt1[1] - pt2[1]) ** 2) )
 
     def calculateExpectedPositions(self, homePlate, firstBase, secondBase, thirdBase, infieldShape):
         '''Helper method to calculate the expected location of each player position in the image
         provided the base coordinates'''
 
-        """homeToFirstDist = sqrt( ((firstBase[0] - homePlate[0]) ** 2) + ((firstBase[1] - homePlate[1]) ** 2) )       # pythagorian theorem to calculate distance between bases
-        firstToSecondDist = sqrt( ((secondBase[0] - firstBase[0]) ** 2) + ((secondBase[1] - firstBase[1]) ** 2) )
-        secondToThirdDist = sqrt( ((thirdBase[0] - secondBase[0]) ** 2) + ((thirdBase[1] - secondBase[1]) ** 2) )
-        thirdToHomeDist = sqrt( ((homePlate[0] - thirdBase[0]) ** 2) + ((homePlate[1] - thirdBase[1]) ** 2) )
+        homeToFirstDist = self.getDistBetweenPoints(homePlate, firstBase)
+        firstToSecondDist = self.getDistBetweenPoints(firstBase, secondBase)
+        secondToThirdDist = self.getDistBetweenPoints(secondBase, thirdBase)
+        thirdToHomeDist = self.getDistBetweenPoints(thirdBase, homePlate)
         # TODO: could potentially do more with this since we know each of these in real life should be around 90 ft
 
         side1 = (homeToFirstDist + secondToThirdDist) / 2   #average the two sides of the infield out to get a more consistent elevation multiplier
         side2 = (firstToSecondDist + thirdToHomeDist) / 2   #represents side1 and side2 of a parallelogram fitted around the infield grass
         
         distRatio = side1 / side2
-        #print(str(homeToFirstDist) + " / " + str(thirdToHomeDist) + " = " + str(distRatio))
-        print(distRatio)"""
+        print(distRatio)
 
         def addBaseID(arr, val):
             newArr = arr.tolist()
@@ -222,28 +226,60 @@ class PlayerFinder(object):
         
         if sortedBases[0][2] == 2.0 or (sortedBases[0][2] == 1.0 and sortedBases[1][2] == 2.0) or (sortedBases[0][2] == 3.0 and sortedBases[1][2] == 2.0):    #If the user is closer towards the outfield than the infield...
             print("outfield")
-            betweenBaseElevationMultiplier = 1.0        # these multipliers are to adapt the expected player position to the user's position in the stands
-            rightInfieldDistanceFromHomeMultiplier = 1.3
-            leftInfieldDistanceFromHomeMultiplier = 1.3
-            outfieldDistanceFromHomeMultiplier = 1.7
+            #use vector operations to calculate expected positions from the coordinates of the bases and the elevation multipliers
+            if distRatio >= 4.0:        # first to second is smaller, so refine right infield, leftfield, and centerfield (same amount at if <= 0.25)
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.5)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.5)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.5)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.5)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+            elif distRatio <= 0.25:     # home to first is smaller, so refine left infield, rightfield, and centerfield (same as if >= 4.0)
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.5)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.5)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.5)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.5)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+            else:                       # normal
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.5)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.5)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.5)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.5)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+            print(leftfield)
         else:       #if the user is closer to the infield...
             print("infield")
-            betweenBaseElevationMultiplier = 1.0
-            rightInfieldDistanceFromHomeMultiplier = 1.0
-            leftInfieldDistanceFromHomeMultiplier = 1.0
-            outfieldDistanceFromHomeMultiplier = 1.0
+            if distRatio >= 4.0:        # first to second is smaller, so refine right infield, leftfield, and centerfield (same amount at if <= 0.25)
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.25)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.25)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.2)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.2)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.7, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+            elif distRatio <= 0.25:     # home to first is smaller, so refine left infield, rightfield, and centerfield (same as if >= 4.0)
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.25)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.25)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.2)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.2)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.7, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+            else:                       # normal
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.25)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.25)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.2)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.2)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.7, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
 
-        #use vector operations to calculate expected positions from the coordinates of the bases and the elevation multipliers
-        first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85 * betweenBaseElevationMultiplier, 1.25 * infieldDistanceFromHomeMultiplier)
-        second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4 * betweenBaseElevationMultiplier, 1.25 * infieldDistanceFromHomeMultiplier)
-        shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4 * betweenBaseElevationMultiplier, 1.2 * infieldDistanceFromHomeMultiplier)
-        third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8 * betweenBaseElevationMultiplier, 1.2 * infieldDistanceFromHomeMultiplier)
-        leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8 * betweenBaseElevationMultiplier, 1.7 * outfieldDistanceFromHomeMultiplier)
-        centerfield = (homePlate + (1.5 * outfieldDistanceFromHomeMultiplier * (secondBase - homePlate))).astype(int)
-        rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7 * betweenBaseElevationMultiplier, 1.7 * outfieldDistanceFromHomeMultiplier)
-
-        return [first, second, shortstop, third]
-        return [first, second, shortstop, third, leftfield, centerfield, rightfield]
+        return [homePlate, first, second, shortstop, third, leftfield, centerfield, rightfield]
 
     def calculatePosition(self, homePlate, base1, base2, betweenBaseMultiplier, distanceToHomeMultiplier):
         '''Calculate the expected postition of a player a certain percent of the way between two bases and
@@ -401,9 +437,9 @@ class PlayerFinder(object):
                 cv2.drawMarker(output_frame, tuple(pos), (b, 0, 0), cv2.MARKER_CROSS, 20, 5)
                 b+=add
         
-        if self.expectedPositions is not None and len(self.expectedPositions) != 0:
+        """if self.expectedPositions is not None and len(self.expectedPositions) != 0:
             for pos in self.expectedPositions:
-                cv2.drawMarker(output_frame, tuple(pos), (0, 255, 0), cv2.MARKER_CROSS, 20, 5)
+                cv2.drawMarker(output_frame, tuple(pos), (0, 255, 0), cv2.MARKER_CROSS, 20, 5)"""
 
         return output_frame
 
