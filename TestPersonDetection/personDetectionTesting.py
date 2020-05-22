@@ -128,6 +128,7 @@ class PlayerFinder(object):
         if self.infield is None:
             return None
         
+        infieldShape = self.infield['widths']
         self.infield = cv2.convexHull(self.infield['contour'])
 
         # to find quadrilateral using hough_fit method
@@ -175,6 +176,7 @@ class PlayerFinder(object):
         if expected_home_plate_angle < 0:
             expected_home_plate_angle += 360
         
+        # first base must be the next base if moving in a counter-clockwise direction in relation to the pitcher's mound
         if (angle > expected_home_plate_angle and angle < expected_home_plate_angle + 180)  or (angle + 360 > expected_home_plate_angle and angle + 360 < expected_home_plate_angle + 180):
             firstBase = self.infield_cnrs[(home_plate_index + 1) % 4]
             thirdBase = self.infield_cnrs[(home_plate_index + 3) % 4]
@@ -182,10 +184,10 @@ class PlayerFinder(object):
             firstBase = self.infield_cnrs[(home_plate_index + 3) % 4]
             thirdBase = self.infield_cnrs[(home_plate_index + 1) % 4]
 
-        self.expectedPositions = self.calculateExpectedPositions(homePlate, firstBase, secondBase, thirdBase)
+        self.expectedPositions = self.calculateExpectedPositions(homePlate, firstBase, secondBase, thirdBase, infieldShape)
 
         self.positions.append([int(pitcher_mound_x), int(pitcher_mound_y)])
-        #TODO: delete these.
+        #TODO: delete these. should be replaced with actual position coordinates
         self.positions.append(homePlate)
         self.positions.append(firstBase)
         self.positions.append(secondBase)
@@ -193,11 +195,11 @@ class PlayerFinder(object):
 
         return image
 
-    def calculateExpectedPositions(self, homePlate, firstBase, secondBase, thirdBase):
+    def calculateExpectedPositions(self, homePlate, firstBase, secondBase, thirdBase, infieldShape):
         '''Helper method to calculate the expected location of each player position in the image
         provided the base coordinates'''
 
-        homeToFirstDist = sqrt( ((firstBase[0] - homePlate[0]) ** 2) + ((firstBase[1] - homePlate[1]) ** 2) )       # pythagorian theorem to calculate distance between bases
+        """homeToFirstDist = sqrt( ((firstBase[0] - homePlate[0]) ** 2) + ((firstBase[1] - homePlate[1]) ** 2) )       # pythagorian theorem to calculate distance between bases
         firstToSecondDist = sqrt( ((secondBase[0] - firstBase[0]) ** 2) + ((secondBase[1] - firstBase[1]) ** 2) )
         secondToThirdDist = sqrt( ((thirdBase[0] - secondBase[0]) ** 2) + ((thirdBase[1] - secondBase[1]) ** 2) )
         thirdToHomeDist = sqrt( ((homePlate[0] - thirdBase[0]) ** 2) + ((homePlate[1] - thirdBase[1]) ** 2) )
@@ -207,20 +209,40 @@ class PlayerFinder(object):
         side2 = (firstToSecondDist + thirdToHomeDist) / 2   #represents side1 and side2 of a parallelogram fitted around the infield grass
         
         distRatio = side1 / side2
-        print(str(homeToFirstDist) + " / " + str(thirdToHomeDist) + " = " + str(distRatio))
+        #print(str(homeToFirstDist) + " / " + str(thirdToHomeDist) + " = " + str(distRatio))
+        print(distRatio)"""
 
-        betweenBaseElevationMultiplier = 1.0        # these multipliers are to adapt the expected player position 
-        distanceFromHomeElevationMultiplier = 1.0   # based on the camera elevation (makes expected position more accurate)
+        def addBaseID(arr, val):
+            newArr = arr.tolist()
+            newArr.append(val)
+            return newArr
+
+        sortedBases = [addBaseID(homePlate, 0.0), addBaseID(firstBase, 1.0), addBaseID(secondBase, 2.0), addBaseID(thirdBase, 3.0)]
+        sortedBases.sort(key=lambda b: b[1], reverse=True)
+        
+        if sortedBases[0][2] == 2.0 or (sortedBases[0][2] == 1.0 and sortedBases[1][2] == 2.0) or (sortedBases[0][2] == 3.0 and sortedBases[1][2] == 2.0):    #If the user is closer towards the outfield than the infield...
+            print("outfield")
+            betweenBaseElevationMultiplier = 1.0        # these multipliers are to adapt the expected player position to the user's position in the stands
+            rightInfieldDistanceFromHomeMultiplier = 1.3
+            leftInfieldDistanceFromHomeMultiplier = 1.3
+            outfieldDistanceFromHomeMultiplier = 1.7
+        else:       #if the user is closer to the infield...
+            print("infield")
+            betweenBaseElevationMultiplier = 1.0
+            rightInfieldDistanceFromHomeMultiplier = 1.0
+            leftInfieldDistanceFromHomeMultiplier = 1.0
+            outfieldDistanceFromHomeMultiplier = 1.0
 
         #use vector operations to calculate expected positions from the coordinates of the bases and the elevation multipliers
-        first = self.calculatePosition(homePlate, firstBase, secondBase, 0.15 * betweenBaseElevationMultiplier, 1.25 * distanceFromHomeElevationMultiplier)
-        second = self.calculatePosition(homePlate, firstBase, secondBase, 0.6 * betweenBaseElevationMultiplier, 1.25 * distanceFromHomeElevationMultiplier)
-        shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.3 * betweenBaseElevationMultiplier, 1.2 * distanceFromHomeElevationMultiplier)
-        third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8 * betweenBaseElevationMultiplier, 1.2 * distanceFromHomeElevationMultiplier)
-        leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.7 * betweenBaseElevationMultiplier, 1.7 * distanceFromHomeElevationMultiplier)
-        centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
-        rightfield = self.calculatePosition(homePlate, firstBase, secondBase, 0.3 * betweenBaseElevationMultiplier, 1.7 * distanceFromHomeElevationMultiplier)
+        first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85 * betweenBaseElevationMultiplier, 1.25 * infieldDistanceFromHomeMultiplier)
+        second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4 * betweenBaseElevationMultiplier, 1.25 * infieldDistanceFromHomeMultiplier)
+        shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4 * betweenBaseElevationMultiplier, 1.2 * infieldDistanceFromHomeMultiplier)
+        third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8 * betweenBaseElevationMultiplier, 1.2 * infieldDistanceFromHomeMultiplier)
+        leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8 * betweenBaseElevationMultiplier, 1.7 * outfieldDistanceFromHomeMultiplier)
+        centerfield = (homePlate + (1.5 * outfieldDistanceFromHomeMultiplier * (secondBase - homePlate))).astype(int)
+        rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7 * betweenBaseElevationMultiplier, 1.7 * outfieldDistanceFromHomeMultiplier)
 
+        return [first, second, shortstop, third]
         return [first, second, shortstop, third, leftfield, centerfield, rightfield]
 
     def calculatePosition(self, homePlate, base1, base2, betweenBaseMultiplier, distanceToHomeMultiplier):
