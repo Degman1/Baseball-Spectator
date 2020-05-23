@@ -13,15 +13,7 @@ struct MainView: View {
         
         NavigationView {
             HStack {
-<<<<<<< HEAD
-<<<<<<< HEAD
                 scoreboard
-=======
-                Scoreboard()
->>>>>>> 5b45bbc4a42a0d31a90eeeeb480781e303e1ff0a
-=======
-                Scoreboard()
->>>>>>> 5b45bbc4a42a0d31a90eeeeb480781e303e1ff0a
                 
                 Spacer()
                 
@@ -43,8 +35,8 @@ struct MainView: View {
     }
 }
 
-//struct MainView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MainView()
-//    }
-//}
+struct MainView_Previews: PreviewProvider {
+    static var previews: some View {
+        MainView()
+    }
+}
