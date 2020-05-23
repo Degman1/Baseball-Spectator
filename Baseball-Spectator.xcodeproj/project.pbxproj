@@ -18,6 +18,7 @@
 		F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */; };
 		F63EE62423BFB02400B155B8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F63EE62023BFB02400B155B8 /* README.md */; };
 		F663C2132417E2CB00D88B17 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F663C2122417E2CB00D88B17 /* ImageView.swift */; };
+		F6CA649A24799F7E009721E0 /* Scoreboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CA649924799F7E009721E0 /* Scoreboard.swift */; };
 		F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +37,7 @@
 		F63EE61923BFAE1300B155B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F63EE62023BFB02400B155B8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F663C2122417E2CB00D88B17 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		F6CA649924799F7E009721E0 /* Scoreboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoreboard.swift; sourceTree = "<group>"; };
 		F6CD4ACF23C4E32800DA0E1E /* Baseball-Spectator-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Baseball-Spectator-Bridging-Header.h"; sourceTree = "<group>"; };
 		F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
 		F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */,
 				F63EE60F23BFAE0D00B155B8 /* ContentView.swift */,
 				F604822A247591A900F71A68 /* MainView.swift */,
+				F6CA649924799F7E009721E0 /* Scoreboard.swift */,
 				F604823F2475A44400F71A68 /* CameraFrameExtraction.swift */,
 				F663C2122417E2CB00D88B17 /* ImageView.swift */,
 				F63EE61F23BFB02400B155B8 /* OpenCVWrapper */,
@@ -190,6 +193,7 @@
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,
 				F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */,
 				F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */,
+				F6CA649A24799F7E009721E0 /* Scoreboard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

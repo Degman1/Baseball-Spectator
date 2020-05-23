@@ -31,7 +31,7 @@ struct MainView: View {
     }
     
     var scoreboard: some View {
-        Text("scoreboard")
+        Scoreboard()
     }
 }
 
