@@ -13,7 +13,7 @@ struct MainView: View {
         
         NavigationView {
             HStack {
-//                Scoreboard
+                scoreboard
                 
                 Spacer()
                 
@@ -28,6 +28,10 @@ struct MainView: View {
         }) {
             Image(systemName: "plus.square")
         }
+    }
+    
+    var scoreboard: some View {
+        Text("scoreboard")
     }
 }
 
