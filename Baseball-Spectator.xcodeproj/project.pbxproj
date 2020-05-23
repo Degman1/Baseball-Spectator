@@ -202,7 +202,6 @@
 				63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */,
 				63FD24B0247994CE002D0728 /* ContourInfo.mm in Sources */,
 				F604822B247591A900F71A68 /* MainView.swift in Sources */,
-				F604822D2475920900F71A68 /* Scoreboard.swift in Sources */,
 				63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */,
 				F60482402475A44400F71A68 /* CameraFrameExtraction.swift in Sources */,
 				63FD24AC247993AF002D0728 /* Timer.mm in Sources */,
