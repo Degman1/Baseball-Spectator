@@ -89,9 +89,14 @@ class PlayerFinder(object):
         mask = cv2.bitwise_or(mask, mask_dark_brown)
         
         im = self.get_players_position_locations(mask_green, image, angle)    #pass in image for quad fit debugging
-        if im is not None:
-            image = im      #updates output for drawing debug of quad_fit
+        if im is None:
+            return image
+        image = im      #updates output for drawing debug of quad_fit
+        
         self.get_player_contours(mask)
+        
+        returnDictionary = self.get_player_dictionary()
+        print(returnDictionary)
  
         return image
     
@@ -128,6 +133,7 @@ class PlayerFinder(object):
         if self.infield is None:
             return None
         
+        infieldShape = self.infield['widths']
         self.infield = cv2.convexHull(self.infield['contour'])
 
         # to find quadrilateral using hough_fit method
@@ -175,6 +181,7 @@ class PlayerFinder(object):
         if expected_home_plate_angle < 0:
             expected_home_plate_angle += 360
         
+        # first base must be the next base if moving in a counter-clockwise direction in relation to the pitcher's mound
         if (angle > expected_home_plate_angle and angle < expected_home_plate_angle + 180)  or (angle + 360 > expected_home_plate_angle and angle + 360 < expected_home_plate_angle + 180):
             firstBase = self.infield_cnrs[(home_plate_index + 1) % 4]
             thirdBase = self.infield_cnrs[(home_plate_index + 3) % 4]
@@ -182,53 +189,109 @@ class PlayerFinder(object):
             firstBase = self.infield_cnrs[(home_plate_index + 3) % 4]
             thirdBase = self.infield_cnrs[(home_plate_index + 1) % 4]
 
-        self.expectedPositions = self.calculateExpectedPositions(homePlate, firstBase, secondBase, thirdBase)
+        self.expectedPositions.append([int(pitcher_mound_x), int(pitcher_mound_y)])
+        calculatedPositions = self.calculateExpectedPositions(homePlate, firstBase, secondBase, thirdBase, infieldShape)
 
-        self.positions.append([int(pitcher_mound_x), int(pitcher_mound_y)])
-        #TODO: delete these.
-        self.positions.append(homePlate)
+        # To draw the corners of the infield grass:
+        """self.positions.append(homePlate)
         self.positions.append(firstBase)
         self.positions.append(secondBase)
-        self.positions.append(thirdBase)
+        self.positions.append(thirdBase)"""
+
+        for pos in calculatedPositions:
+            self.expectedPositions.append(pos)
 
         return image
-
-    def calculateExpectedPositions(self, homePlate, firstBase, secondBase, thirdBase):
+    
+    def calculateExpectedPositions(self, homePlate, firstBase, secondBase, thirdBase, infieldShape):
         '''Helper method to calculate the expected location of each player position in the image
         provided the base coordinates'''
 
-        homeToFirstDist = sqrt( ((firstBase[0] - homePlate[0]) ** 2) + ((firstBase[1] - homePlate[1]) ** 2) )       # pythagorian theorem to calculate distance between bases
-        firstToSecondDist = sqrt( ((secondBase[0] - firstBase[0]) ** 2) + ((secondBase[1] - firstBase[1]) ** 2) )
-        secondToThirdDist = sqrt( ((thirdBase[0] - secondBase[0]) ** 2) + ((thirdBase[1] - secondBase[1]) ** 2) )
-        thirdToHomeDist = sqrt( ((homePlate[0] - thirdBase[0]) ** 2) + ((homePlate[1] - thirdBase[1]) ** 2) )
+        homeToFirstDist = self.getDistBetweenPoints(homePlate, firstBase)
+        firstToSecondDist = self.getDistBetweenPoints(firstBase, secondBase)
+        secondToThirdDist = self.getDistBetweenPoints(secondBase, thirdBase)
+        thirdToHomeDist = self.getDistBetweenPoints(thirdBase, homePlate)
         # TODO: could potentially do more with this since we know each of these in real life should be around 90 ft
 
         side1 = (homeToFirstDist + secondToThirdDist) / 2   #average the two sides of the infield out to get a more consistent elevation multiplier
         side2 = (firstToSecondDist + thirdToHomeDist) / 2   #represents side1 and side2 of a parallelogram fitted around the infield grass
         
         distRatio = side1 / side2
-        print(str(homeToFirstDist) + " / " + str(thirdToHomeDist) + " = " + str(distRatio))
+        #print(distRatio)
 
-        betweenBaseElevationMultiplier = 1.0        # these multipliers are to adapt the expected player position 
-        distanceFromHomeElevationMultiplier = 1.0   # based on the camera elevation (makes expected position more accurate)
+        def addBaseID(arr, val):
+            newArr = arr.tolist()
+            newArr.append(val)
+            return newArr
 
-        #use vector operations to calculate expected positions from the coordinates of the bases and the elevation multipliers
-        first = self.calculatePosition(homePlate, firstBase, secondBase, 0.15 * betweenBaseElevationMultiplier, 1.25 * distanceFromHomeElevationMultiplier)
-        second = self.calculatePosition(homePlate, firstBase, secondBase, 0.6 * betweenBaseElevationMultiplier, 1.25 * distanceFromHomeElevationMultiplier)
-        shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.3 * betweenBaseElevationMultiplier, 1.2 * distanceFromHomeElevationMultiplier)
-        third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8 * betweenBaseElevationMultiplier, 1.2 * distanceFromHomeElevationMultiplier)
-        leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.7 * betweenBaseElevationMultiplier, 1.7 * distanceFromHomeElevationMultiplier)
-        centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
-        rightfield = self.calculatePosition(homePlate, firstBase, secondBase, 0.3 * betweenBaseElevationMultiplier, 1.7 * distanceFromHomeElevationMultiplier)
+        sortedBases = [addBaseID(homePlate, 0.0), addBaseID(firstBase, 1.0), addBaseID(secondBase, 2.0), addBaseID(thirdBase, 3.0)]
+        sortedBases.sort(key=lambda b: b[1], reverse=True)
+        
+        # TODO: when able to get a real image test set, revise these values and maybe model them with some sort of function if possible
 
-        return [first, second, shortstop, third, leftfield, centerfield, rightfield]
+        if sortedBases[0][2] == 2.0 or (sortedBases[0][2] == 1.0 and sortedBases[1][2] == 2.0) or (sortedBases[0][2] == 3.0 and sortedBases[1][2] == 2.0):    #If the user is closer towards the outfield than the infield...
+            #print("outfield")
+            #use vector operations to calculate expected positions from the coordinates of the bases and the elevation multipliers
+            if distRatio >= 4.0:        # first to second is smaller, so refine right infield, leftfield, and centerfield (same amount at if <= 0.25)
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.5)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.5)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.5)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.5)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+            elif distRatio <= 0.25:     # home to first is smaller, so refine left infield, rightfield, and centerfield (same as if >= 4.0)
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.5)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.5)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.5)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.5)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+            else:                       # normal
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.5)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.5)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.5)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.5)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+            print(leftfield)
+        else:       #if the user is closer to the infield...
+            #print("infield")
+            if distRatio >= 4.0:        # first to second is smaller, so refine right infield, leftfield, and centerfield (same amount at if <= 0.25)
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.25)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.25)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.2)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.2)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.7, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+            elif distRatio <= 0.25:     # home to first is smaller, so refine left infield, rightfield, and centerfield (same as if >= 4.0)
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.25)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.25)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.2)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.2)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.7, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+            else:                       # normal
+                first = self.calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.25)
+                second = self.calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.25)
+                shortstop = self.calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.2)
+                third = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.2)
+                leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.7, 1.7)
+                centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
+                rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
+
+        return [homePlate, first, second, shortstop, third, leftfield, centerfield, rightfield]
 
     def calculatePosition(self, homePlate, base1, base2, betweenBaseMultiplier, distanceToHomeMultiplier):
         '''Calculate the expected postition of a player a certain percent of the way between two bases and
         a certain percent of the way from home using vector operations'''
 
         return (homePlate + ((base1 + (betweenBaseMultiplier * (base2 - base1))) - homePlate ) * distanceToHomeMultiplier).astype(int)
-            
+    
     def get_player_contours(self, mask):
         '''Sub-processing routine to find the location of the players on the field
 
@@ -330,8 +393,58 @@ class PlayerFinder(object):
     def quad_fit(self, contour, image_frame=None):
         '''Best fit of a quadrilateral to the contour'''
 
-        approx = infieldFittingRoutines.approxPolyDP_adaptive(contour, nsides=4)
+        #approx = infieldFittingRoutines.approxPolyDP_adaptive(contour, nsides=4)
         return infieldFittingRoutines.hough_fit(contour, nsides=4, approx_fit=None, image_frame=None)
+
+    def get_player_dictionary(self):
+        playersByPosition = {"pitcher": [],
+                                "catcher": [],
+                                "first": [],
+                                "second": [],
+                                "shortstop": [],
+                                "third": [],
+                                "leftfield": [],
+                                "centerfield": [],
+                                "rightfield": [],
+                                "offense": self.infield_cnrs}   # TODO make the dictionary keys into what names the website calls each
+                                                                #      position so the names can be used to directly look up each players
+                                                                #      position
+
+        for player in self.players:
+            lowestPt = max(player, key=lambda x: x[0][1])[0]
+            closestPosition = []    #saves index of and distance to closest expected position
+            
+            for i in range(9):  #there are 9 expected positions
+                dist = self.getDistBetweenPoints(lowestPt, self.expectedPositions[i])
+
+                if closestPosition == [] or dist < closestPosition[1]:
+                    closestPosition = [i, dist]
+            
+            if closestPosition[0] == 0:
+                playersByPosition["pitcher"].append(lowestPt)
+            elif closestPosition[0] == 1:
+                playersByPosition["catcher"].append(lowestPt)
+            elif closestPosition[0] == 2:
+                playersByPosition["first"].append(lowestPt)
+            elif closestPosition[0] == 3:
+                playersByPosition["second"].append(lowestPt)
+            elif closestPosition[0] == 4:
+                playersByPosition["shortstop"].append(lowestPt)
+            elif closestPosition[0] == 5:
+                playersByPosition["third"].append(lowestPt)
+            elif closestPosition[0] == 6:
+                playersByPosition["leftfield"].append(lowestPt)
+            elif closestPosition[0] == 7:
+                playersByPosition["centerfield"].append(lowestPt)
+            else: # == 8
+                playersByPosition["rightfield"].append(lowestPt)
+            
+        return playersByPosition
+
+
+    def getDistBetweenPoints(self, pt1, pt2):
+        return sqrt( ((pt1[0] - pt2[0]) ** 2) + ((pt1[1] - pt2[1]) ** 2) )
+
 
     def prepare_output_image(self, input_frame):
         '''Prepare output image for drive station. Draw the found target contour.'''
@@ -372,16 +485,16 @@ class PlayerFinder(object):
         """
 
         #Shades of blue
-        if self.positions is not None and len(self.positions) != 0:
+        if self.expectedPositions is not None and len(self.expectedPositions) != 0:
             b = 0
-            add = int(255 / len(self.positions))
-            for pos in self.positions:
+            add = int(255 / len(self.expectedPositions))
+            for pos in self.expectedPositions:
                 cv2.drawMarker(output_frame, tuple(pos), (b, 0, 0), cv2.MARKER_CROSS, 20, 5)
                 b+=add
         
-        if self.expectedPositions is not None and len(self.expectedPositions) != 0:
+        """if self.expectedPositions is not None and len(self.expectedPositions) != 0:
             for pos in self.expectedPositions:
-                cv2.drawMarker(output_frame, tuple(pos), (0, 255, 0), cv2.MARKER_CROSS, 20, 5)
+                cv2.drawMarker(output_frame, tuple(pos), (0, 255, 0), cv2.MARKER_CROSS, 20, 5)"""
 
         return output_frame
 

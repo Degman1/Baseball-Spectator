@@ -13,7 +13,11 @@ struct MainView: View {
         
         NavigationView {
             HStack {
+<<<<<<< HEAD
                 scoreboard
+=======
+                Scoreboard()
+>>>>>>> 5b45bbc4a42a0d31a90eeeeb480781e303e1ff0a
                 
                 Spacer()
                 
