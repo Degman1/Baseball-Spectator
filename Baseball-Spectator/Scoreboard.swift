@@ -33,7 +33,11 @@ struct Scoreboard: View {
                         Text("\(awayTeamScore)")
                     }
                 }
-                
+                VStack {
+                    basesView
+                    outsView
+                    ballstrikesView
+                }
             }
         }
     }
@@ -41,13 +45,27 @@ struct Scoreboard: View {
     var outsView: some View {
         HStack {
             if outs == 0 {
-                
+                Image(systemName: "circle")
+                Image(systemName: "circle")
+                Image(systemName: "circle")
+            } else if outs == 1 {
+                Image(systemName: "circle.fill")
+                Image(systemName: "circle")
+                Image(systemName: "circle")
+            } else if outs == 2 {
+               Image(systemName: "circle.fill")
+               Image(systemName: "circle.fill")
+               Image(systemName: "circle")
+            } else {
+                Image(systemName: "circle.fill")
+                Image(systemName: "circle.fill")
+                Image(systemName: "circle.fill")
             }
         }
     }
     
     var basesView: some View {
-        Text("")
+        Text("bases")
     }
     
     var ballstrikesView: some View {
