@@ -3,10 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24A924799375002D0728 /* InfieldContourFitting.mm */; };
+		63FD24AC247993AF002D0728 /* Timer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AB247993AF002D0728 /* Timer.mm */; };
+		63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AD24799445002D0728 /* ImageProcessor.mm */; };
+		63FD24B0247994CE002D0728 /* ContourInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AF247994CE002D0728 /* ContourInfo.mm */; };
 		F604822B247591A900F71A68 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F604822A247591A900F71A68 /* MainView.swift */; };
 		F60482392475992700F71A68 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F60482382475992700F71A68 /* opencv2.framework */; };
 		F60482402475A44400F71A68 /* CameraFrameExtraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F604823F2475A44400F71A68 /* CameraFrameExtraction.swift */; };
@@ -23,6 +27,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		63FD24A924799375002D0728 /* InfieldContourFitting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InfieldContourFitting.mm; sourceTree = "<group>"; };
+		63FD24AB247993AF002D0728 /* Timer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Timer.mm; sourceTree = "<group>"; };
+		63FD24AD24799445002D0728 /* ImageProcessor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageProcessor.mm; sourceTree = "<group>"; };
+		63FD24AF247994CE002D0728 /* ContourInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContourInfo.mm; sourceTree = "<group>"; };
 		F604822A247591A900F71A68 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		F60482382475992700F71A68 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		F604823A2475994900F71A68 /* opencv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = opencv.hpp; path = opencv2.framework/Versions/A/Headers/opencv.hpp; sourceTree = SOURCE_ROOT; };
@@ -108,6 +116,10 @@
 				F604823A2475994900F71A68 /* opencv.hpp */,
 				F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */,
 				F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */,
+				63FD24AD24799445002D0728 /* ImageProcessor.mm */,
+				63FD24AF247994CE002D0728 /* ContourInfo.mm */,
+				63FD24A924799375002D0728 /* InfieldContourFitting.mm */,
+				63FD24AB247993AF002D0728 /* Timer.mm */,
 				F6CD4AD323C4E37C00DA0E1E /* PrefixHeader.pch */,
 			);
 			path = OpenCVWrapper;
@@ -141,7 +153,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1110;
 				LastUpgradeCheck = 1110;
-				ORGANIZATIONNAME = "Joey Cohen";
+				ORGANIZATIONNAME = "David Gerard";
 				TargetAttributes = {
 					F63EE60723BFAE0D00B155B8 = {
 						CreatedOnToolsVersion = 11.1;
@@ -150,7 +162,7 @@
 				};
 			};
 			buildConfigurationList = F63EE60323BFAE0D00B155B8 /* Build configuration list for PBXProject "Baseball-Spectator" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 11.4";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -187,8 +199,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				F663C2132417E2CB00D88B17 /* ImageView.swift in Sources */,
+				63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */,
+				63FD24B0247994CE002D0728 /* ContourInfo.mm in Sources */,
 				F604822B247591A900F71A68 /* MainView.swift in Sources */,
+				F604822D2475920900F71A68 /* Scoreboard.swift in Sources */,
+				63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */,
 				F60482402475A44400F71A68 /* CameraFrameExtraction.swift in Sources */,
+				63FD24AC247993AF002D0728 /* Timer.mm in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,
 				F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */,
@@ -332,18 +349,20 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Baseball-Spectator/Preview Content\"";
-				DEVELOPMENT_TEAM = XFW26PEUTK;
+				DEVELOPMENT_TEAM = QRS872LFWU;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_NO_COMMON_BLOCKS = NO;
 				INFOPLIST_FILE = "Baseball-Spectator/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "come.JoeyCohen.MLB-AR";
+				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "come.DavidGerard.Baseball-Spectator";
 				PRODUCT_NAME = "Baseball-Spectator";
 				SWIFT_OBJC_BRIDGING_HEADER = "Baseball-Spectator-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -359,18 +378,20 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Baseball-Spectator/Preview Content\"";
-				DEVELOPMENT_TEAM = XFW26PEUTK;
+				DEVELOPMENT_TEAM = QRS872LFWU;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_NO_COMMON_BLOCKS = NO;
 				INFOPLIST_FILE = "Baseball-Spectator/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "come.JoeyCohen.MLB-AR";
+				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "come.DavidGerard.Baseball-Spectator";
 				PRODUCT_NAME = "Baseball-Spectator";
 				SWIFT_OBJC_BRIDGING_HEADER = "Baseball-Spectator-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
