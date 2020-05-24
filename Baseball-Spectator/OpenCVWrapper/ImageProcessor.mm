@@ -161,6 +161,9 @@ class ImageProcessor {
         vector<cv::Point> infieldHull;
         cv::convexHull(infield.contour, infieldHull);
         
+        InfieldContourFitting fit = InfieldContourFitting();
+        vector<cv::Point> infieldCorners = fit.quadrilateralHoughFit(infield);
+        
         return infieldHull;
     }
     

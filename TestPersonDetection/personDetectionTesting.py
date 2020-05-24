@@ -256,7 +256,7 @@ class PlayerFinder(object):
                 leftfield = self.calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.7)
                 centerfield = (homePlate + (1.5 * (secondBase - homePlate))).astype(int)
                 rightfield = self.calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7)
-            print(leftfield)
+            #print(leftfield)
         else:       #if the user is closer to the infield...
             #print("infield")
             if distRatio >= 4.0:        # first to second is smaller, so refine right infield, leftfield, and centerfield (same amount at if <= 0.25)

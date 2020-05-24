@@ -117,8 +117,8 @@
 				F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */,
 				F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */,
 				63FD24AD24799445002D0728 /* ImageProcessor.mm */,
-				63FD24AF247994CE002D0728 /* ContourInfo.mm */,
 				63FD24A924799375002D0728 /* InfieldContourFitting.mm */,
+				63FD24AF247994CE002D0728 /* ContourInfo.mm */,
 				63FD24AB247993AF002D0728 /* Timer.mm */,
 				F6CD4AD323C4E37C00DA0E1E /* PrefixHeader.pch */,
 			);
