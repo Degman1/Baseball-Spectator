@@ -91,7 +91,7 @@ class ImageProcessor {
         
         timer.stop();
         cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
-        
+
         return result;
     }
     
@@ -99,7 +99,8 @@ class ImageProcessor {
         return ((struct1.width * struct1.height) > (struct2.width * struct2.height));
     }
     
-    private: vector<cv::Point> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle) {
+    private:
+    vector<cv::Point> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle) {
         /*
          Sub-processing routine to find the location of each of the game positions
 
@@ -134,8 +135,8 @@ class ImageProcessor {
             if (area > 18500 and area < 2000000) {
                 ContourInfo cnt;
                 cnt.contour = c;
-                cnt.x = rect.y + ( rect.width / 2);
-                cnt.y = rect.y + ( rect.height / 2);
+                cnt.x = rect.x;
+                cnt.y = rect.y;
                 cnt.width = rect.width;
                 cnt.height = rect.height;
                 infieldContours.push_back(cnt);
@@ -158,8 +159,10 @@ class ImageProcessor {
         
         if (infield.x == -1) {  }       //TODO: indicate the infield was not found
         
+        // use the hull of the infield instead of the original infield contour
         vector<cv::Point> infieldHull;
         cv::convexHull(infield.contour, infieldHull);
+        infield.contour = infieldHull;
         
         InfieldContourFitting fit = InfieldContourFitting();
         vector<cv::Point> infieldCorners = fit.quadrilateralHoughFit(infield);
@@ -200,15 +203,15 @@ class ImageProcessor {
             if (area > 270 and area < 2000) {
                 ContourInfo cnt;
                 cnt.contour = c;
-                cnt.x = rect.x + (rect.width / 2);
-                cnt.y = rect.y + ( rect.height / 2);
+                cnt.x = rect.x;
+                cnt.y = rect.y;
                 cnt.width = rect.width;
                 cnt.height = rect.height;
                 playerContours.push_back(cnt);
             } else if (field.x == -1 or (field.width * field.height) < area) {
                 field.contour = c;
-                field.x = rect.x + (rect.width / 2);
-                field.y = rect.y + ( rect.height / 2);
+                field.x = rect.x;
+                field.y = rect.y;
                 field.width = rect.width;
                 field.height = rect.height;
             }
@@ -252,18 +255,17 @@ class ImageProcessor {
         int fieldWidth = int(field.width / 2);
         int fieldHeight = int(field.height / 2);
         
-        if (cnt.x >= field.x + fieldWidth or cnt.x <= field.x - fieldWidth or
-            cnt.y >= field.y + fieldHeight or cnt.y <= field.y - fieldHeight) {
+        int centerX = field.x + (field.width / 2);
+        int centerY = field.y + (field.height / 2);
+        
+        if (cnt.x >= centerX + fieldWidth or cnt.x <= centerX - fieldWidth or
+            cnt.y >= centerY + fieldHeight or centerY <= centerY - fieldHeight) {
             return false;
         }
                 
         double distance = cv::pointPolygonTest(field.contour, cv::Point(cnt.x, cnt.y), true);
         
-        if (distance <= 0.0) {        //outside of contour or on edge of contour
-            return false;
-        }
-        
-        return true;
+        return distance >= 0.0;
     }
 };
 
