@@ -227,8 +227,11 @@ def _find_sides(nsides, hough_lines, w, h):
     dist_thres = 10
     theta_thres = pi / 9  # 5 degrees
     best_lines = []
+    print(hough_lines)
     for linelist in hough_lines:
         line = linelist[0]
+        print(line)
+        print(line[0])
         if line[0] < 0:
             line[0] *= -1       #flip the line to be a positive distance
             line[1] -= pi
