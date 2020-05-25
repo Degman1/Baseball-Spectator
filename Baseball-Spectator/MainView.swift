@@ -10,19 +10,23 @@ import SwiftUI
 
 struct MainView: View {
     var body: some View {
-        NavigationView {
-            HStack {
-                VStack {
-                    importButton
-                        .offset(x: -60, y: -75)
-                    
+        ZStack {
+            NavigationView {
+                HStack {
+                    VStack {
+                        importButton
+                            .offset(x: -60, y: -75)
+                        
+                        Spacer()
+                        
+                        scoreboard
+                            .padding(EdgeInsets(top: 0, leading: 10, bottom: 50, trailing: 0))
+                    }
                     Spacer()
-                    
-                    scoreboard
-                        .padding(EdgeInsets(top: 0, leading: 10, bottom: 50, trailing: 0))
                 }
-                Spacer()
             }
+            
+            FrameExtractorViewControllerRepresentable()
         }
     }
     

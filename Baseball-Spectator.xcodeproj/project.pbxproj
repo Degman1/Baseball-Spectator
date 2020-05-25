@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63C177D4247C2B8200DAC60B /* FrameExtractorRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C177D3247C2B8200DAC60B /* FrameExtractorRepresentable.swift */; };
 		63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24A924799375002D0728 /* InfieldContourFitting.mm */; };
 		63FD24AC247993AF002D0728 /* Timer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AB247993AF002D0728 /* Timer.mm */; };
 		63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AD24799445002D0728 /* ImageProcessor.mm */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		63C177D3247C2B8200DAC60B /* FrameExtractorRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameExtractorRepresentable.swift; sourceTree = "<group>"; };
 		63FD24A924799375002D0728 /* InfieldContourFitting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InfieldContourFitting.mm; sourceTree = "<group>"; };
 		63FD24AB247993AF002D0728 /* Timer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Timer.mm; sourceTree = "<group>"; };
 		63FD24AD24799445002D0728 /* ImageProcessor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageProcessor.mm; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 				F604822A247591A900F71A68 /* MainView.swift */,
 				F6CA649924799F7E009721E0 /* Scoreboard.swift */,
 				F604823F2475A44400F71A68 /* CameraFrameExtraction.swift */,
+				63C177D3247C2B8200DAC60B /* FrameExtractorRepresentable.swift */,
 				F663C2122417E2CB00D88B17 /* ImageView.swift */,
 				F63EE61F23BFB02400B155B8 /* OpenCVWrapper */,
 				F63EE61123BFAE1300B155B8 /* Assets.xcassets */,
@@ -203,6 +206,7 @@
 				63FD24B0247994CE002D0728 /* ContourInfo.mm in Sources */,
 				F604822B247591A900F71A68 /* MainView.swift in Sources */,
 				63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */,
+				63C177D4247C2B8200DAC60B /* FrameExtractorRepresentable.swift in Sources */,
 				F60482402475A44400F71A68 /* CameraFrameExtraction.swift in Sources */,
 				63FD24AC247993AF002D0728 /* Timer.mm in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
@@ -356,6 +360,7 @@
 				);
 				GCC_NO_COMMON_BLOCKS = NO;
 				INFOPLIST_FILE = "Baseball-Spectator/Info.plist";
+				"INFOPLIST_FILE[sdk=*]" = "Baseball-Spectator/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

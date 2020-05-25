@@ -6,11 +6,12 @@
 //  Copyright © 2020 Joey Cohen. All rights reserved.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 import AVFoundation
 
-class ViewController: UIViewController, FrameExtractorDelegate {
+
+class FrameExtractorViewController: UIViewController, FrameExtractorDelegate {
     func captured(image: UIImage) {
         imageView.image = image
     }
@@ -23,6 +24,26 @@ class ViewController: UIViewController, FrameExtractorDelegate {
         super.viewDidLoad()
         frameExtractor = FrameExtractor()
         frameExtractor.delegate = self
+        
+        let view = UIView()
+        view.backgroundColor = .white
+        
+        if imageView == nil {
+            print("here")
+            self.view = view
+            return
+        }
+        
+        view.addSubview(imageView)
+        
+        /*
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20)
+        ])*/
+        
+        self.view = view
     }
 }
 
