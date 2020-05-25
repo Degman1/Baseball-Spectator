@@ -189,6 +189,34 @@ class InfieldContourFitting {
         return false;
     }
     
+    cv::Point getIntersection(cv::Vec2f line1, cv::Vec2f line2) {
+        // find the intersection between two lines in Hesse normal form
+        
+        cv::Point intersection;
+        intersection.x = -1;       //indicates that finding the intersection failed
+        intersection.y = -1;
+        
+        int rho1 = line1[0];
+        double theta1 = line1[1];
+        int rho2 = line2[0];
+        double theta2 = line2[1];
+        
+        if (abs(theta1 - theta2) < 1e-6) {
+            return intersection;
+        }
+        
+        double cos1 = cos(theta1);
+        double sin1 = sin(theta1);
+        double cos2 = cos(theta2);
+        double sin2 = sin(theta2);
+        
+        double denom = (cos1 * sin2) - (sin1 * cos2);
+        intersection.x = ((sin2 * rho1) - (sin1 * rho2)) / denom;
+        intersection.y = ((cos1 * rho2) - (cos2 * rho1)) / denom;
+        
+        return intersection;
+    }
+    
     vector<cv::Point> getCornersUsingExtremePoints(vector<cv::Point> contour) {
         vector<cv::Point> ret;
         return ret;
