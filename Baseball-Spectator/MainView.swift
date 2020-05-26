@@ -11,22 +11,21 @@ import SwiftUI
 struct MainView: View {
     var body: some View {
         ZStack {
-            NavigationView {
-                HStack {
-                    VStack {
-                        importButton
-                            .offset(x: -60, y: -75)
-                        
-                        Spacer()
-                        
-                        scoreboard
-                            .padding(EdgeInsets(top: 0, leading: 10, bottom: 50, trailing: 0))
-                    }
-                    Spacer()
-                }
-            }
-            
             FrameExtractorViewControllerRepresentable()
+            VStack {
+                HStack {
+                    scoreboard
+                        .padding(EdgeInsets(top: 11, leading: 10, bottom: 0, trailing: 0))
+                        //.offset(y: -50)
+                    
+                    Spacer()
+
+                    importButton
+                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
+                        .offset(y: -65)
+                }
+                Spacer()
+            }
         }
     }
     
@@ -45,6 +44,6 @@ struct MainView: View {
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        MainView().previewLayout(.fixed(width: 818, height: 414))
     }
 }

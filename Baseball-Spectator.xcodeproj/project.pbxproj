@@ -352,7 +352,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Baseball-Spectator/Preview Content\"";
-				DEVELOPMENT_TEAM = QRS872LFWU;
+				DEVELOPMENT_TEAM = XFW26PEUTK;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -366,7 +366,7 @@
 					"@executable_path/Frameworks",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "come.DavidGerard.Baseball-Spectator";
+				PRODUCT_BUNDLE_IDENTIFIER = "come.DavidGerard.Baseball-Spectators";
 				PRODUCT_NAME = "Baseball-Spectator";
 				SWIFT_OBJC_BRIDGING_HEADER = "Baseball-Spectator-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -382,7 +382,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Baseball-Spectator/Preview Content\"";
-				DEVELOPMENT_TEAM = QRS872LFWU;
+				DEVELOPMENT_TEAM = XFW26PEUTK;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -395,7 +395,7 @@
 					"@executable_path/Frameworks",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "come.DavidGerard.Baseball-Spectator";
+				PRODUCT_BUNDLE_IDENTIFIER = "come.DavidGerard.Baseball-Spectators";
 				PRODUCT_NAME = "Baseball-Spectator";
 				SWIFT_OBJC_BRIDGING_HEADER = "Baseball-Spectator-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

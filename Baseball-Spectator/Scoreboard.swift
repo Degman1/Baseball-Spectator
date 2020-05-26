@@ -39,7 +39,7 @@ struct Scoreboard: View {
     
     @State private var isPressed = false
     @State private var wFrame: CGFloat = 200
-    @State private var hFrame: CGFloat = 100
+    @State private var hFrame: CGFloat = 160
     
     var body: some View {
             ZStack {
@@ -81,10 +81,10 @@ struct Scoreboard: View {
                             self.isPressed.toggle()
                             if self.isPressed {
                                 self.wFrame = 350
-                                self.hFrame = 125
+                                self.hFrame = 185
                             } else {
                                 self.wFrame = 200
-                                self.hFrame = 100
+                                self.hFrame = 160
                             }
                         }) {
                             Divider().rotationEffect(.degrees(180))
@@ -100,7 +100,6 @@ struct Scoreboard: View {
                 }.background(Color.green)
             }
             .frame(width: self.wFrame, height: self.hFrame)
-            .rotationEffect(.degrees(-90))
     }
     
     var awayInnings: some View {
