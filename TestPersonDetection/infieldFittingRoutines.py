@@ -227,20 +227,22 @@ def _find_sides(nsides, hough_lines, w, h):
     dist_thres = 10
     theta_thres = pi / 9  # 5 degrees
     best_lines = []
-    print(hough_lines)
+
     for linelist in hough_lines:
         line = linelist[0]
-        print(line)
-        print(line[0])
+
         if line[0] < 0:
             line[0] *= -1       #flip the line to be a positive distance
             line[1] -= pi
+
+        print("line: " + str(line))
 
         coord_near_ref = _compute_line_near_reference(line, contour_center)
 
         if not best_lines or not _is_close(best_lines, line, coord_near_ref, dist_thres, theta_thres):
             # print('best line:', line[0], math.degrees(line[1]))
             best_lines.append((line, coord_near_ref))
+            print("  worked")
 
         if len(best_lines) == nsides:
             break
@@ -260,12 +262,21 @@ def _find_sides(nsides, hough_lines, w, h):
     used = set()
     used.add(iline1)
     while len(used) < nsides:
+        print("index 1: " + str(iline1))
+
         found = False
         for iline2 in range(nsides):
+            print("  index 2: " + str(iline2))
             if iline2 in used:
+                print("    already used")
                 continue
 
             inter = _intersection(best_lines[iline1][0], best_lines[iline2][0])
+
+            passed = inter is not None and inter[0] >= boundaries[0] and inter[0] <= boundaries[1] and inter[1] >= boundaries[2] and inter[1] <= boundaries[3]
+            
+            print("    passed test: " + str(passed))
+
             if inter is not None and \
                inter[0] >= boundaries[0] and inter[0] <= boundaries[1] and \
                inter[1] >= boundaries[2] and inter[1] <= boundaries[3]:

@@ -167,7 +167,7 @@ class ImageProcessor {
         InfieldContourFitting fit = InfieldContourFitting();
         vector<cv::Point> infieldCorners = fit.quadrilateralHoughFit(infield);
         
-        return infieldHull;
+        return infieldCorners;
     }
     
     private: vector<vector<cv::Point>> getPlayerContourLocations(cv::Mat fieldMask) {

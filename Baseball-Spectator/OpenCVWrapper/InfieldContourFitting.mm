@@ -49,21 +49,28 @@ class InfieldContourFitting {
         // now that we have a sufficient number of hough lines, pick the four best representative of the contour's four sides and find the intersection between those lines to get the four corners
         vector<cv::Point> result = getCornersUsingHoughLines(lines, contourInfo.width, contourInfo.height);
         
+        cout << result << "\n";
+        
+        // if getting the corners using hough lines failed, try again using extreme points of the contour
+        // TODO: find a better method than extreme points or make getCornersUsingHoughLines() more reliable
         if (result.empty() or result.size() != 4) {
-            // the quadrilateral fit using hough lines failed so try again using the extreme points
-            return getCornersUsingExtremePoints(contourInfo.contour);
+            cout << "failed, trying extrema" << "\n";
+            vector<cv::Point> ret = getCornersUsingExtremePoints(contourInfo.contour);
+            cout << ret << "\n\n";
+            return ret;
         } else {
+            cout << "worked!" << "\n\n";
             return result;
         }
     }
     
     vector<cv::Point> getCornersUsingHoughLines(vector<cv::Vec2f> houghLines, int width, int height) {
-        vector<cv::Point> contourCorners;       // eventually will hold the four corners of the contour
-                                                // return this empty vector to indicate failure
+        vector<cv::Point> emptyContourCorners;  // return this empty vector to indicate failure
+        
         int centerX = width / 2;
         int centerY = height / 2;
         
-        vector<int> boundaries;        // defines the boundaries by which
+        vector<int> boundaries;        // defines the boundaries by which each of the eventual corners should be inside
         boundaries.push_back(-100);
         boundaries.push_back(width + 100);
         boundaries.push_back(-100);
@@ -85,15 +92,19 @@ class InfieldContourFitting {
                 lineCopy[1] -= M_PI;
             }
             
+            cout << "line: " << lineCopy << "\n";
+            
             cv::Point coordinateNearReference = computeLineNearReference(lineCopy, centerX, centerY);
             
-            if (!bestLines.empty() or bestLines.size() != 0 or !isClose(bestLines, lineCopy, coordinateNearReference, distanceThreshold, thetaThreshold)) {
+            if (bestLines.empty() or bestLines.size() == 0 or !isClose(bestLines, lineCopy, coordinateNearReference, distanceThreshold, thetaThreshold)) {
                 cv::Vec4f goodLine;
                 goodLine[0] = lineCopy[0];
                 goodLine[1] = lineCopy[1];
                 goodLine[2] = coordinateNearReference.x;
                 goodLine[2] = coordinateNearReference.y;
                 bestLines.push_back(goodLine);
+                
+                cout << "  worked\n";
                 
                 // stop when we have 4 reference lines (four sides of the quadrilateral)
             }
@@ -103,8 +114,69 @@ class InfieldContourFitting {
             }
         }
         
+        cout << "\n";
+        
+        // if there are not four lines found, the fitting must have failed
         if (bestLines.size() != 4) {
-            return contourCorners;
+            return emptyContourCorners;
+        }
+        
+        vector<cv::Point> contourCorners;       // holds the four corners of the contour
+        
+        int line1Index = 0;         // start at the first line index
+        set<int> usedIndices;       // hold all the line indices that have already been used to find successfull intersections
+        
+        // start with the first index, so move it to used
+        usedIndices.insert(line1Index);
+        
+        // go through each possible combination of the four lines to find the four correct intersections
+        while (usedIndices.size() < 4) {        //while we have not found four...
+            cout << "index 1: " << line1Index << "\n";
+            
+            bool found = false;
+            
+            for (int line2Index = 0; line2Index < 4; line2Index++) {
+                cout << "  index 2: " << line2Index << "\n";
+                // continue to next iteration if the line2Index is already contained in usedIndices
+                if (usedIndices.find(line2Index) != usedIndices.end()) {
+                    cout << "    already used\n";
+                    continue;
+                }
+                
+                // find the intersection between the two
+                cv::Point intersection = getIntersection(bestLines[line1Index], bestLines[line2Index]);
+                
+                bool passedTest = (intersection.x != -1 and intersection.x >= boundaries[0] and intersection.x <= boundaries[1] and intersection.y >= boundaries[2] and intersection.y <= boundaries[3]);
+                cout << "    passed test: " << passedTest << "\n";
+                
+                
+                // if the intersection is poosible and near where we expect it should be, then it is a correct intersection
+                if (intersection.x != -1 and intersection.x >= boundaries[0] and intersection.x <= boundaries[1] and intersection.y >= boundaries[2] and intersection.y <= boundaries[3]) {
+                    contourCorners.push_back(intersection);    // add the intersection to the list of contour corners
+                    usedIndices.insert(line2Index);
+                    line1Index = line2Index;
+                    found = true;
+                    cout << "\t- found inter\n";
+                    break;
+                }
+            }
+            
+            if (!found) {
+                return emptyContourCorners;
+            }
+        }
+        
+        // still need to add the final intersection since we only have three now
+        cv::Point intersection = getIntersection(bestLines[0], bestLines[line1Index]);
+        
+        // once again make sure there is an intersection and that intersection is within the general area that we expect it to be
+        if (intersection.x != -1 and intersection.x >= boundaries[0] and intersection.x <= boundaries[1] and intersection.y >= boundaries[2] and intersection.y <= boundaries[3]) {
+            contourCorners.push_back(intersection);    // add the intersection to the list of contour corners
+        }
+        
+        // if there are not four corners in the list, the method failed
+        if (contourCorners.size() != 4) {
+            return emptyContourCorners;
         }
         
         return contourCorners;
@@ -189,8 +261,9 @@ class InfieldContourFitting {
         return false;
     }
     
-    cv::Point getIntersection(cv::Vec2f line1, cv::Vec2f line2) {
+    cv::Point getIntersection(cv::Vec4f line1, cv::Vec4f line2) {
         // find the intersection between two lines in Hesse normal form
+        // ignore the last 2 elements from each line, they are left over from before and are not longer needed
         
         cv::Point intersection;
         intersection.x = -1;       //indicates that finding the intersection failed
@@ -218,7 +291,52 @@ class InfieldContourFitting {
     }
     
     vector<cv::Point> getCornersUsingExtremePoints(vector<cv::Point> contour) {
-        vector<cv::Point> ret;
-        return ret;
+        int minY = -1;
+        cv::Point minYPoint;
+        int maxY = -1;
+        cv::Point maxYPoint;
+        
+        for (cv::Point point : contour) {           // find the lowest and highest points in the contour
+            if (minY == -1 or point.y < minY) {
+                minYPoint = point;
+                minY = point.y;
+            }
+            if (maxY == -1 or point.y > maxY) {
+                maxYPoint = point;
+                maxY = point.y;
+            }
+        }
+                
+        int height = maxYPoint.y - minYPoint.y;
+        
+        vector<cv::Point> extremePoints;        // order will be: top left, top right, bottom right, bottom left
+        extremePoints.push_back(maxYPoint);
+        extremePoints.push_back(maxYPoint);
+        extremePoints.push_back(minYPoint);
+        extremePoints.push_back(minYPoint);
+        
+        int dyTop = int(height / 5.5);           // for image7: 10
+        int dyBottom = int(height / 2.75);       // for image7: 20
+        
+        for (cv::Point pt : contour) {           // corrections if possible (carefull: pt is in shape of [[0, 0]])
+            if (maxY - dyBottom < pt.y and maxY + dyBottom > pt.y) {
+                if (pt.x < extremePoints[0].x) { // top left
+                    extremePoints[0] = pt;
+                }
+                if (pt.x > extremePoints[1].x) { // top right
+                    extremePoints[1] = pt;
+                }
+            }
+            if (minY - dyTop < pt.y and minY + dyTop > pt.y) {
+                if (pt.x > extremePoints[2].x) {  // bottom right
+                    extremePoints[2] = pt;
+                }
+                if (pt.x < extremePoints[3].x) {  // bottom left
+                    extremePoints[3] = pt;
+                }
+            }
+        }
+        
+        return extremePoints;
     }
 };
