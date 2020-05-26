@@ -16,13 +16,12 @@ struct MainView: View {
                 HStack {
                     scoreboard
                         .padding(EdgeInsets(top: 11, leading: 10, bottom: 0, trailing: 0))
-                        //.offset(y: -50)
                     
                     Spacer()
 
                     importButton
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
-                        .offset(y: -65)
+                        .offset(y: -68)
                 }
                 Spacer()
             }
