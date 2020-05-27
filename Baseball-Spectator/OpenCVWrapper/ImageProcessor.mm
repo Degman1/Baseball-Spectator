@@ -81,11 +81,10 @@ class ImageProcessor {
         cv::bitwise_or(fieldMask, darkBrownMask, fieldMask);
         
         // Get the location of the standard position of each of the fielders
-        vector<cv::Point> infieldContour = getPositionLocations(greenMask, expectedHomePlateAngle);
+        vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle);
         
         // Get the location of each of the actual players on the field
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
-        playerContours.push_back(infieldContour);
         
         // resizedMat wasn't in correct format before, so change it to RGB here for in-color drawing
         cv::cvtColor(hsv, resizedMat, cv::COLOR_HSV2RGB);
@@ -94,10 +93,16 @@ class ImageProcessor {
         cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 0, 0), 3);
         
         int b = 0;
-        int add = int(255 / infieldContour.size());     // change the color to differentiate the bases
-        for (cv::Point pt : infieldContour) {
+        int add = int(255 / expectedPositions.size());     // change the color to differentiate the bases
+        for (cv::Point pt : expectedPositions) {
             cv::circle(resizedMat, pt, 15, cv::Scalar(0, 0, b), cv::FILLED);
             b += add;
+        }
+        
+        map<string, vector<cv::Point>> playersByPosition = getPlayersByPosition(playerContours, expectedPositions);
+        
+        for ( const auto &p : playersByPosition ) {
+           cout << p.first << '\t' << p.second << "\n";
         }
         
         // Convert the Mat image to a UIImage
@@ -107,10 +112,6 @@ class ImageProcessor {
         cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
 
         return result;
-    }
-    
-    static bool sortByArea(ContourInfo &struct1, ContourInfo &struct2) {
-        return ((struct1.width * struct1.height) > (struct2.width * struct2.height));
     }
     
     private:
@@ -187,9 +188,16 @@ class ImageProcessor {
             return failedVec;
         }
         
-        vector<cv::Point> bases = getBasesInOrder(infieldCorners, expectedHomePlateAngle);      // get the bases in order of home, first, second, third
+        vector<cv::Point> bases = putBasesInOrder(infieldCorners, expectedHomePlateAngle);      // get the bases in order of pitcher, home, first, second, third
         
-        return bases;
+        vector<cv::Point> expectedPositions = calculateExpectedPositions(bases[1], bases[2], bases[3], bases[4]);
+        expectedPositions.insert(expectedPositions.begin(), bases[0]);
+        
+        return expectedPositions;
+    }
+    
+    static bool sortByArea(ContourInfo &struct1, ContourInfo &struct2) {
+        return ((struct1.width * struct1.height) > (struct2.width * struct2.height));
     }
     
     private: vector<vector<cv::Point>> getPlayerContourLocations(cv::Mat fieldMask) {
@@ -290,7 +298,7 @@ class ImageProcessor {
         return distance >= 0.0;
     }
     
-    vector<cv::Point> getBasesInOrder(vector<cv::Point> unorderedBases, int expectedHomePlateAngle) {
+    vector<cv::Point> putBasesInOrder(vector<cv::Point> unorderedBases, int expectedHomePlateAngle) {
         vector<cv::Point> failedVec;
         
         cv::Point pitcher;
@@ -351,12 +359,191 @@ class ImageProcessor {
         bases.push_back(secondBase);
         bases.push_back(thirdBase);
         
-        cout << "home: " << homePlate << "\n";
-        cout << "first: " << firstBase << "\n";
-        cout << "second: " << secondBase << "\n";
-        cout << "third: " << thirdBase << "\n";
-        
         return bases;
+    }
+    
+    vector<cv::Point> calculateExpectedPositions(cv::Point homePlate, cv::Point firstBase, cv::Point secondBase, cv::Point thirdBase) {
+        int homeToFirstDist = getDistBetweenPoints(homePlate, firstBase);
+        int firstToSecondDist = getDistBetweenPoints(firstBase, secondBase);
+        int secondToThirdDist = getDistBetweenPoints(secondBase, thirdBase);
+        int thirdToHomeDist = getDistBetweenPoints(thirdBase, homePlate);
+        // TODO: could potentially do more with this since we know each of these in real life should be around 90 ft
+        
+        int side1 = (homeToFirstDist + secondToThirdDist) / 2;   // average the two sides of the infield out to get a more consistent elevation multiplier
+        int side2 = (firstToSecondDist + thirdToHomeDist) / 2;   // represents side1 and side2 of a parallelogram fitted around the infield grass
+        
+        float distRatio = side1 / side2;
+        
+        vector<cv::Vec3f> sortedBases;
+        sortedBases.push_back(addBaseID(homePlate, 0));
+        sortedBases.push_back(addBaseID(firstBase, 1));
+        sortedBases.push_back(addBaseID(secondBase, 2));
+        sortedBases.push_back(addBaseID(thirdBase, 3));
+        
+        // sort the list by the highest y coordinate (lowest in image) to find which base the user is closest to
+        sort(sortedBases.begin(), sortedBases.end(), sortBySecondVectorIndex);
+        
+        // TODO: when able to get a real image test set, revise these values and change them base on the distance ratio as set up below
+        
+        cv::Point first, second, shortstop, third, leftfield, centerfield, rightfield;
+        
+        if (sortedBases[0][2] == 2.0 or (sortedBases[0][2] == 1.0 and sortedBases[1][2] == 2.0) or (sortedBases[0][2] == 3.0 and sortedBases[1][2] == 2.0)) {    //If the user is closer towards the outfield than the infield...
+            cout << "Sitting on the outfield side" << "\n";
+            
+            // use vector operations to calculate expected positions from the coordinates of the bases and the elevation multipliers
+            if (distRatio >= 4.0) {        // first to second is smaller, so refine right infield, leftfield, and centerfield (same amount at if <= 0.25)
+                first = calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.5);
+                second = calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.5);
+                shortstop = calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.5);
+                third = calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.5);
+                leftfield = calculatePosition(homePlate, secondBase, thirdBase, 0.8, 3.0);
+                centerfield.x = homePlate.x + (3.0 * (secondBase.x - homePlate.x));
+                centerfield.y = homePlate.y + (3.0 * (secondBase.y - homePlate.y));
+                rightfield = calculatePosition(homePlate, secondBase, firstBase, 0.7, 3.0);
+            } else if (distRatio <= 0.25) {     // home to first is smaller, so refine left infield, rightfield, and centerfield (same as if >= 4.0)
+                first = calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.5);
+                second = calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.5);
+                shortstop = calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.5);
+                third = calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.5);
+                leftfield = calculatePosition(homePlate, secondBase, thirdBase, 0.8, 3.0);
+                centerfield.x = homePlate.x + (3.0 * (secondBase.x - homePlate.x));
+                centerfield.y = homePlate.y + (3.0 * (secondBase.y - homePlate.y));
+                rightfield = calculatePosition(homePlate, secondBase, firstBase, 0.7, 3.0);
+            } else {                       // normal
+                first = calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.5);
+                second = calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.5);
+                shortstop = calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.5);
+                third = calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.5);
+                leftfield = calculatePosition(homePlate, secondBase, thirdBase, 0.8, 3.0);
+                centerfield.x = homePlate.x + (3.0 * (secondBase.x - homePlate.x));
+                centerfield.y = homePlate.y + (3.0 * (secondBase.y - homePlate.y));
+                rightfield = calculatePosition(homePlate, secondBase, firstBase, 0.7, 3.0);
+            }
+        } else {       //if the user is closer to the infield...
+            cout << "Sitting on the infield side" << "\n";
+            
+            if (distRatio >= 4.0) {        // first to second is smaller, so refine right infield, leftfield, and centerfield (same amount at if <= 0.25)
+                first = calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.25);
+                second = calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.25);
+                shortstop = calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.2);
+                third = calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.2);
+                leftfield = calculatePosition(homePlate, secondBase, thirdBase, 0.6, 1.7);
+                centerfield.x = homePlate.x + (1.5 * (secondBase.x - homePlate.x));
+                centerfield.y = homePlate.y + (1.5 * (secondBase.y - homePlate.y));
+                rightfield = calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7);
+            } else if (distRatio <= 0.25) {     // home to first is smaller, so refine left infield, rightfield, and centerfield (same as if >= 4.0)
+                first = calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.25);
+                second = calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.25);
+                shortstop = calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.2);
+                third = calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.2);
+                leftfield = calculatePosition(homePlate, secondBase, thirdBase, 0.7, 1.7);
+                centerfield.x = homePlate.x + (1.5 * (secondBase.x - homePlate.x));
+                centerfield.y = homePlate.y + (1.5 * (secondBase.y - homePlate.y));
+                rightfield = calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7);
+            } else {                       // normal
+                first = calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.25);
+                second = calculatePosition(homePlate, secondBase, firstBase, 0.4, 1.25);
+                shortstop = calculatePosition(homePlate, secondBase, thirdBase, 0.4, 1.2);
+                third = calculatePosition(homePlate, secondBase, thirdBase, 0.8, 1.2);
+                leftfield = calculatePosition(homePlate, secondBase, thirdBase, 0.7, 1.7);
+                centerfield.x = homePlate.x + (1.5 * (secondBase.x - homePlate.x));
+                centerfield.y = homePlate.y + (1.5 * (secondBase.y - homePlate.y));
+                rightfield = calculatePosition(homePlate, secondBase, firstBase, 0.7, 1.7);
+            }
+        }
+        
+        vector<cv::Point> expectedPositions;
+        expectedPositions.push_back(homePlate);
+        expectedPositions.push_back(first);
+        expectedPositions.push_back(second);
+        expectedPositions.push_back(shortstop);
+        expectedPositions.push_back(third);
+        expectedPositions.push_back(leftfield);
+        expectedPositions.push_back(centerfield);
+        expectedPositions.push_back(rightfield);
+        
+        return expectedPositions;
+    }
+    
+    cv::Point calculatePosition(cv::Point homePlate, cv::Point base1, cv::Point base2, float betweenBaseMultiplier, float distanceToHomeMultiplier) {
+        //Calculate the expected postition of a player a certain percent of the way between two bases and a certain percent of the way from home using vector operations
+        
+        cv::Point translatedPoint;
+        translatedPoint.x = (homePlate.x + ((base1.x + (betweenBaseMultiplier * (base2.x - base1.x))) - homePlate.x ) * distanceToHomeMultiplier);
+        translatedPoint.y = (homePlate.y + ((base1.y + (betweenBaseMultiplier * (base2.y - base1.y))) - homePlate.y ) * distanceToHomeMultiplier);
+        return translatedPoint;
+    }
+    
+    cv::Vec3f addBaseID(cv::Point point, int idNumber) {
+        cv::Vec3f vec;
+        vec[0] = point.x;
+        vec[1] = point.y;
+        vec[2] = idNumber;
+        return vec;
+    }
+    
+    static bool sortBySecondVectorIndex(cv::Vec3f &struct1, cv::Vec3f &struct2) {
+        return struct1[1] > struct2[1];
+    }
+    
+    map<string, vector<cv::Point>> getPlayersByPosition(vector<vector<cv::Point>> playerContours, vector<cv::Point> expectedPositions) {
+        map<string, vector<cv::Point>> playersByPosition;
+        vector<cv::Point> emptyVec;
+        
+        // populate the map with the position keys
+        playersByPosition["pitcher"] = emptyVec;
+        playersByPosition["catcher"] = emptyVec;
+        playersByPosition["first"] = emptyVec;
+        playersByPosition["second"] = emptyVec;
+        playersByPosition["shortstop"] = emptyVec;
+        playersByPosition["third"] = emptyVec;
+        playersByPosition["leftfield"] = emptyVec;
+        playersByPosition["centerfield"] = emptyVec;
+        playersByPosition["rightfield"] = emptyVec;
+                
+        for (vector<cv::Point> contour: playerContours) {
+            vector<cv::Point> contourCopy = contour;
+            sort(contourCopy.begin(), contourCopy.end(), sortByYCoordinate);
+            cv::Point lowestPoint = contourCopy[0];
+            
+            int closestPositionIndex = -1;
+            int closestDistance = -1;
+            
+            for (int i = 0; i < 9; i++) {
+                int dist = getDistBetweenPoints(lowestPoint, expectedPositions[i]);
+                
+                if (closestPositionIndex == -1 or dist < closestDistance) {
+                    closestPositionIndex = i;
+                    closestDistance = dist;
+                }
+            }
+            
+            switch (closestPositionIndex) {
+                case 0: playersByPosition["pitcher"].push_back(lowestPoint);
+                    break;
+                case 1: playersByPosition["catcher"].push_back(lowestPoint);
+                    break;
+                case 2: playersByPosition["first"].push_back(lowestPoint);
+                    break;
+                case 3: playersByPosition["second"].push_back(lowestPoint);
+                    break;
+                case 4: playersByPosition["shortstop"].push_back(lowestPoint);
+                    break;
+                case 5: playersByPosition["third"].push_back(lowestPoint);
+                    break;
+                case 6: playersByPosition["leftfield"].push_back(lowestPoint);
+                    break;
+                case 7: playersByPosition["rightfield"].push_back(lowestPoint);
+                    break;
+                case 8: playersByPosition["centerfield"].push_back(lowestPoint);
+                    break;
+            }
+        }
+        return playersByPosition;
+    }
+    
+    static bool sortByYCoordinate(cv::Point &struct1, cv::Point &struct2) {
+        return struct1.y > struct2.y;
     }
     
     int getDistBetweenPoints(cv::Point pt1, cv::Point pt2) {
