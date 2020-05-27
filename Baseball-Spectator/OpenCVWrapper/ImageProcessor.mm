@@ -81,10 +81,14 @@ class ImageProcessor {
         
         // Get the location of each of the actual players on the field
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
+        playerContours.push_back(infieldContour);
+        
+        // resizedMat wasn't in correct format before, so change it to RGB here for in-color drawing
+        cv::cvtColor(hsv, resizedMat, cv::COLOR_HSV2RGB);
         
         // Draw contours on image for DEBUG
-        playerContours.push_back(infieldContour);
-        cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 255, 0), 3);
+        cv::Scalar color = cv::Scalar(255, 0, 0);
+        cv::drawContours(resizedMat, playerContours, -1, color, 3);
         
         // Convert the Mat image to a UIImage
         UIImage *result = MatToUIImage(resizedMat);
