@@ -57,7 +57,7 @@ class ImageProcessor {
         double scalePercent = newHeight / image.size.height;
         int width = int(image.size.width * scalePercent);
         cv::resize(mat, resizedMat, cv::Size(width, newHeight), 0, 0, cv::INTER_AREA);
-        
+                
         timer.start();      //NOTE: Start timer here because the image scaling takes a long time and won't be performed in the final product
         
         // Convert to HSV colorspace
@@ -77,13 +77,20 @@ class ImageProcessor {
         cv::bitwise_or(fieldMask, darkBrownMask, fieldMask);
         
         // Get the location of the standard position of each of the fielders
-        vector<cv::Point> infieldContour = getPositionLocations(greenMask, expectedHomePlateAngle);
+        vector<cv::Vec4f> infieldContour = getPositionLocations(greenMask, expectedHomePlateAngle);
+        cv::Point offset;
+        offset.x = infieldContour[4][0];
+        offset.y = infieldContour[4][1];
+        
+        for (int i = 0; i < 4; i++) {
+            resizedMat = plotHoughLine(resizedMat, infieldContour[i][0], infieldContour[i][1], offset);
+        }
         
         // Get the location of each of the actual players on the field
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
         
         // Draw contours on image for DEBUG
-        playerContours.push_back(infieldContour);
+        ///playerContours.push_back(infieldContour);
         cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 255, 0), 3);
         
         // Convert the Mat image to a UIImage
@@ -95,12 +102,33 @@ class ImageProcessor {
         return result;
     }
     
+    cv::Mat plotHoughLine(cv::Mat frame, int rho, double theta, cv::Point offset) {
+        // Given (rho, theta) of a line in Hesse form, plot it on a frame
+        
+        cv::Mat drawingFrame = frame;       //create a copy of the original frame to draw on
+        
+        double a = cos(theta);
+        double b = sin(theta);
+        double x0 = a * rho;
+        double y0 = b * rho;
+        
+        cv::Point pt1;      //find 2 points on the line to define the line
+        pt1.x = int(x0 + 1000*(-b)) + offset.x;
+        pt1.y = int(y0 + 1000*(a)) + offset.y;
+        cv::Point pt2;
+        pt2.x = int(x0 - 1000*(-b)) + offset.x;
+        pt2.y = int(y0 - 1000*(a)) + offset.y;
+        
+        cv::line(drawingFrame, pt1, pt2, cv::Scalar(0, 0, 255), 3);
+        return drawingFrame;
+    }
+    
     static bool sortByArea(ContourInfo &struct1, ContourInfo &struct2) {
         return ((struct1.width * struct1.height) > (struct2.width * struct2.height));
     }
     
     private:
-    vector<cv::Point> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle) {
+    vector<cv::Vec4f> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle) {
         /*
          Sub-processing routine to find the location of each of the game positions
 
@@ -165,7 +193,7 @@ class ImageProcessor {
         infield.contour = infieldHull;
         
         InfieldContourFitting fit = InfieldContourFitting();
-        vector<cv::Point> infieldCorners = fit.quadrilateralHoughFit(infield);
+        vector<cv::Vec4f> infieldCorners = fit.quadrilateralHoughFit(infield);
         
         return infieldCorners;
     }

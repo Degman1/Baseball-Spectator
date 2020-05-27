@@ -16,7 +16,7 @@ using namespace std;
 
 class InfieldContourFitting {
     public:
-    vector<cv::Point> quadrilateralHoughFit(ContourInfo contourInfo) {
+    vector<cv::Vec4f> quadrilateralHoughFit(ContourInfo contourInfo) {
         // Use the OpenCV Hough Finding algorigthm to find the closest quadrilateral fit for the given contour
         
         vector<cv::Point> quadFit;
@@ -36,19 +36,26 @@ class InfieldContourFitting {
         
         // redraw the shifted contour onto the new image (perfectly fits in the image)
         cv::drawContours(contourPlot, displacedContourForDrawing, -1, cv::Scalar(255, 255, 255), 1);
-                
+        
         // find all the hough lines in the image
         vector<cv::Vec2f> lines;
         cv::HoughLines(contourPlot, lines, 2, M_PI / 180, 80);
         
-        if (lines.empty() or lines.size() < 4) {
+        /*if (lines.empty() or lines.size() < 4) {
             // the quadrilateral fit failed, so try again using the extreme points
             return getCornersUsingExtremePoints(contourInfo.contour);
-        }
+        }*/
         
         // now that we have a sufficient number of hough lines, pick the four best representative of the contour's four sides and find the intersection between those lines to get the four corners
-        vector<cv::Point> result = getCornersUsingHoughLines(lines, contourInfo.width, contourInfo.height);
+        vector<cv::Vec4f> result = getCornersUsingHoughLines(lines, contourInfo.width, contourInfo.height);
         
+        cv::Vec4f off;
+        off[0] = offset.x;
+        off[1] = offset.y;
+        result.push_back(off);
+        
+        return result;
+        /*
         cout << result << "\n";
         
         // if getting the corners using hough lines failed, try again using extreme points of the contour
@@ -60,11 +67,11 @@ class InfieldContourFitting {
             return ret;
         } else {
             cout << "worked!" << "\n\n";
-            return result;
-        }
+            return result;          //TODO: offset these points!!!
+        }*/
     }
     
-    vector<cv::Point> getCornersUsingHoughLines(vector<cv::Vec2f> houghLines, int width, int height) {
+    vector<cv::Vec4f> getCornersUsingHoughLines(vector<cv::Vec2f> houghLines, int width, int height) {
         vector<cv::Point> emptyContourCorners;  // return this empty vector to indicate failure
         
         int centerX = width / 2;
@@ -77,7 +84,7 @@ class InfieldContourFitting {
         boundaries.push_back(height + 100);
         
         int distanceThreshold = 10;
-        double thetaThreshold = M_PI / 9;
+        double thetaThreshold = M_PI / 12;
         vector<cv::Vec4f> bestLines;
         
         // go through each of the lines and attempt to find the best four that fit the contour
@@ -94,17 +101,19 @@ class InfieldContourFitting {
             
             cout << "line: " << lineCopy << "\n";
             
-            cv::Point coordinateNearReference = computeLineNearReference(lineCopy, centerX, centerY);
+            cv::Vec2f coordinateNearReference = computeLineNearReference(lineCopy, centerX, centerY);
+            
+            cout << "  coordNearRef: " << coordinateNearReference << "\n";
             
             if (bestLines.empty() or bestLines.size() == 0 or !isClose(bestLines, lineCopy, coordinateNearReference, distanceThreshold, thetaThreshold)) {
                 cv::Vec4f goodLine;
                 goodLine[0] = lineCopy[0];
                 goodLine[1] = lineCopy[1];
-                goodLine[2] = coordinateNearReference.x;
-                goodLine[2] = coordinateNearReference.y;
+                goodLine[2] = coordinateNearReference[0];
+                goodLine[3] = coordinateNearReference[1];
                 bestLines.push_back(goodLine);
                 
-                cout << "  worked\n";
+                cout << "    worked\n";
                 
                 // stop when we have 4 reference lines (four sides of the quadrilateral)
             }
@@ -116,6 +125,8 @@ class InfieldContourFitting {
         
         cout << "\n";
         
+        return bestLines;
+        /*
         // if there are not four lines found, the fitting must have failed
         if (bestLines.size() != 4) {
             return emptyContourCorners;
@@ -179,7 +190,7 @@ class InfieldContourFitting {
             return emptyContourCorners;
         }
         
-        return contourCorners;
+        return contourCorners;*/
     }
     
     vector<cv::Point> offsetContour(vector<cv::Point> contour, cv::Point offset, bool subtract = false) {
@@ -198,7 +209,7 @@ class InfieldContourFitting {
         return resultVector;
     }
     
-    cv::Point computeLineNearReference(cv::Vec2f line, int contourCenterX, int contourCenterY) {
+    cv::Vec2f computeLineNearReference(cv::Vec2f line, int contourCenterX, int contourCenterY) {
         int rho = line[0];
         double theta = line[1];
 
@@ -207,37 +218,37 @@ class InfieldContourFitting {
         double x = cosTheta * rho;
         double y = sinTheta * rho;
         
-        cv::Point pointNearReference;   // -1 represents None
+        cv::Vec2f pointNearReference;   // -1 represents None
         
         if (abs(cosTheta) < 1e-6) {
-            pointNearReference.x = -1;
-            pointNearReference.y = y;
+            pointNearReference[0] = -1;
+            pointNearReference[1] = y;
         } else if (abs(sinTheta) < 1e-6) {
-            pointNearReference.x = x;
-            pointNearReference.y = -1;
+            pointNearReference[0] = x;
+            pointNearReference[1] = -1;
         } else {
-            pointNearReference.x = x + (y - contourCenterY) * sinTheta / cosTheta;
-            pointNearReference.y = y + (x - contourCenterX) * cosTheta / sinTheta;
+            pointNearReference[0] = x + (y - contourCenterY) * sinTheta / cosTheta;
+            pointNearReference[1] = y + (x - contourCenterX) * cosTheta / sinTheta;
         }
         
         return pointNearReference;
     }
     
-    bool isClose(vector<cv::Vec4f> bestLines, cv::Vec2f candidateLine, cv::Point coordinateNearReference, int distanceThreshold, double thetaThreshold) {
+    bool isClose(vector<cv::Vec4f> bestLines, cv::Vec2f candidateLine, cv::Vec2f coordinateNearReference, int distanceThreshold, double thetaThreshold) {
         //int candidateRho = candidateLine[0];      //was never actually used
         double candidateTheta = candidateLine[1];
         
         for (cv::Vec4f line : bestLines) {
             vector<double> deltaDistances;
             
-            if (coordinateNearReference.x != -1 and line[2] != -1) {
-                deltaDistances.push_back(abs(coordinateNearReference.x - line[2]));
+            if (coordinateNearReference[0] != -1 and line[2] != -1) {
+                deltaDistances.push_back(abs(coordinateNearReference[0] - line[2]));
             }
-            if (coordinateNearReference.y != -1 and line[3] != -1) {
-                deltaDistances.push_back(abs(coordinateNearReference.y - line[3]));
+            if (coordinateNearReference[1] != -1 and line[3] != -1) {
+                deltaDistances.push_back(abs(coordinateNearReference[1] - line[3]));
             }
             if (deltaDistances.empty()) {
-                return false;
+                return true;
             }
             
             double deltaDistance = *min_element(deltaDistances.begin(), deltaDistances.end());

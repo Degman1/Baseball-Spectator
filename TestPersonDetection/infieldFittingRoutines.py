@@ -239,6 +239,8 @@ def _find_sides(nsides, hough_lines, w, h):
 
         coord_near_ref = _compute_line_near_reference(line, contour_center)
 
+        print("coordNearRef: " + str(coord_near_ref))
+
         if not best_lines or not _is_close(best_lines, line, coord_near_ref, dist_thres, theta_thres):
             # print('best line:', line[0], math.degrees(line[1]))
             best_lines.append((line, coord_near_ref))
@@ -250,7 +252,7 @@ def _find_sides(nsides, hough_lines, w, h):
     if len(best_lines) != nsides:
         # print("hough_fit: found %s lines" % len(best_lines))
         return None
-
+    print()
     # print('best')
     # for l in best_lines:
     #     print('   ', l[0][0], degrees(l[0][1]))
