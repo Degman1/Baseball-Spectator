@@ -18,7 +18,7 @@ struct ContentView: View {
 //            MainView()
 //        }
         ZStack {
-            self.testProcessing(uiimage: UIImage(named: "image\(imageID).jpg")!)
+            self.testProcessing(imageID: imageID)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
             //Text("\(OpenCVWrapper.openCVVersionString())")
@@ -27,8 +27,9 @@ struct ContentView: View {
         }
     }
     
-    func testProcessing(uiimage: UIImage) -> Image {
-        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: 176.74)
+    func testProcessing(imageID: Int) -> Image {
+        let uiimage = UIImage(named: "image\(imageID).jpg")!
+        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: HOME_PLATE_ANGLES[imageID - 1])
         return Image(uiImage: res)
     }
 }

@@ -47,6 +47,10 @@ class ImageProcessor {
             8. RETURN each players' bottom point and their corresponding position
         */
         
+        if (expectedHomePlateAngle >= 360 or expectedHomePlateAngle <= -360) {     //no homePlateAngle is provided, so no point in going through processing
+            return image;
+        }
+        
         cv::Mat mat, resizedMat, hsv, greenMask, brownMask, darkBrownMask, fieldMask, erosion;
         
         UIImageToMat(image, mat);
@@ -87,8 +91,14 @@ class ImageProcessor {
         cv::cvtColor(hsv, resizedMat, cv::COLOR_HSV2RGB);
         
         // Draw contours on image for DEBUG
-        cv::Scalar color = cv::Scalar(255, 0, 0);
-        cv::drawContours(resizedMat, playerContours, -1, color, 3);
+        cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 0, 0), 3);
+        
+        int b = 0;
+        int add = int(255 / infieldContour.size());     // change the color to differentiate the bases
+        for (cv::Point pt : infieldContour) {
+            cv::circle(resizedMat, pt, 15, cv::Scalar(0, 0, b), cv::FILLED);
+            b += add;
+        }
         
         // Convert the Mat image to a UIImage
         UIImage *result = MatToUIImage(resizedMat);
@@ -120,6 +130,8 @@ class ImageProcessor {
         */
         
         cv::Mat erosion;
+        
+        vector<cv::Point> failedVec;
         
         // Erode the image to remove impurities
         cv::erode(greenMask, erosion, getStructuringElement(cv::MORPH_RECT, cv::Size(5, 4)));
@@ -171,7 +183,13 @@ class ImageProcessor {
         InfieldContourFitting fit = InfieldContourFitting();
         vector<cv::Point> infieldCorners = fit.quadrilateralHoughFit(infield);
         
-        return infieldCorners;
+        if (infieldCorners.empty() or infieldCorners.size() == 0) {
+            return failedVec;
+        }
+        
+        vector<cv::Point> bases = getBasesInOrder(infieldCorners, expectedHomePlateAngle);      // get the bases in order of home, first, second, third
+        
+        return bases;
     }
     
     private: vector<vector<cv::Point>> getPlayerContourLocations(cv::Mat fieldMask) {
@@ -271,5 +289,77 @@ class ImageProcessor {
         
         return distance >= 0.0;
     }
-};
+    
+    vector<cv::Point> getBasesInOrder(vector<cv::Point> unorderedBases, int expectedHomePlateAngle) {
+        vector<cv::Point> failedVec;
+        
+        cv::Point pitcher;
+        pitcher.x = (unorderedBases[0].x + unorderedBases[1].x + unorderedBases[2].x + unorderedBases[3].x) / 4;
+        pitcher.y = (unorderedBases[0].y + unorderedBases[1].y + unorderedBases[2].y + unorderedBases[3].y) / 4;
+        
+        int da = 361;               // delta angle starting value
+        int homePlateIndex = -1;
+        
+        for (int i = 0; i < unorderedBases.size(); i++) {
+            int x = unorderedBases[i].x - pitcher.x;
+            int y = pitcher.y - unorderedBases[i].y;           // flip because y goes up as the pixel location goes down
+            float angle = atan2(y, x) * (180 / M_PI);
+            
+            float daTest = abs(angle - expectedHomePlateAngle);   //TODO: use the device's gyroscope to adjust the expected angle based on the device's rotation
+            
+            if (daTest < da) {
+                da = daTest;
+                homePlateIndex = i;
+            }
+        }
+        
+        if (homePlateIndex == -1) {
+            return failedVec;
+        }
+        
+        cv::Point homePlate = unorderedBases[homePlateIndex];
+        cv::Point secondBase = unorderedBases[(homePlateIndex + 2) % 4];      // can do this since the corners are in order, either clockwise or counter-clockwise
+        
+        // Find which is first base and which is third base:
+        int testBaseIndex = (homePlateIndex + 1) % 4;
+        int x = unorderedBases[testBaseIndex].x - pitcher.x;
+        int y = pitcher.y - unorderedBases[testBaseIndex].y;
+        double angle = atan2(y, x) * (180 / M_PI);
 
+        if (angle < 0) {
+            angle += 360;
+        }
+        if (expectedHomePlateAngle < 0) {
+            expectedHomePlateAngle += 360;
+        }
+        
+        cv::Point firstBase, thirdBase;
+        
+        // first base must be the next base if moving in a counter-clockwise direction in relation to the pitcher's mound
+        if ((angle > expectedHomePlateAngle and angle < expectedHomePlateAngle + 180)  or (angle + 360 > expectedHomePlateAngle and angle + 360 < expectedHomePlateAngle + 180)) {
+            firstBase = unorderedBases[(homePlateIndex + 1) % 4];
+            thirdBase = unorderedBases[(homePlateIndex + 3) % 4];
+        } else {
+            firstBase = unorderedBases[(homePlateIndex + 3) % 4];
+            thirdBase = unorderedBases[(homePlateIndex + 1) % 4];
+        }
+        
+        vector<cv::Point> bases;
+        bases.push_back(pitcher);
+        bases.push_back(homePlate);
+        bases.push_back(firstBase);
+        bases.push_back(secondBase);
+        bases.push_back(thirdBase);
+        
+        cout << "home: " << homePlate << "\n";
+        cout << "first: " << firstBase << "\n";
+        cout << "second: " << secondBase << "\n";
+        cout << "third: " << thirdBase << "\n";
+        
+        return bases;
+    }
+    
+    int getDistBetweenPoints(cv::Point pt1, cv::Point pt2) {
+        return sqrt( pow((pt1.x - pt2.x), 2) + pow((pt1.y - pt2.y), 2) );
+    }
+};

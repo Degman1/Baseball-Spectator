@@ -148,7 +148,7 @@ class PlayerFinder(object):
         da = 361    #delta angle
         home_plate_index = None
 
-        if expected_home_plate_angle is None:
+        if expected_home_plate_angle is None:       #TODO: this should be move up to first in processing
             return None
 
         for i in range(0, len(cnrs)):
