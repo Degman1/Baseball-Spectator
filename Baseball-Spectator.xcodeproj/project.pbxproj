@@ -7,16 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63564B4124802BD600BFAF7B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63564B4024802BD600BFAF7B /* ViewController.swift */; };
+		63564B4324802C7200BFAF7B /* ViewControllerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63564B4224802C7200BFAF7B /* ViewControllerRepresentable.swift */; };
+		63564B4524803F5C00BFAF7B /* AVCaptureExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */; };
 		635AB6E7247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */; };
 		636152F8247FFDC60043AFA1 /* TestProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636152F7247FFDC60043AFA1 /* TestProcessingView.swift */; };
-		63C177D4247C2B8200DAC60B /* FrameExtractorRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C177D3247C2B8200DAC60B /* FrameExtractorRepresentable.swift */; };
 		63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24A924799375002D0728 /* InfieldContourFitting.mm */; };
 		63FD24AC247993AF002D0728 /* Timer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AB247993AF002D0728 /* Timer.mm */; };
 		63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AD24799445002D0728 /* ImageProcessor.mm */; };
 		63FD24B0247994CE002D0728 /* ContourInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AF247994CE002D0728 /* ContourInfo.mm */; };
 		F604822B247591A900F71A68 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F604822A247591A900F71A68 /* MainView.swift */; };
 		F60482392475992700F71A68 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F60482382475992700F71A68 /* opencv2.framework */; };
-		F60482402475A44400F71A68 /* CameraFrameExtraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F604823F2475A44400F71A68 /* CameraFrameExtraction.swift */; };
 		F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */; };
 		F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */; };
 		F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60F23BFAE0D00B155B8 /* ContentView.swift */; };
@@ -24,15 +25,16 @@
 		F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61423BFAE1300B155B8 /* Preview Assets.xcassets */; };
 		F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */; };
 		F63EE62423BFB02400B155B8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F63EE62023BFB02400B155B8 /* README.md */; };
-		F663C2132417E2CB00D88B17 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F663C2122417E2CB00D88B17 /* ImageView.swift */; };
 		F6CA649A24799F7E009721E0 /* Scoreboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CA649924799F7E009721E0 /* Scoreboard.swift */; };
 		F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		63564B4024802BD600BFAF7B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		63564B4224802C7200BFAF7B /* ViewControllerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerRepresentable.swift; sourceTree = "<group>"; };
+		63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCaptureExtension.swift; sourceTree = "<group>"; };
 		635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectedHomePlateAngles.swift; sourceTree = "<group>"; };
 		636152F7247FFDC60043AFA1 /* TestProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestProcessingView.swift; sourceTree = "<group>"; };
-		63C177D3247C2B8200DAC60B /* FrameExtractorRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameExtractorRepresentable.swift; sourceTree = "<group>"; };
 		63FD24A924799375002D0728 /* InfieldContourFitting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InfieldContourFitting.mm; sourceTree = "<group>"; wrapsLines = 1; };
 		63FD24AB247993AF002D0728 /* Timer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Timer.mm; sourceTree = "<group>"; };
 		63FD24AD24799445002D0728 /* ImageProcessor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageProcessor.mm; sourceTree = "<group>"; };
@@ -40,7 +42,6 @@
 		F604822A247591A900F71A68 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		F60482382475992700F71A68 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		F604823A2475994900F71A68 /* opencv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = opencv.hpp; path = opencv2.framework/Versions/A/Headers/opencv.hpp; sourceTree = SOURCE_ROOT; };
-		F604823F2475A44400F71A68 /* CameraFrameExtraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraFrameExtraction.swift; sourceTree = "<group>"; };
 		F63EE60823BFAE0D00B155B8 /* Baseball-Spectator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Baseball-Spectator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -50,7 +51,6 @@
 		F63EE61723BFAE1300B155B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F63EE61923BFAE1300B155B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F63EE62023BFB02400B155B8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		F663C2122417E2CB00D88B17 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		F6CA649924799F7E009721E0 /* Scoreboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scoreboard.swift; sourceTree = "<group>"; };
 		F6CD4ACF23C4E32800DA0E1E /* Baseball-Spectator-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Baseball-Spectator-Bridging-Header.h"; sourceTree = "<group>"; };
 		F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
@@ -96,11 +96,11 @@
 				F63EE60F23BFAE0D00B155B8 /* ContentView.swift */,
 				F604822A247591A900F71A68 /* MainView.swift */,
 				F6CA649924799F7E009721E0 /* Scoreboard.swift */,
-				F604823F2475A44400F71A68 /* CameraFrameExtraction.swift */,
-				63C177D3247C2B8200DAC60B /* FrameExtractorRepresentable.swift */,
-				F663C2122417E2CB00D88B17 /* ImageView.swift */,
-				635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */,
+				63564B4024802BD600BFAF7B /* ViewController.swift */,
+				63564B4224802C7200BFAF7B /* ViewControllerRepresentable.swift */,
 				636152F7247FFDC60043AFA1 /* TestProcessingView.swift */,
+				635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */,
+				63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */,
 				F63EE61F23BFB02400B155B8 /* OpenCVWrapper */,
 				F63EE61123BFAE1300B155B8 /* Assets.xcassets */,
 				F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */,
@@ -207,13 +207,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F663C2132417E2CB00D88B17 /* ImageView.swift in Sources */,
 				63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */,
 				63FD24B0247994CE002D0728 /* ContourInfo.mm in Sources */,
 				F604822B247591A900F71A68 /* MainView.swift in Sources */,
 				63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */,
-				63C177D4247C2B8200DAC60B /* FrameExtractorRepresentable.swift in Sources */,
-				F60482402475A44400F71A68 /* CameraFrameExtraction.swift in Sources */,
+				63564B4124802BD600BFAF7B /* ViewController.swift in Sources */,
+				63564B4324802C7200BFAF7B /* ViewControllerRepresentable.swift in Sources */,
 				63FD24AC247993AF002D0728 /* Timer.mm in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
 				636152F8247FFDC60043AFA1 /* TestProcessingView.swift in Sources */,
@@ -222,6 +221,7 @@
 				635AB6E7247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift in Sources */,
 				F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */,
 				F6CA649A24799F7E009721E0 /* Scoreboard.swift in Sources */,
+				63564B4524803F5C00BFAF7B /* AVCaptureExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,7 +360,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Baseball-Spectator/Preview Content\"";
-				DEVELOPMENT_TEAM = XFW26PEUTK;
+				DEVELOPMENT_TEAM = QRS872LFWU;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -374,7 +374,7 @@
 					"@executable_path/Frameworks",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "come.DavidGerard.Baseball-Spectators";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.DavidGerard.Baseball-Spectators";
 				PRODUCT_NAME = "Baseball-Spectator";
 				SWIFT_OBJC_BRIDGING_HEADER = "Baseball-Spectator-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -390,7 +390,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Baseball-Spectator/Preview Content\"";
-				DEVELOPMENT_TEAM = XFW26PEUTK;
+				DEVELOPMENT_TEAM = QRS872LFWU;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -403,7 +403,7 @@
 					"@executable_path/Frameworks",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "come.DavidGerard.Baseball-Spectators";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.DavidGerard.Baseball-Spectators";
 				PRODUCT_NAME = "Baseball-Spectator";
 				SWIFT_OBJC_BRIDGING_HEADER = "Baseball-Spectator-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

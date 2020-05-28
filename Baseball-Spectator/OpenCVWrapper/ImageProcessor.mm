@@ -83,33 +83,38 @@ class ImageProcessor {
         // Get the location of the standard position of each of the fielders
         vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle);
         
+        if (expectedPositions.empty()) { return image; }    //TODO:  or expectedPositions.size() != 9
+        
         // Get the location of each of the actual players on the field
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
+        
+        if (playerContours.empty() or playerContours.size() == 0) { return image; }
         
         // resizedMat wasn't in correct format before, so change it to RGB here for in-color drawing
         cv::cvtColor(hsv, resizedMat, cv::COLOR_HSV2RGB);
         
         // Draw contours on image for DEBUG
+        playerContours.push_back(expectedPositions);
         cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 0, 0), 3);
         
-        int b = 0;
+        /*int b = 0;
         int add = int(255 / expectedPositions.size());     // change the color to differentiate the bases
         for (cv::Point pt : expectedPositions) {
             cv::circle(resizedMat, pt, 15, cv::Scalar(0, 0, b), cv::FILLED);
             b += add;
-        }
+        }*/
         
-        map<string, vector<cv::Point>> playersByPosition = getPlayersByPosition(playerContours, expectedPositions);
+        //map<string, vector<cv::Point>> playersByPosition = getPlayersByPosition(playerContours, expectedPositions);
         
-        for ( const auto &p : playersByPosition ) {
+        /*for ( const auto &p : playersByPosition ) {
            cout << p.first << '\t' << p.second << "\n";
-        }
+        }*/
         
         // Convert the Mat image to a UIImage
         UIImage *result = MatToUIImage(resizedMat);
         
         timer.stop();
-        cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
+        //cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
 
         return result;
     }
@@ -174,7 +179,7 @@ class ImageProcessor {
             }
         }
         
-        if (infield.x == -1) {  }       //TODO: indicate the infield was not found
+        if (infield.x == -1) { return failedVec; }       //TODO: indicate the infield was not found
         
         // use the hull of the infield instead of the original infield contour
         vector<cv::Point> infieldHull;
@@ -187,6 +192,8 @@ class ImageProcessor {
         if (infieldCorners.empty() or infieldCorners.size() == 0) {
             return failedVec;
         }
+        
+        return infieldCorners;
         
         vector<cv::Point> bases = putBasesInOrder(infieldCorners, expectedHomePlateAngle);      // get the bases in order of pitcher, home, first, second, third
         
@@ -388,7 +395,7 @@ class ImageProcessor {
         cv::Point first, second, shortstop, third, leftfield, centerfield, rightfield;
         
         if (sortedBases[0][2] == 2.0 or (sortedBases[0][2] == 1.0 and sortedBases[1][2] == 2.0) or (sortedBases[0][2] == 3.0 and sortedBases[1][2] == 2.0)) {    //If the user is closer towards the outfield than the infield...
-            cout << "Sitting on the outfield side" << "\n";
+            //cout << "Sitting on the outfield side" << "\n";
             
             // use vector operations to calculate expected positions from the coordinates of the bases and the elevation multipliers
             if (distRatio >= 4.0) {        // first to second is smaller, so refine right infield, leftfield, and centerfield (same amount at if <= 0.25)
@@ -420,7 +427,7 @@ class ImageProcessor {
                 rightfield = calculatePosition(homePlate, secondBase, firstBase, 0.7, 3.0);
             }
         } else {       //if the user is closer to the infield...
-            cout << "Sitting on the infield side" << "\n";
+            //cout << "Sitting on the infield side" << "\n";
             
             if (distRatio >= 4.0) {        // first to second is smaller, so refine right infield, leftfield, and centerfield (same amount at if <= 0.25)
                 first = calculatePosition(homePlate, secondBase, firstBase, 0.85, 1.25);
@@ -508,7 +515,7 @@ class ImageProcessor {
             
             int closestPositionIndex = -1;
             int closestDistance = -1;
-            
+                        
             for (int i = 0; i < 9; i++) {
                 int dist = getDistBetweenPoints(lowestPoint, expectedPositions[i]);
                 
