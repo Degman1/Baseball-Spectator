@@ -83,7 +83,7 @@ class ImageProcessor {
         // Get the location of the standard position of each of the fielders
         vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle);
         
-        if (expectedPositions.empty()) { return image; }    //TODO:  or expectedPositions.size() != 9
+        if (expectedPositions.empty()or expectedPositions.size() != 9) { return image; }
         
         // Get the location of each of the actual players on the field
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
@@ -94,7 +94,6 @@ class ImageProcessor {
         cv::cvtColor(hsv, resizedMat, cv::COLOR_HSV2RGB);
         
         // Draw contours on image for DEBUG
-        playerContours.push_back(expectedPositions);
         cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 0, 0), 3);
         
         /*int b = 0;
@@ -104,7 +103,7 @@ class ImageProcessor {
             b += add;
         }*/
         
-        //map<string, vector<cv::Point>> playersByPosition = getPlayersByPosition(playerContours, expectedPositions);
+        map<string, vector<cv::Point>> playersByPosition = getPlayersByPosition(playerContours, expectedPositions);
         
         /*for ( const auto &p : playersByPosition ) {
            cout << p.first << '\t' << p.second << "\n";
@@ -192,9 +191,7 @@ class ImageProcessor {
         if (infieldCorners.empty() or infieldCorners.size() == 0) {
             return failedVec;
         }
-        
-        return infieldCorners;
-        
+                
         vector<cv::Point> bases = putBasesInOrder(infieldCorners, expectedHomePlateAngle);      // get the bases in order of pitcher, home, first, second, third
         
         vector<cv::Point> expectedPositions = calculateExpectedPositions(bases[1], bases[2], bases[3], bases[4]);
