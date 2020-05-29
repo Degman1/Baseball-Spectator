@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIImage *)processImage:(UIImage *)image expectedHomePlateAngle:(double)expectedHomePlateAngle;
 
+//+ (mat<string, vector<vector<int>>>)getPlayersByPosition;
+
 @end
 
 NS_ASSUME_NONNULL_END

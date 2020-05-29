@@ -19,8 +19,9 @@ using namespace std;
 
 @implementation OpenCVWrapper
 
+ImageProcessor processor = ImageProcessor();
+
 + (UIImage *)processImage:(UIImage *)image expectedHomePlateAngle:(double)expectedHomePlateAngle {
-    ImageProcessor processor = ImageProcessor();
     UIImage* output = processor.processImage(image, expectedHomePlateAngle);
     
     /*int nRepeats = 1000;  //use this code to get an average processing time over n repeats

@@ -12,6 +12,9 @@
 		63564B4524803F5C00BFAF7B /* AVCaptureExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */; };
 		635AB6E7247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */; };
 		636152F8247FFDC60043AFA1 /* TestProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636152F7247FFDC60043AFA1 /* TestProcessingView.swift */; };
+		63DAA5CA248156940022F9AA /* FileIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5C9248156930022F9AA /* FileIO.swift */; };
+		63DAA5CC248156C70022F9AA /* ProcessingResult.txt in Resources */ = {isa = PBXBuildFile; fileRef = 63DAA5CB248156C70022F9AA /* ProcessingResult.txt */; };
+		63DAA5CE248157FF0022F9AA /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5CD248157FF0022F9AA /* Point.swift */; };
 		63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24A924799375002D0728 /* InfieldContourFitting.mm */; };
 		63FD24AC247993AF002D0728 /* Timer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AB247993AF002D0728 /* Timer.mm */; };
 		63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AD24799445002D0728 /* ImageProcessor.mm */; };
@@ -35,6 +38,9 @@
 		63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCaptureExtension.swift; sourceTree = "<group>"; };
 		635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectedHomePlateAngles.swift; sourceTree = "<group>"; };
 		636152F7247FFDC60043AFA1 /* TestProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestProcessingView.swift; sourceTree = "<group>"; };
+		63DAA5C9248156930022F9AA /* FileIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIO.swift; sourceTree = "<group>"; };
+		63DAA5CB248156C70022F9AA /* ProcessingResult.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProcessingResult.txt; sourceTree = "<group>"; };
+		63DAA5CD248157FF0022F9AA /* Point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		63FD24A924799375002D0728 /* InfieldContourFitting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InfieldContourFitting.mm; sourceTree = "<group>"; wrapsLines = 1; };
 		63FD24AB247993AF002D0728 /* Timer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Timer.mm; sourceTree = "<group>"; };
 		63FD24AD24799445002D0728 /* ImageProcessor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageProcessor.mm; sourceTree = "<group>"; };
@@ -101,6 +107,8 @@
 				636152F7247FFDC60043AFA1 /* TestProcessingView.swift */,
 				635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */,
 				63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */,
+				63DAA5C9248156930022F9AA /* FileIO.swift */,
+				63DAA5CD248157FF0022F9AA /* Point.swift */,
 				F63EE61F23BFB02400B155B8 /* OpenCVWrapper */,
 				F63EE61123BFAE1300B155B8 /* Assets.xcassets */,
 				F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */,
@@ -121,7 +129,9 @@
 		F63EE61F23BFB02400B155B8 /* OpenCVWrapper */ = {
 			isa = PBXGroup;
 			children = (
+				63DAA5CB248156C70022F9AA /* ProcessingResult.txt */,
 				F63EE62023BFB02400B155B8 /* README.md */,
+				F6CD4AD323C4E37C00DA0E1E /* PrefixHeader.pch */,
 				F604823A2475994900F71A68 /* opencv.hpp */,
 				F6CD4AD023C4E32800DA0E1E /* OpenCVWrapper.h */,
 				F6CD4AD123C4E32800DA0E1E /* OpenCVWrapper.mm */,
@@ -129,7 +139,6 @@
 				63FD24A924799375002D0728 /* InfieldContourFitting.mm */,
 				63FD24AF247994CE002D0728 /* ContourInfo.mm */,
 				63FD24AB247993AF002D0728 /* Timer.mm */,
-				F6CD4AD323C4E37C00DA0E1E /* PrefixHeader.pch */,
 			);
 			path = OpenCVWrapper;
 			sourceTree = "<group>";
@@ -193,6 +202,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63DAA5CC248156C70022F9AA /* ProcessingResult.txt in Resources */,
 				F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */,
 				F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */,
 				F63EE62423BFB02400B155B8 /* README.md in Resources */,
@@ -214,6 +224,7 @@
 				63564B4124802BD600BFAF7B /* ViewController.swift in Sources */,
 				63564B4324802C7200BFAF7B /* ViewControllerRepresentable.swift in Sources */,
 				63FD24AC247993AF002D0728 /* Timer.mm in Sources */,
+				63DAA5CE248157FF0022F9AA /* Point.swift in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
 				636152F8247FFDC60043AFA1 /* TestProcessingView.swift in Sources */,
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,
@@ -222,6 +233,7 @@
 				F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */,
 				F6CA649A24799F7E009721E0 /* Scoreboard.swift in Sources */,
 				63564B4524803F5C00BFAF7B /* AVCaptureExtension.swift in Sources */,
+				63DAA5CA248156940022F9AA /* FileIO.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

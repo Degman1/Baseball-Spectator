@@ -14,6 +14,8 @@
 #import "Timer.mm"
 #import "InfieldContourFitting.mm"
 
+#include <fstream>
+
 using namespace std;
 
 //Class to run the image processing
@@ -47,7 +49,12 @@ class ImageProcessor {
             8. RETURN each players' bottom point and their corresponding position
         */
         
+        ofstream file;
+        file.open("/Users/David/git/Baseball-Spectator/Baseball-Spectator/OpenCVWrapper/ProcessingResult.txt");
+        
         if (expectedHomePlateAngle >= 360 or expectedHomePlateAngle <= -360) {     //no homePlateAngle is provided, so no point in going through processing
+            file << "0";
+            file.close();
             return image;
         }
         
@@ -83,12 +90,20 @@ class ImageProcessor {
         // Get the location of the standard position of each of the fielders
         vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle);
         
-        if (expectedPositions.empty()or expectedPositions.size() != 9) { return image; }
+        if (expectedPositions.empty()or expectedPositions.size() != 9) {
+            file << "0";
+            file.close();
+            return image;
+        }
         
         // Get the location of each of the actual players on the field
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
         
-        if (playerContours.empty() or playerContours.size() == 0) { return image; }
+        if (playerContours.empty() or playerContours.size() == 0) {
+            file << "0";
+            file.close();
+            return image;
+        }
         
         // resizedMat wasn't in correct format before, so change it to RGB here for in-color drawing
         cv::cvtColor(hsv, resizedMat, cv::COLOR_HSV2RGB);
@@ -114,7 +129,10 @@ class ImageProcessor {
         
         timer.stop();
         //cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
-
+        
+        file << "1";
+        file.close();
+        
         return result;
     }
     
