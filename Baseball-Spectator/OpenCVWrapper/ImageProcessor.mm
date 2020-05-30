@@ -130,7 +130,7 @@ class ImageProcessor {
         timer.stop();
         //cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
         
-        file << "1";
+        file << "111";
         file.close();
         
         return result;

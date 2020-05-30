@@ -14,6 +14,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private let videoDataOutput = AVCaptureVideoDataOutput()
     private var skipFrame = 0;
     private let context = CIContext()
+    public var playersByPosition: [[Point]] = []
     
     var imageView: UIImageView!
     
@@ -24,7 +25,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         self.captureSession.startRunning()
         
         if imageView == nil {
-            imageView = UIImageView(image: UIImage(named: "cat"))   //just to initialize the view
+            imageView = UIImageView(image: UIImage(named: "image1"))   //just to initialize the view
         }
         imageView.frame.size.width = UIScreen.main.bounds.width
         imageView.frame.size.height = UIScreen.main.bounds.height
@@ -36,7 +37,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             deviceTypes: [.builtInWideAngleCamera, .builtInDualCamera, .builtInTrueDepthCamera],
             mediaType: .video,
             position: .back).devices.first else {
-                fatalError("No back camera device found, please make sure to run SimpleLaneDetection in an iOS device and not a simulator")
+                fatalError("No back camera device found, please make sure to run Baseball Spectator in an iOS device and not a simulator")
         }
         device.set(frameRate: 20)
         let cameraInput = try! AVCaptureDeviceInput(device: device)
@@ -67,6 +68,27 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             
             self.skipFrame += 1
+        }
+        
+        let result = try! FileIO.read(from: "/Users/David/git/Baseball-Spectator/Baseball-Spectator/OpenCVWrapper/ProcessingResult.txt")
+        
+        let splitByPosition = result.split(separator: "\n")
+        
+        if result.count != 9 {              // processing failed
+            self.playersByPosition = []
+            return
+        }
+        
+        self.playersByPosition = [
+            [], [], [], [], [], [], [], [], []
+        ]   //has 9 spots for the 9 field positions
+        
+        for i in 0..<splitByPosition.count {
+            let splitByPlayer = splitByPosition[i].split(separator: " ")
+            for coord in splitByPlayer {
+                let splitCoord = coord.split(separator: ",")
+                self.playersByPosition[i].append(Point(x: Int(splitCoord[0])!, y: Int(splitCoord[1])!))
+            }
         }
     }
     

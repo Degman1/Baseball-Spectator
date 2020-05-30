@@ -10,8 +10,12 @@ import Foundation
 import SwiftUI
 
 struct ViewControllerRepresentable: UIViewControllerRepresentable {
+    static var playersByPosition: [[Point]] = []
+    
     func makeUIViewController(context: Context) -> UIViewController {
-        return ViewController()
+        let view = ViewController()
+        ViewControllerRepresentable.playersByPosition = view.playersByPosition
+        return view
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
