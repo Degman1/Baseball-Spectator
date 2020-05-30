@@ -10,12 +10,10 @@ import Foundation
 import SwiftUI
 
 struct ViewControllerRepresentable: UIViewControllerRepresentable {
-    static var playersByPosition: [[Point]] = []
+    var fileInterface: FileIO
     
     func makeUIViewController(context: Context) -> UIViewController {
-        let view = ViewController()
-        ViewControllerRepresentable.playersByPosition = view.playersByPosition
-        return view
+        return ViewController(fileInterface: fileInterface)
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {

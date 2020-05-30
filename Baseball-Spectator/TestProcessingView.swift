@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TestProcessingView: View {
     @State var imageID = 1
+    var fileInterface: FileIO
     
     var body: some View {
         ZStack {
@@ -25,14 +26,17 @@ struct TestProcessingView: View {
     func testProcessing(imageID: Int) -> Image {
         let uiimage = UIImage(named: "image\(imageID).jpg")!
         let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: HOME_PLATE_ANGLES[imageID - 1])
-        /*let str = try! FileIO.read(from: "/Users/David/git/Baseball-Spectator/Baseball-Spectator/OpenCVWrapper/ProcessingResult.txt")
-        print(str)*/
+        
+        try! fileInterface.loadData()
+        print(fileInterface.content)
+        print(fileInterface.playersByPosition)
+        
         return Image(uiImage: res)
     }
 }
 
 struct TestProcessingView_Previews: PreviewProvider {
     static var previews: some View {
-        TestProcessingView()
+        TestProcessingView(fileInterface: FileIO())
     }
 }

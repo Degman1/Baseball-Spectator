@@ -15,6 +15,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var skipFrame = 0;
     private let context = CIContext()
     public var playersByPosition: [[Point]] = []
+    var fileInterface: FileIO
+    
+    init(fileInterface: FileIO) {
+        self.fileInterface = fileInterface
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     var imageView: UIImageView!
     
@@ -70,26 +80,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             self.skipFrame += 1
         }
         
-        let result = try! FileIO.read(from: "/Users/David/git/Baseball-Spectator/Baseball-Spectator/OpenCVWrapper/ProcessingResult.txt")
-        
-        let splitByPosition = result.split(separator: "\n")
-        
-        if result.count != 9 {              // processing failed
-            self.playersByPosition = []
-            return
-        }
-        
-        self.playersByPosition = [
-            [], [], [], [], [], [], [], [], []
-        ]   //has 9 spots for the 9 field positions
-        
-        for i in 0..<splitByPosition.count {
-            let splitByPlayer = splitByPosition[i].split(separator: " ")
-            for coord in splitByPlayer {
-                let splitCoord = coord.split(separator: ",")
-                self.playersByPosition[i].append(Point(x: Int(splitCoord[0])!, y: Int(splitCoord[1])!))
-            }
-        }
+        try! fileInterface.loadData()
     }
     
     private func getFrames() {

@@ -9,12 +9,14 @@
 import SwiftUI
 
 struct MainView: View {
+    let fileInterface = FileIO()
+    
     var body: some View {
         ZStack {
-            ViewControllerRepresentable()
+            ViewControllerRepresentable(fileInterface: fileInterface)
             VStack {
                 HStack {
-                    scoreboard
+                    Scoreboard()
                         .padding(EdgeInsets(top: 11, leading: 10, bottom: 0, trailing: 0))
                     
                     Spacer()
@@ -34,10 +36,6 @@ struct MainView: View {
         }) {
             Image(systemName: "plus.square")
         }
-    }
-    
-    var scoreboard: some View {
-        Scoreboard()
     }
 }
 

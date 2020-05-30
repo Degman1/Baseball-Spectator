@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    let fileInterface = FileIO()
+    
     var body: some View {
         MainView()
     }
