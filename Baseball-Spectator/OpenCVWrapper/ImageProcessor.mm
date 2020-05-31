@@ -53,7 +53,7 @@ class ImageProcessor {
         file.open("/Users/David/git/Baseball-Spectator/Baseball-Spectator/OpenCVWrapper/ProcessingResult.txt");
         
         if (expectedHomePlateAngle >= 360 or expectedHomePlateAngle <= -360) {     //no homePlateAngle is provided, so no point in going through processing
-            file << "0";
+            file << "";     // clears the contents of the file
             file.close();
             return image;
         }
@@ -91,7 +91,7 @@ class ImageProcessor {
         vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle);
         
         if (expectedPositions.empty()or expectedPositions.size() != 9) {
-            file << "0";
+            file << "";
             file.close();
             return image;
         }
@@ -100,7 +100,7 @@ class ImageProcessor {
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
         
         if (playerContours.empty() or playerContours.size() == 0) {
-            file << "0";
+            file << "";
             file.close();
             return image;
         }
@@ -127,11 +127,24 @@ class ImageProcessor {
         // Convert the Mat image to a UIImage
         UIImage *result = MatToUIImage(resizedMat);
         
+        string contents = "";
+        for ( const auto &p : playersByPosition ) {
+            string playersOfCertainPosition = "";
+            for (cv::Point pt : p.second) {
+                playersOfCertainPosition += to_string(pt.x);
+                playersOfCertainPosition += ",";
+                playersOfCertainPosition += to_string(pt.y);
+                playersOfCertainPosition += " ";
+            }
+            contents += "\n";
+        }
+        
+        file << contents;
+        file.close();
+        
         timer.stop();
         //cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
         
-        file << "111";
-        file.close();
         
         return result;
     }
