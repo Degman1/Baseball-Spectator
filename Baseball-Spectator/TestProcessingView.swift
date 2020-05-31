@@ -25,11 +25,12 @@ struct TestProcessingView: View {
     
     func testProcessing(imageID: Int) -> Image {
         let uiimage = UIImage(named: "image\(imageID).jpg")!
-        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: HOME_PLATE_ANGLES[imageID - 1])
+        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: HOME_PLATE_ANGLES[imageID - 1], filePath: fileInterface.filePath)
         
         try! fileInterface.loadData()
-        print(fileInterface.content)
-        print(fileInterface.playersByPosition)
+        for pos in fileInterface.playersByPosition {
+            print(pos)
+        }
         
         return Image(uiImage: res)
     }

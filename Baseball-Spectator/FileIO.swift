@@ -10,7 +10,11 @@ import Foundation
 
 class FileIO {
     var playersByPosition: [[Point]] = []
-    var content: String = ""
+    var filePath: String
+    
+    init() {
+        filePath = Bundle.main.path(forResource: "ProcessingResult", ofType: "txt")!
+    }
     
     func loadData() throws {
         // This makes it so that if running on the simulator vs. iPhone, differentiate which path to use that points to the processing results
@@ -20,16 +24,13 @@ class FileIO {
         
         #else
         
-        let path = Bundle.main.path(forResource: "ProcessingResult", ofType: "txt")
-        let contents = try! String(contentsOfFile: path!)
+        let contents = try! String(contentsOfFile: self.filePath)
         
         #endif
-        
-        self.content = contents
-        
+                
         let splitByPosition = contents.split(separator: "\n")
         
-        if contents.count != 9 {              // processing failed
+        if splitByPosition.count != 9 {              // processing failed
             self.playersByPosition = []
             return
         }
@@ -39,6 +40,7 @@ class FileIO {
         ]   //has 9 spots for the 9 field positions
         
         for i in 0..<splitByPosition.count {
+            if splitByPosition[i] == "-" {continue}
             let splitByPlayer = splitByPosition[i].split(separator: " ")
             for coord in splitByPlayer {
                 let splitCoord = coord.split(separator: ",")

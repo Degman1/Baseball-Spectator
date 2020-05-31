@@ -35,7 +35,7 @@ class ImageProcessor {
         upperDarkBrown = cv::Scalar(10, 175, 150);
     }
     
-    public: UIImage* processImage(UIImage* image, double expectedHomePlateAngle) {
+    public: UIImage* processImage(UIImage* image, double expectedHomePlateAngle, string filePath) {
         /*
          Main image processing routine
         
@@ -48,11 +48,10 @@ class ImageProcessor {
             7. Assign each player an expected position
             8. RETURN each players' bottom point and their corresponding position
         */
-        
-        ofstream file;
-        file.open("/Users/David/git/Baseball-Spectator/Baseball-Spectator/OpenCVWrapper/ProcessingResult.txt");
-        
+                
         if (expectedHomePlateAngle >= 360 or expectedHomePlateAngle <= -360) {     //no homePlateAngle is provided, so no point in going through processing
+            ofstream file;
+            file.open(filePath);
             file << "";     // clears the contents of the file
             file.close();
             return image;
@@ -91,6 +90,8 @@ class ImageProcessor {
         vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle);
         
         if (expectedPositions.empty()or expectedPositions.size() != 9) {
+            ofstream file;
+            file.open(filePath);
             file << "";
             file.close();
             return image;
@@ -100,6 +101,8 @@ class ImageProcessor {
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
         
         if (playerContours.empty() or playerContours.size() == 0) {
+            ofstream file;
+            file.open(filePath);
             file << "";
             file.close();
             return image;
@@ -111,6 +114,7 @@ class ImageProcessor {
         // Draw contours on image for DEBUG
         cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 0, 0), 3);
         
+        // Draw expected positions on image for debugging
         /*int b = 0;
         int add = int(255 / expectedPositions.size());     // change the color to differentiate the bases
         for (cv::Point pt : expectedPositions) {
@@ -118,33 +122,22 @@ class ImageProcessor {
             b += add;
         }*/
         
-        map<string, vector<cv::Point>> playersByPosition = getPlayersByPosition(playerContours, expectedPositions);
+        // calculate which players are closest to which positions
+        vector<vector<cv::Point>> playersByPosition = getPlayersByPosition(playerContours, expectedPositions);
         
+        // print out playersByPosition for debugging
         /*for ( const auto &p : playersByPosition ) {
            cout << p.first << '\t' << p.second << "\n";
         }*/
         
-        // Convert the Mat image to a UIImage
+        // write the resulting data to a file to be read by the swift app code
+        writePlayersByPositionToFile(playersByPosition, filePath);
+        
+        // Convert the Mat image to a UIImage (will be the image displayed on the main screen of the app)
         UIImage *result = MatToUIImage(resizedMat);
-        
-        string contents = "";
-        for ( const auto &p : playersByPosition ) {
-            string playersOfCertainPosition = "";
-            for (cv::Point pt : p.second) {
-                playersOfCertainPosition += to_string(pt.x);
-                playersOfCertainPosition += ",";
-                playersOfCertainPosition += to_string(pt.y);
-                playersOfCertainPosition += " ";
-            }
-            contents += "\n";
-        }
-        
-        file << contents;
-        file.close();
         
         timer.stop();
         //cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
-        
         
         return result;
     }
@@ -521,21 +514,15 @@ class ImageProcessor {
         return struct1[1] > struct2[1];
     }
     
-    map<string, vector<cv::Point>> getPlayersByPosition(vector<vector<cv::Point>> playerContours, vector<cv::Point> expectedPositions) {
-        map<string, vector<cv::Point>> playersByPosition;
+    vector<vector<cv::Point>> getPlayersByPosition(vector<vector<cv::Point>> playerContours, vector<cv::Point> expectedPositions) {
+        vector<vector<cv::Point>> playersByPosition;    // the players position is indicated by the position's corresponding number minus one
         vector<cv::Point> emptyVec;
         
-        // populate the map with the position keys
-        playersByPosition["pitcher"] = emptyVec;
-        playersByPosition["catcher"] = emptyVec;
-        playersByPosition["first"] = emptyVec;
-        playersByPosition["second"] = emptyVec;
-        playersByPosition["shortstop"] = emptyVec;
-        playersByPosition["third"] = emptyVec;
-        playersByPosition["leftfield"] = emptyVec;
-        playersByPosition["centerfield"] = emptyVec;
-        playersByPosition["rightfield"] = emptyVec;
-                
+        // populate the map with empty vectors
+        for (int i = 0; i < 9; i++) {
+            playersByPosition.push_back(emptyVec);
+        }
+        
         for (vector<cv::Point> contour: playerContours) {
             vector<cv::Point> contourCopy = contour;
             sort(contourCopy.begin(), contourCopy.end(), sortByYCoordinate);
@@ -553,27 +540,9 @@ class ImageProcessor {
                 }
             }
             
-            switch (closestPositionIndex) {
-                case 0: playersByPosition["pitcher"].push_back(lowestPoint);
-                    break;
-                case 1: playersByPosition["catcher"].push_back(lowestPoint);
-                    break;
-                case 2: playersByPosition["first"].push_back(lowestPoint);
-                    break;
-                case 3: playersByPosition["second"].push_back(lowestPoint);
-                    break;
-                case 4: playersByPosition["shortstop"].push_back(lowestPoint);
-                    break;
-                case 5: playersByPosition["third"].push_back(lowestPoint);
-                    break;
-                case 6: playersByPosition["leftfield"].push_back(lowestPoint);
-                    break;
-                case 7: playersByPosition["rightfield"].push_back(lowestPoint);
-                    break;
-                case 8: playersByPosition["centerfield"].push_back(lowestPoint);
-                    break;
-            }
+            playersByPosition[closestPositionIndex].push_back(lowestPoint);
         }
+        
         return playersByPosition;
     }
     
@@ -583,5 +552,30 @@ class ImageProcessor {
     
     int getDistBetweenPoints(cv::Point pt1, cv::Point pt2) {
         return sqrt( pow((pt1.x - pt2.x), 2) + pow((pt1.y - pt2.y), 2) );
+    }
+    
+    void writePlayersByPositionToFile(vector<vector<cv::Point>> playersByPosition, string filePath) {
+        ofstream file;
+        file.open(filePath);
+        
+        string contents = "";
+        for ( vector<cv::Point> vec : playersByPosition ) {
+            string playersOfCertainPosition = "";
+            for (cv::Point pt : vec) {
+                playersOfCertainPosition += to_string(pt.x);
+                playersOfCertainPosition += ",";
+                playersOfCertainPosition += to_string(pt.y);
+                playersOfCertainPosition += " ";
+            }
+            contents += playersOfCertainPosition;
+            if (playersOfCertainPosition == "") {
+                contents += "-";
+            }
+            contents += "\n";
+        }
+        
+        file << contents;
+
+        file.close();
     }
 };

@@ -74,7 +74,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         DispatchQueue.main.async {
             if self.skipFrame % 2 == 0 {
-                self.imageView.image = OpenCVWrapper.processImage(image, expectedHomePlateAngle: HOME_PLATE_ANGLES[4])
+                self.imageView.image = OpenCVWrapper.processImage(image, expectedHomePlateAngle: HOME_PLATE_ANGLES[4], filePath: self.fileInterface.filePath)
             }
             
             self.skipFrame += 1

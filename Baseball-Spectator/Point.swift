@@ -8,7 +8,11 @@
 
 import Foundation
 
-struct Point {
+struct Point: CustomStringConvertible {
+    var description: String {
+        return "(\(x), \(y))"
+    }
+    
     let x: Int
     let y: Int
     
