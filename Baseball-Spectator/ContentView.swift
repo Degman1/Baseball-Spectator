@@ -12,7 +12,7 @@ struct ContentView: View {
     let fileInterface = FileIO()
     
     var body: some View {
-        TestProcessingView(fileInterface: fileInterface)
+        TestVideoProcessingView(fileInterface: fileInterface)
     }
 }
 

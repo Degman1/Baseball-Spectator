@@ -18,16 +18,9 @@ class FileIO {
     
     func loadData() throws {
         // This makes it so that if running on the simulator vs. iPhone, differentiate which path to use that points to the processing results
-        #if targetEnvironment(simulator)
-        
-        let contents = try FileIO.read(from: "/Users/David/git/Baseball-Spectator/Baseball-Spectator/OpenCVWrapper/ProcessingResult.txt")
-        
-        #else
         
         let contents = try! String(contentsOfFile: self.filePath)
-        
-        #endif
-                
+                        
         let splitByPosition = contents.split(separator: "\n")
         
         if splitByPosition.count != 9 {              // processing failed

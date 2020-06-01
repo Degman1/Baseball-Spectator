@@ -7,11 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		630E2A1024858758008DEF17 /* TestVideoProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A0F24858758008DEF17 /* TestVideoProcessingView.swift */; };
+		630E2A1224858C8E008DEF17 /* VideoParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A1124858C8E008DEF17 /* VideoParser.swift */; };
+		630E2A1524859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A1424859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift */; };
+		630E2A172485A271008DEF17 /* videoplayback.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 630E2A162485A051008DEF17 /* videoplayback.mp4 */; };
 		63564B4124802BD600BFAF7B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63564B4024802BD600BFAF7B /* ViewController.swift */; };
 		63564B4324802C7200BFAF7B /* ViewControllerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63564B4224802C7200BFAF7B /* ViewControllerRepresentable.swift */; };
 		63564B4524803F5C00BFAF7B /* AVCaptureExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */; };
 		635AB6E7247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */; };
-		636152F8247FFDC60043AFA1 /* TestProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636152F7247FFDC60043AFA1 /* TestProcessingView.swift */; };
+		636152F8247FFDC60043AFA1 /* TestImageProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636152F7247FFDC60043AFA1 /* TestImageProcessingView.swift */; };
 		63DAA5CA248156940022F9AA /* FileIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5C9248156930022F9AA /* FileIO.swift */; };
 		63DAA5CC248156C70022F9AA /* ProcessingResult.txt in Resources */ = {isa = PBXBuildFile; fileRef = 63DAA5CB248156C70022F9AA /* ProcessingResult.txt */; };
 		63DAA5CE248157FF0022F9AA /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5CD248157FF0022F9AA /* Point.swift */; };
@@ -33,11 +37,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		630E2A0F24858758008DEF17 /* TestVideoProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestVideoProcessingView.swift; sourceTree = "<group>"; };
+		630E2A1124858C8E008DEF17 /* VideoParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoParser.swift; sourceTree = "<group>"; };
+		630E2A1424859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewControllerRepresentable.swift; sourceTree = "<group>"; };
+		630E2A162485A051008DEF17 /* videoplayback.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = videoplayback.mp4; sourceTree = "<group>"; };
 		63564B4024802BD600BFAF7B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		63564B4224802C7200BFAF7B /* ViewControllerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerRepresentable.swift; sourceTree = "<group>"; };
 		63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCaptureExtension.swift; sourceTree = "<group>"; };
 		635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectedHomePlateAngles.swift; sourceTree = "<group>"; };
-		636152F7247FFDC60043AFA1 /* TestProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestProcessingView.swift; sourceTree = "<group>"; };
+		636152F7247FFDC60043AFA1 /* TestImageProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImageProcessingView.swift; sourceTree = "<group>"; };
 		63DAA5C9248156930022F9AA /* FileIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIO.swift; sourceTree = "<group>"; };
 		63DAA5CB248156C70022F9AA /* ProcessingResult.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProcessingResult.txt; sourceTree = "<group>"; };
 		63DAA5CD248157FF0022F9AA /* Point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
@@ -76,6 +84,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		630E2A1324859782008DEF17 /* TestProcessing */ = {
+			isa = PBXGroup;
+			children = (
+				636152F7247FFDC60043AFA1 /* TestImageProcessingView.swift */,
+				630E2A0F24858758008DEF17 /* TestVideoProcessingView.swift */,
+				630E2A1424859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift */,
+				635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */,
+				630E2A1124858C8E008DEF17 /* VideoParser.swift */,
+			);
+			path = TestProcessing;
+			sourceTree = "<group>";
+		};
 		F63EE5FF23BFAE0D00B155B8 = {
 			isa = PBXGroup;
 			children = (
@@ -105,12 +125,12 @@
 				63564B4224802C7200BFAF7B /* ViewControllerRepresentable.swift */,
 				63564B4024802BD600BFAF7B /* ViewController.swift */,
 				63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */,
-				636152F7247FFDC60043AFA1 /* TestProcessingView.swift */,
-				635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */,
 				63DAA5C9248156930022F9AA /* FileIO.swift */,
 				63DAA5CD248157FF0022F9AA /* Point.swift */,
+				630E2A1324859782008DEF17 /* TestProcessing */,
 				F63EE61F23BFB02400B155B8 /* OpenCVWrapper */,
 				F63EE61123BFAE1300B155B8 /* Assets.xcassets */,
+				630E2A162485A051008DEF17 /* videoplayback.mp4 */,
 				F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */,
 				F63EE61923BFAE1300B155B8 /* Info.plist */,
 				F63EE61323BFAE1300B155B8 /* Preview Content */,
@@ -202,6 +222,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				630E2A172485A271008DEF17 /* videoplayback.mp4 in Resources */,
 				63DAA5CC248156C70022F9AA /* ProcessingResult.txt in Resources */,
 				F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */,
 				F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */,
@@ -219,14 +240,17 @@
 			files = (
 				63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */,
 				63FD24B0247994CE002D0728 /* ContourInfo.mm in Sources */,
+				630E2A1524859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift in Sources */,
+				630E2A1224858C8E008DEF17 /* VideoParser.swift in Sources */,
 				F604822B247591A900F71A68 /* MainView.swift in Sources */,
 				63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */,
 				63564B4124802BD600BFAF7B /* ViewController.swift in Sources */,
 				63564B4324802C7200BFAF7B /* ViewControllerRepresentable.swift in Sources */,
 				63FD24AC247993AF002D0728 /* Timer.mm in Sources */,
+				630E2A1024858758008DEF17 /* TestVideoProcessingView.swift in Sources */,
 				63DAA5CE248157FF0022F9AA /* Point.swift in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
-				636152F8247FFDC60043AFA1 /* TestProcessingView.swift in Sources */,
+				636152F8247FFDC60043AFA1 /* TestImageProcessingView.swift in Sources */,
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,
 				F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */,
 				635AB6E7247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift in Sources */,

@@ -52,7 +52,7 @@ class ImageProcessor {
         if (expectedHomePlateAngle >= 360 or expectedHomePlateAngle <= -360) {     //no homePlateAngle is provided, so no point in going through processing
             ofstream file;
             file.open(filePath);
-            file << "";     // clears the contents of the file
+            file << "bad angle";     // clears the contents of the file
             file.close();
             return image;
         }
@@ -86,24 +86,13 @@ class ImageProcessor {
         cv::bitwise_or(greenMask, brownMask, fieldMask);
         cv::bitwise_or(fieldMask, darkBrownMask, fieldMask);
         
-        // Get the location of the standard position of each of the fielders
-        vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle);
-        
-        if (expectedPositions.empty()or expectedPositions.size() != 9) {
-            ofstream file;
-            file.open(filePath);
-            file << "";
-            file.close();
-            return image;
-        }
-        
         // Get the location of each of the actual players on the field
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
         
         if (playerContours.empty() or playerContours.size() == 0) {
             ofstream file;
             file.open(filePath);
-            file << "";
+            file << "no players found";
             file.close();
             return image;
         }
@@ -113,6 +102,17 @@ class ImageProcessor {
         
         // Draw contours on image for DEBUG
         cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 0, 0), 3);
+        
+        // Get the location of the standard position of each of the fielders
+        vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle);
+        
+        if (expectedPositions.empty()or expectedPositions.size() != 9) {
+            ofstream file;
+            file.open(filePath);
+            file << "no infield found";
+            file.close();
+            return image;
+        }
         
         // Draw expected positions on image for debugging
         /*int b = 0;
