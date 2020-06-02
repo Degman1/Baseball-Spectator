@@ -92,7 +92,7 @@ class ImageProcessor {
         if (playerContours.empty() or playerContours.size() == 0) {
             ofstream file;
             file.open(filePath);
-            file << "no players found";
+            file << "no players detected";
             file.close();
             return image;
         }
@@ -109,9 +109,10 @@ class ImageProcessor {
         if (expectedPositions.empty()or expectedPositions.size() != 9) {
             ofstream file;
             file.open(filePath);
-            file << "no infield found";
+            file << "no infield detected";
             file.close();
-            return image;
+            UIImage *result = MatToUIImage(resizedMat);
+            return result;
         }
         
         // Draw expected positions on image for debugging
@@ -515,12 +516,16 @@ class ImageProcessor {
     }
     
     vector<vector<cv::Point>> getPlayersByPosition(vector<vector<cv::Point>> playerContours, vector<cv::Point> expectedPositions) {
+        // finds which players are closest to which position, and returns a vector of the lowest point of the contours with the index of the array indicative of the position number minus one
+        // includes the expected positions in the playersByPosition vector
+        
         vector<vector<cv::Point>> playersByPosition;    // the players position is indicated by the position's corresponding number minus one
-        vector<cv::Point> emptyVec;
         
         // populate the map with empty vectors
         for (int i = 0; i < 9; i++) {
-            playersByPosition.push_back(emptyVec);
+            vector<cv::Point> vec;
+            vec.push_back(expectedPositions[i]);
+            playersByPosition.push_back(vec);
         }
         
         for (vector<cv::Point> contour: playerContours) {
