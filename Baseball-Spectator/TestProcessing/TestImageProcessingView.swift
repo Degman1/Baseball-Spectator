@@ -10,14 +10,22 @@ import SwiftUI
 
 struct TestImageProcessingView: View {
     @State var imageID = 1
+    @State var positionID = -1  // represents no selection
     var fileInterface: FileIO
     
     var body: some View {
-        ZStack {
-            self.testProcessing(imageID: imageID)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-            Stepper("ImageID: \(imageID)", value: $imageID, in: 1...12)
+        GeometryReader { geometry in
+            ZStack {
+                self.testProcessing(imageID: self.imageID)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, positionID: self.$positionID, imageID: self.$imageID)
+                Stepper("ImageID: \(self.imageID)", value: self.$imageID, in: 1...11)
+                    .background(Color.white)
+                    .frame(width: 300, height: 200, alignment: .topTrailing)
+                
+            }.frame(alignment: .topLeading)
         }
     }
     

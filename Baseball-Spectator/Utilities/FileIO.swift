@@ -9,7 +9,7 @@
 import Foundation
 
 class FileIO {
-    var playersByPosition: [[Point]] = []
+    var playersByPosition: [[CGPoint]] = []
     var filePath: String
     
     init() {
@@ -37,7 +37,7 @@ class FileIO {
             let splitByPlayer = splitByPosition[i].split(separator: " ")
             for coord in splitByPlayer {
                 let splitCoord = coord.split(separator: ",")
-                self.playersByPosition[i].append(Point(x: Int(splitCoord[0])!, y: Int(splitCoord[1])!))
+                self.playersByPosition[i].append(CGPoint(x: Int(splitCoord[0])!, y: Int(splitCoord[1])!))
             }
         }
     }
@@ -48,7 +48,6 @@ class FileIO {
     }
     
     static func write(_ path: String, data: String) throws {
-        //let url = NSURL.fileURL(withPathComponents: path.split(separator:"/").map(String.init))!
         try data.write(to: URL(fileURLWithPath: path), atomically: true, encoding: String.Encoding.utf8)
     }
     

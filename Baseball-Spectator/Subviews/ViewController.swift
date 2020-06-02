@@ -14,7 +14,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private let videoDataOutput = AVCaptureVideoDataOutput()
     private var skipFrame = 0;
     private let context = CIContext()
-    public var playersByPosition: [[Point]] = []
+    public var playersByPosition: [[CGPoint]] = []
     var fileInterface: FileIO
     
     init(fileInterface: FileIO) {
