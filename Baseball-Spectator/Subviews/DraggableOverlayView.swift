@@ -13,11 +13,12 @@ struct DraggableOverlayView: View {
     let fileInterface: FileIO
     @Binding var positionID: Int
     @Binding var imageID: Int
+    @Binding var clickedPosition: String;
     
     var body: some View {
         Rectangle()
-            .foregroundColor(.black)
-            .opacity(0.3)
+            .foregroundColor(.white)
+            .opacity(0.1)
             .frame(
                 width: TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width / TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height * geometry.size.height,
                 height: self.geometry.size.height)
@@ -50,28 +51,27 @@ struct DraggableOverlayView: View {
                     
                     switch i {
                     case 0:
-                    print("pitcher")
+                        self.clickedPosition = "pitcher"
                     case 1:
-                    print("catcher")
+                        self.clickedPosition = "catcher"
                     case 2:
-                    print("first")
+                        self.clickedPosition = "first"
                     case 3:
-                    print("second")
+                        self.clickedPosition = "second"
                     case 4:
-                    print("shortstop")
+                        self.clickedPosition = "shortstop"
                     case 5:
-                    print("third")
+                        self.clickedPosition = "third"
                     case 6:
-                    print("leftfield")
+                        self.clickedPosition = "leftfield"
                     case 7:
-                    print("centerfield")
+                        self.clickedPosition = "centerfield"
                     case 8:
-                    print("rightfield")
+                        self.clickedPosition = "rightfield"
                     default:
-                    print("failed...")
+                        self.clickedPosition = "failed"
                     }
                     
-                    print()
                     return
                 }
             }

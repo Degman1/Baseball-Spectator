@@ -10,17 +10,17 @@ import Foundation
 
 class FileIO {
     var playersByPosition: [[CGPoint]] = []
-    var filePath: String
+    var filePath: URL
     
-    init() {
-        filePath = Bundle.main.path(forResource: "ProcessingResult", ofType: "txt")!
+    init(fileName name: String, fileExtension ext: String) {
+        filePath = FileIO.getDocumentsDirectory().appendingPathComponent(name).appendingPathExtension(ext)
     }
     
     func loadData() throws {
         // This makes it so that if running on the simulator vs. iPhone, differentiate which path to use that points to the processing results
         
-        let contents = try! String(contentsOfFile: self.filePath)
-                        
+        let contents = try! FileIO.read(from: self.filePath)
+        
         let splitByPosition = contents.split(separator: "\n")
         
         if splitByPosition.count != 9 {              // processing failed
@@ -42,13 +42,21 @@ class FileIO {
         }
     }
   
-    static func read(from path: String) throws-> String {
-        return try String(contentsOfFile: path, encoding: String.Encoding.utf8)
+    static func read(from path: URL) throws -> String {
+        return try String(contentsOf: path, encoding: String.Encoding.utf8)
 
     }
     
-    static func write(_ path: String, data: String) throws {
-        try data.write(to: URL(fileURLWithPath: path), atomically: true, encoding: String.Encoding.utf8)
+    static func write(_ path: URL, data: String) throws {
+        try data.write(to: path, atomically: true, encoding: String.Encoding.utf8)
+    }
+    
+    static func getDocumentsDirectory() -> URL {
+        // find all possible documents directories for this user
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+
+        // just send back the first one, which ought to be the only one
+        return paths[0]
     }
     
     enum FileIOError: Error {

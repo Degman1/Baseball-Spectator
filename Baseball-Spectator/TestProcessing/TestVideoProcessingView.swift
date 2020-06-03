@@ -34,7 +34,7 @@ struct TestVideoProcessingView: View {
         if self.videoParser.frames.count == 0 {
             return Image("image1")
         }
-        let res = OpenCVWrapper.processImage(self.videoParser.frames[imageIndex], expectedHomePlateAngle: HOME_PLATE_ANGLES[0], filePath: fileInterface.filePath)
+        let res = OpenCVWrapper.processImage(self.videoParser.frames[imageIndex], expectedHomePlateAngle: HOME_PLATE_ANGLES[0], filePath: "\(fileInterface.filePath)")
         
         try! fileInterface.loadData()
         for pos in fileInterface.playersByPosition {
@@ -51,6 +51,6 @@ struct TestVideoProcessingView: View {
 
 struct TestVideoProcessingView_Previews: PreviewProvider {
     static var previews: some View {
-        TestVideoProcessingView(fileInterface: FileIO())
+        TestVideoProcessingView(fileInterface: FileIO(fileName: "ProcessingResult", fileExtension: "txt"))
     }
 }

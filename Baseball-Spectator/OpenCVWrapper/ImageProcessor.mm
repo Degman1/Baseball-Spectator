@@ -563,6 +563,8 @@ class ImageProcessor {
         ofstream file;
         file.open(filePath);
         
+        cout << "\n open? " << file.is_open() << "\n";
+        
         string contents = "";
         for ( vector<cv::Point> vec : playersByPosition ) {
             string playersOfCertainPosition = "";
@@ -578,7 +580,7 @@ class ImageProcessor {
             }
             contents += "\n";
         }
-        
+                
         file << contents;
 
         file.close();

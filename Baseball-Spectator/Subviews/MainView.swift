@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct MainView: View {
-    let fileInterface = FileIO()
+    let fileInterface = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
     
     var body: some View {
         ZStack {

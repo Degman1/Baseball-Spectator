@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		630C2C292486F35200503E5A /* ProcessingResult.txt in Resources */ = {isa = PBXBuildFile; fileRef = 630C2C272486F0E600503E5A /* ProcessingResult.txt */; };
 		630E2A1024858758008DEF17 /* TestVideoProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A0F24858758008DEF17 /* TestVideoProcessingView.swift */; };
 		630E2A1224858C8E008DEF17 /* VideoParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A1124858C8E008DEF17 /* VideoParser.swift */; };
 		630E2A1524859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A1424859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift */; };
@@ -16,7 +17,6 @@
 		63564B4524803F5C00BFAF7B /* AVCaptureExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */; };
 		635AB6E7247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */; };
 		636152F8247FFDC60043AFA1 /* TestImageProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636152F7247FFDC60043AFA1 /* TestImageProcessingView.swift */; };
-		6388264E2486CBD000C9FB4E /* ProcessingResult.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6388264D2486CBD000C9FB4E /* ProcessingResult.txt */; };
 		638826502486CCF800C9FB4E /* DraggableOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */; };
 		638826542486DB4500C9FB4E /* TestImageResolutions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638826532486DB4500C9FB4E /* TestImageResolutions.swift */; };
 		63DAA5CA248156940022F9AA /* FileIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5C9248156930022F9AA /* FileIO.swift */; };
@@ -39,6 +39,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		630C2C272486F0E600503E5A /* ProcessingResult.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProcessingResult.txt; sourceTree = "<group>"; };
 		630E2A0F24858758008DEF17 /* TestVideoProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestVideoProcessingView.swift; sourceTree = "<group>"; };
 		630E2A1124858C8E008DEF17 /* VideoParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoParser.swift; sourceTree = "<group>"; };
 		630E2A1424859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewControllerRepresentable.swift; sourceTree = "<group>"; };
@@ -48,7 +49,6 @@
 		63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCaptureExtension.swift; sourceTree = "<group>"; };
 		635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectedHomePlateAngles.swift; sourceTree = "<group>"; };
 		636152F7247FFDC60043AFA1 /* TestImageProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImageProcessingView.swift; sourceTree = "<group>"; };
-		6388264D2486CBD000C9FB4E /* ProcessingResult.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProcessingResult.txt; sourceTree = "<group>"; };
 		6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableOverlayView.swift; sourceTree = "<group>"; };
 		638826532486DB4500C9FB4E /* TestImageResolutions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImageResolutions.swift; sourceTree = "<group>"; };
 		63DAA5C9248156930022F9AA /* FileIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIO.swift; sourceTree = "<group>"; };
@@ -171,7 +171,7 @@
 		F63EE61F23BFB02400B155B8 /* OpenCVWrapper */ = {
 			isa = PBXGroup;
 			children = (
-				6388264D2486CBD000C9FB4E /* ProcessingResult.txt */,
+				630C2C272486F0E600503E5A /* ProcessingResult.txt */,
 				F63EE62023BFB02400B155B8 /* README.md */,
 				F6CD4AD323C4E37C00DA0E1E /* PrefixHeader.pch */,
 				F604823A2475994900F71A68 /* opencv.hpp */,
@@ -244,11 +244,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				630C2C292486F35200503E5A /* ProcessingResult.txt in Resources */,
 				630E2A172485A271008DEF17 /* videoplayback.mp4 in Resources */,
 				F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */,
 				F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */,
 				F63EE62423BFB02400B155B8 /* README.md in Resources */,
-				6388264E2486CBD000C9FB4E /* ProcessingResult.txt in Resources */,
 				F63EE61223BFAE1300B155B8 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
