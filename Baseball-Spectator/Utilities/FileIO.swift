@@ -14,6 +14,7 @@ class FileIO {
     
     init(fileName name: String, fileExtension ext: String) {
         filePath = FileIO.getDocumentsDirectory().appendingPathComponent(name).appendingPathExtension(ext)
+        try! FileIO.write(filePath, data: "")    // to create the file in the documents directory
     }
     
     func loadData() throws {

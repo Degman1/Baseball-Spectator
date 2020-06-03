@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		630C2C292486F35200503E5A /* ProcessingResult.txt in Resources */ = {isa = PBXBuildFile; fileRef = 630C2C272486F0E600503E5A /* ProcessingResult.txt */; };
 		630E2A1024858758008DEF17 /* TestVideoProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A0F24858758008DEF17 /* TestVideoProcessingView.swift */; };
 		630E2A1224858C8E008DEF17 /* VideoParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A1124858C8E008DEF17 /* VideoParser.swift */; };
 		630E2A1524859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A1424859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift */; };
@@ -39,7 +38,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		630C2C272486F0E600503E5A /* ProcessingResult.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProcessingResult.txt; sourceTree = "<group>"; };
 		630E2A0F24858758008DEF17 /* TestVideoProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestVideoProcessingView.swift; sourceTree = "<group>"; };
 		630E2A1124858C8E008DEF17 /* VideoParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoParser.swift; sourceTree = "<group>"; };
 		630E2A1424859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewControllerRepresentable.swift; sourceTree = "<group>"; };
@@ -171,7 +169,6 @@
 		F63EE61F23BFB02400B155B8 /* OpenCVWrapper */ = {
 			isa = PBXGroup;
 			children = (
-				630C2C272486F0E600503E5A /* ProcessingResult.txt */,
 				F63EE62023BFB02400B155B8 /* README.md */,
 				F6CD4AD323C4E37C00DA0E1E /* PrefixHeader.pch */,
 				F604823A2475994900F71A68 /* opencv.hpp */,
@@ -244,7 +241,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				630C2C292486F35200503E5A /* ProcessingResult.txt in Resources */,
 				630E2A172485A271008DEF17 /* videoplayback.mp4 in Resources */,
 				F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */,
 				F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */,
