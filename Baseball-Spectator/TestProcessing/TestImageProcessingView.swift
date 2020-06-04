@@ -36,12 +36,12 @@ struct TestImageProcessingView: View {
                         }
                         self.processingState = .UserSelectHome
                     }, label: {
-                        return Text("ImageID: \(self.imageID)")
+                        return Text("ImageID: \(self.imageID)").background(Color.white)
                         
                     })
                     //Stepper("ImageID: \(self.imageID)", value: self.$imageID, in: 1...11)
                     HStack {
-                        Text(self.clickedPosition)
+                        Text(self.clickedPosition).background(Color.white)
                         Spacer()
                     }
                     HStack {
