@@ -13,6 +13,8 @@ struct TestImageProcessingView: View {
     @State var positionID = -1  // represents no selection
     var fileInterface: FileIO
     @State var clickedPosition: String = ""
+    @State var processingState: ProcessingState = .UserSelectHome
+    @State var expectedHomePlateAngle: Double = 0.0
     
     var body: some View {
         GeometryReader { geometry in
@@ -21,11 +23,33 @@ struct TestImageProcessingView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, positionID: self.$positionID, imageID: self.$imageID, clickedPosition: self.$clickedPosition)
+                DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, positionID: self.$positionID, imageID: self.$imageID, clickedPosition: self.$clickedPosition, processingState: self.$processingState, expectedHomePlateAngle: self.$expectedHomePlateAngle)
                 VStack {
-                    Stepper("ImageID: \(self.imageID)", value: self.$imageID, in: 1...11)
+                    Stepper(onIncrement: {
+                        if self.imageID < 11 {
+                            self.imageID += 1
+                        }
+                        self.processingState = .UserSelectHome
+                    }, onDecrement: {
+                        if self.imageID > 1 {
+                            self.imageID -= 1
+                        }
+                        self.processingState = .UserSelectHome
+                    }, label: {
+                        return Text("ImageID: \(self.imageID)")
+                        
+                    })
+                    //Stepper("ImageID: \(self.imageID)", value: self.$imageID, in: 1...11)
                     HStack {
-                        Text(self.clickedPosition).background(Color.white)
+                        Text(self.clickedPosition)
+                        Spacer()
+                    }
+                    HStack {
+                        if self.processingState == .UserSelectHome {
+                            Text("Select Home Plate").background(Color.white)
+                        } else {
+                            Text("All Set!").background(Color.white)
+                        }
                         Spacer()
                     }
                 }
@@ -35,8 +59,8 @@ struct TestImageProcessingView: View {
     
     func testProcessing(imageID: Int) -> Image {
         let uiimage = UIImage(named: "image\(imageID).jpg")!
-        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: HOME_PLATE_ANGLES[imageID - 1], filePath: fileInterface.filePath)
-        try! fileInterface.loadData()
+        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: self.expectedHomePlateAngle, filePath: self.fileInterface.filePath, processingState: Int32(self.processingState.rawValue))
+        try! fileInterface.loadDataIntoPlayersByPosition()
         return Image(uiImage: res)
     }
 }

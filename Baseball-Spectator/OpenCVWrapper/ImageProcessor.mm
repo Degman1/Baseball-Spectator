@@ -35,7 +35,7 @@ class ImageProcessor {
         upperDarkBrown = cv::Scalar(10, 175, 150);
     }
     
-    public: UIImage* processImage(UIImage* image, double expectedHomePlateAngle, string filePath) {
+    public: UIImage* processImage(UIImage* image, double expectedHomePlateAngle, string filePath, int processingState) {
         /*
          Main image processing routine
         
@@ -48,7 +48,7 @@ class ImageProcessor {
             7. Assign each player an expected position
             8. RETURN each players' bottom point and their corresponding position
         */
-                
+        
         if (expectedHomePlateAngle >= 360 or expectedHomePlateAngle <= -360) {     //no homePlateAngle is provided, so no point in going through processing
             ofstream file;
             file.open(filePath);
@@ -86,6 +86,32 @@ class ImageProcessor {
         cv::bitwise_or(greenMask, brownMask, fieldMask);
         cv::bitwise_or(fieldMask, darkBrownMask, fieldMask);
         
+        // resizedMat wasn't in correct format before, so change it to RGB here for in-color drawing
+        cv::cvtColor(hsv, resizedMat, cv::COLOR_HSV2RGB);
+        
+        // Get the location of the standard position of each of the fielders
+        vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle, processingState);
+        
+        if (expectedPositions.size() == 5) {
+            // draw a circle over home, first, second, and third
+            
+            for (int i = 0; i < 4; i++) {
+                cv::circle(resizedMat, expectedPositions[i], 15, cv::Scalar(0, 0, 255), cv::FILLED);
+            }
+            
+            writeBasesToFile(expectedPositions, filePath);
+            
+            UIImage *result = MatToUIImage(resizedMat);
+            return result;
+        } else if (expectedPositions.empty() or expectedPositions.size() != 9) {
+            ofstream file;
+            file.open(filePath);
+            file << "no infield detected";
+            file.close();
+            UIImage *result = MatToUIImage(resizedMat);
+            return result;
+        }
+        
         // Get the location of each of the actual players on the field
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
         
@@ -97,23 +123,8 @@ class ImageProcessor {
             return image;
         }
         
-        // resizedMat wasn't in correct format before, so change it to RGB here for in-color drawing
-        cv::cvtColor(hsv, resizedMat, cv::COLOR_HSV2RGB);
-        
         // Draw contours on image for DEBUG
         cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 0, 0), 3);
-        
-        // Get the location of the standard position of each of the fielders
-        vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle);
-        
-        if (expectedPositions.empty()or expectedPositions.size() != 9) {
-            ofstream file;
-            file.open(filePath);
-            file << "no infield detected";
-            file.close();
-            UIImage *result = MatToUIImage(resizedMat);
-            return result;
-        }
         
         // Draw expected positions on image for debugging
         /*int b = 0;
@@ -144,7 +155,7 @@ class ImageProcessor {
     }
     
     private:
-    vector<cv::Point> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle) {
+    vector<cv::Point> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle, int processingState) {
         /*
          Sub-processing routine to find the location of each of the game positions
 
@@ -203,7 +214,7 @@ class ImageProcessor {
             }
         }
         
-        if (infield.x == -1) { return failedVec; }       //TODO: indicate the infield was not found
+        if (infield.x == -1) { return failedVec; }
         
         // use the hull of the infield instead of the original infield contour
         vector<cv::Point> infieldHull;
@@ -215,6 +226,11 @@ class ImageProcessor {
         
         if (infieldCorners.empty() or infieldCorners.size() == 0) {
             return failedVec;
+        }
+        
+        if (processingState == 0) {
+            infieldCorners.push_back(getAveragePoint(infieldCorners));
+            return infieldCorners;
         }
                 
         vector<cv::Point> bases = putBasesInOrder(infieldCorners, expectedHomePlateAngle);      // get the bases in order of pitcher, home, first, second, third
@@ -582,5 +598,35 @@ class ImageProcessor {
         file << contents;
 
         file.close();
+    }
+    
+    void writeBasesToFile(vector<cv::Point> bases, string filePath) {
+        ofstream file;
+        file.open(filePath);
+        string contents = to_string(bases[0].x) + "," + to_string(bases[0].y) + "\n";
+        contents += to_string(bases[1].x) + "," + to_string(bases[1].y) + "\n";
+        contents += to_string(bases[2].x) + "," + to_string(bases[2].y) + "\n";
+        contents += to_string(bases[3].x) + "," + to_string(bases[3].y) + "\n";
+        contents += to_string(bases[4].x) + "," + to_string(bases[4].y) + "\n";
+        
+        file << contents;
+        
+        file.close();
+    }
+    
+    cv::Point getAveragePoint(vector<cv::Point> points) {
+        int aveX = 0;
+        int aveY = 0;
+        
+        for (cv::Point point : points) {
+            aveX += point.x;
+            aveY += point.y;
+        }
+        
+        cv::Point avePoint;
+        avePoint.x = aveX / points.size();
+        avePoint.y = aveY / points.size();
+        
+        return avePoint;
     }
 };

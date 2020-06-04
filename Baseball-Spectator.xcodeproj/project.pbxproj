@@ -18,6 +18,7 @@
 		636152F8247FFDC60043AFA1 /* TestImageProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636152F7247FFDC60043AFA1 /* TestImageProcessingView.swift */; };
 		638826502486CCF800C9FB4E /* DraggableOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */; };
 		638826542486DB4500C9FB4E /* TestImageResolutions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638826532486DB4500C9FB4E /* TestImageResolutions.swift */; };
+		63C46CAF24887ADF00EC3E67 /* ProcessingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C46CAE24887ADF00EC3E67 /* ProcessingState.swift */; };
 		63DAA5CA248156940022F9AA /* FileIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5C9248156930022F9AA /* FileIO.swift */; };
 		63DAA5CE248157FF0022F9AA /* CGPointExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5CD248157FF0022F9AA /* CGPointExtension.swift */; };
 		63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24A924799375002D0728 /* InfieldContourFitting.mm */; };
@@ -49,6 +50,7 @@
 		636152F7247FFDC60043AFA1 /* TestImageProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImageProcessingView.swift; sourceTree = "<group>"; };
 		6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableOverlayView.swift; sourceTree = "<group>"; };
 		638826532486DB4500C9FB4E /* TestImageResolutions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImageResolutions.swift; sourceTree = "<group>"; };
+		63C46CAE24887ADF00EC3E67 /* ProcessingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingState.swift; sourceTree = "<group>"; };
 		63DAA5C9248156930022F9AA /* FileIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIO.swift; sourceTree = "<group>"; };
 		63DAA5CD248157FF0022F9AA /* CGPointExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGPointExtension.swift; sourceTree = "<group>"; };
 		63FD24A924799375002D0728 /* InfieldContourFitting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InfieldContourFitting.mm; sourceTree = "<group>"; wrapsLines = 1; };
@@ -117,6 +119,7 @@
 				63564B4224802C7200BFAF7B /* ViewControllerRepresentable.swift */,
 				63564B4024802BD600BFAF7B /* ViewController.swift */,
 				6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */,
+				63C46CAE24887ADF00EC3E67 /* ProcessingState.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -268,6 +271,7 @@
 				630E2A1024858758008DEF17 /* TestVideoProcessingView.swift in Sources */,
 				63DAA5CE248157FF0022F9AA /* CGPointExtension.swift in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
+				63C46CAF24887ADF00EC3E67 /* ProcessingState.swift in Sources */,
 				636152F8247FFDC60043AFA1 /* TestImageProcessingView.swift in Sources */,
 				638826502486CCF800C9FB4E /* DraggableOverlayView.swift in Sources */,
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,

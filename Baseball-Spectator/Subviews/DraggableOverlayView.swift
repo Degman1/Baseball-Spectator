@@ -14,6 +14,8 @@ struct DraggableOverlayView: View {
     @Binding var positionID: Int
     @Binding var imageID: Int
     @Binding var clickedPosition: String;
+    @Binding var processingState: ProcessingState
+    @Binding var expectedHomePlateAngle: Double
     
     var body: some View {
         Rectangle()
@@ -30,7 +32,8 @@ struct DraggableOverlayView: View {
     }
     
     func dragOperation(value: DragGesture.Value) {
-        if fileInterface.playersByPosition.count == 0 { return }
+        if processingState == .Processing && fileInterface.playersByPosition.count == 0 { return }
+        
         let res = TEST_IMAGE_RESOLUTIONS[self.imageID - 1]
         let imageDisplayWidth = (res.width / res.height) * geometry.size.height
         
@@ -39,42 +42,55 @@ struct DraggableOverlayView: View {
         }
         
         let loc = value.location.scale(from: CGSize(width: imageDisplayWidth, height: geometry.size.height), to: res)
-        
-        guard let closestPlayerCoordinateToDrag = loc.getClosestPointFromHere(to: fileInterface.playersByPosition.flatMap{$0}) else {
-            return
-        }
                 
-        for i in 0..<9 {
-            for position in fileInterface.playersByPosition[i] {
-                if position == closestPlayerCoordinateToDrag {
-                    self.positionID = i
-                    
-                    switch i {
-                    case 0:
-                        self.clickedPosition = "pitcher"
-                    case 1:
-                        self.clickedPosition = "catcher"
-                    case 2:
-                        self.clickedPosition = "first"
-                    case 3:
-                        self.clickedPosition = "second"
-                    case 4:
-                        self.clickedPosition = "shortstop"
-                    case 5:
-                        self.clickedPosition = "third"
-                    case 6:
-                        self.clickedPosition = "leftfield"
-                    case 7:
-                        self.clickedPosition = "centerfield"
-                    case 8:
-                        self.clickedPosition = "rightfield"
-                    default:
-                        self.clickedPosition = "failed"
+        if processingState == .UserSelectHome {
+            guard let closestPositionToDrag = loc.getClosestPointFromHere(to: fileInterface.playersByPosition[0]) else {
+                return
+            }
+            
+            if let a = try! fileInterface.getExpectedHomePlateAngle(point: closestPositionToDrag) {
+                self.expectedHomePlateAngle = a
+                self.processingState = .Processing
+                return
+            }
+        } else {
+            guard let closestPlayerCoordinateToDrag = loc.getClosestPointFromHere(to: fileInterface.playersByPosition.flatMap{$0}) else {
+                return
+            }
+            
+            for i in 0..<9 {
+                for position in fileInterface.playersByPosition[i] {
+                    if position == closestPlayerCoordinateToDrag {
+                        self.positionID = i
+                        
+                        switch i {
+                        case 0:
+                            self.clickedPosition = "pitcher"
+                        case 1:
+                            self.clickedPosition = "catcher"
+                        case 2:
+                            self.clickedPosition = "first"
+                        case 3:
+                            self.clickedPosition = "second"
+                        case 4:
+                            self.clickedPosition = "shortstop"
+                        case 5:
+                            self.clickedPosition = "third"
+                        case 6:
+                            self.clickedPosition = "leftfield"
+                        case 7:
+                            self.clickedPosition = "centerfield"
+                        case 8:
+                            self.clickedPosition = "rightfield"
+                        default:
+                            self.clickedPosition = "failed"
+                        }
+                        
+                        return
                     }
-                    
-                    return
                 }
             }
         }
+        
     }
 }

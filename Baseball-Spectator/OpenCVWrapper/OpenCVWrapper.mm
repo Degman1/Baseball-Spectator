@@ -21,9 +21,9 @@ using namespace std;
 
 ImageProcessor processor = ImageProcessor();
 
-+ (UIImage *)processImage:(UIImage *)image expectedHomePlateAngle:(double)expectedHomePlateAngle filePath:(NSURL *)filePath {
++ (UIImage *)processImage:(UIImage *)image expectedHomePlateAngle:(double)expectedHomePlateAngle filePath:(NSURL *)filePath processingState:(int)processingState {
     string path([filePath.path UTF8String]);
-    UIImage* output = processor.processImage(image, expectedHomePlateAngle, path);
+    UIImage* output = processor.processImage(image, expectedHomePlateAngle, path, processingState);
     
     /*int nRepeats = 1000;  //use this code to get an average processing time over n repeats
     UIImage* output;

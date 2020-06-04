@@ -11,6 +11,7 @@ import SwiftUI
 struct TestVideoProcessingView: View {
     @State var imageIndex = 0
     var fileInterface: FileIO
+    var processingState: ProcessingState = .UserSelectHome
     var videoParser = VideoParser()
     
     init(fileInterface: FileIO) {
@@ -34,9 +35,9 @@ struct TestVideoProcessingView: View {
         if self.videoParser.frames.count == 0 {
             return Image("image1")
         }
-        let res = OpenCVWrapper.processImage(self.videoParser.frames[imageIndex], expectedHomePlateAngle: HOME_PLATE_ANGLES[0], filePath: fileInterface.filePath)
+        let res = OpenCVWrapper.processImage(self.videoParser.frames[imageIndex], expectedHomePlateAngle: HOME_PLATE_ANGLES[0], filePath: fileInterface.filePath, processingState: Int32(self.processingState.rawValue))
         
-        try! fileInterface.loadData()
+        try! fileInterface.loadDataIntoPlayersByPosition()
         for pos in fileInterface.playersByPosition {
             print(pos)
         }

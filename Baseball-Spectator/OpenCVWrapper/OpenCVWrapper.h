@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface OpenCVWrapper : NSObject
 
-+ (UIImage *)processImage:(UIImage *)image expectedHomePlateAngle:(double)expectedHomePlateAngle filePath:(NSURL *)filePath;
++ (UIImage *)processImage:(UIImage *)image expectedHomePlateAngle:(double)expectedHomePlateAngle filePath:(NSURL *)filePath processingState:(int)processingState;
 
 @end
 

@@ -15,6 +15,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var skipFrame = 0;
     private let context = CIContext()
     public var playersByPosition: [[CGPoint]] = []
+    var processingState: ProcessingState = .UserSelectHome
     var fileInterface: FileIO
     
     init(fileInterface: FileIO) {
@@ -74,13 +75,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         DispatchQueue.main.async {
             if self.skipFrame % 2 == 0 {
-                self.imageView.image = OpenCVWrapper.processImage(image, expectedHomePlateAngle: HOME_PLATE_ANGLES[4], filePath: self.fileInterface.filePath)
+                self.imageView.image = OpenCVWrapper.processImage(image, expectedHomePlateAngle: HOME_PLATE_ANGLES[4], filePath: self.fileInterface.filePath, processingState: Int32(self.processingState.rawValue))
             }
             
             self.skipFrame += 1
         }
         
-        try! fileInterface.loadData()
+        try! fileInterface.loadDataIntoPlayersByPosition()
     }
     
     private func getFrames() {
