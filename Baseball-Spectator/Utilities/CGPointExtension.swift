@@ -32,6 +32,10 @@ extension CGPoint {
         return closestPoint
     }
     
+    func getClosestPointFromHere(to arrayOfPoints: [[CGPoint]]) -> CGPoint? {
+        return nil
+    }
+    
     func scale(from initialBounds: CGSize, to newBounds: CGSize) -> CGPoint {
         return CGPoint(x: (x / initialBounds.width) * newBounds.width,
                        y: (y / initialBounds.height) * newBounds.height)

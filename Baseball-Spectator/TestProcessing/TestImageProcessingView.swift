@@ -9,12 +9,10 @@
 import SwiftUI
 
 struct TestImageProcessingView: View {
-    @State var imageID = 1
-    @State var positionID = -1  // represents no selection
     var fileInterface: FileIO
-    @State var clickedPosition: String = ""
-    @State var processingState: ProcessingState = .UserSelectHome
-    @State var expectedHomePlateAngle: Double = 0.0
+    @State var imageID = 1
+    @ObservedObject var processingCoordinator = ProcessingCoordinator()
+    @ObservedObject var selectedPlayer = SelectedPlayer()
     
     var body: some View {
         GeometryReader { geometry in
@@ -23,29 +21,27 @@ struct TestImageProcessingView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, positionID: self.$positionID, imageID: self.$imageID, clickedPosition: self.$clickedPosition, processingState: self.$processingState, expectedHomePlateAngle: self.$expectedHomePlateAngle)
+                
+                DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, imageID: self.$imageID, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
+                
                 VStack {
                     Stepper(onIncrement: {
                         if self.imageID < 11 {
                             self.imageID += 1
                         }
-                        self.processingState = .UserSelectHome
+                        self.processingCoordinator.processingState = .UserSelectHome
                     }, onDecrement: {
                         if self.imageID > 1 {
                             self.imageID -= 1
                         }
-                        self.processingState = .UserSelectHome
+                        self.processingCoordinator.processingState = .UserSelectHome
                     }, label: {
                         return Text("ImageID: \(self.imageID)").background(Color.white)
                         
                     })
                     //Stepper("ImageID: \(self.imageID)", value: self.$imageID, in: 1...11)
                     HStack {
-                        Text(self.clickedPosition).background(Color.white)
-                        Spacer()
-                    }
-                    HStack {
-                        if self.processingState == .UserSelectHome {
+                        if self.processingCoordinator.processingState == .UserSelectHome {
                             Text("Select Home Plate").background(Color.white)
                         } else {
                             Text("All Set!").background(Color.white)
@@ -53,13 +49,17 @@ struct TestImageProcessingView: View {
                         Spacer()
                     }
                 }
+                
+                if self.selectedPlayer.coordinate != nil {
+                    PlayerInfoBarView(geometry: geometry, imageID: self.$imageID, selectedPlayer: self.selectedPlayer)
+                }
             }
         }
     }
     
     func testProcessing(imageID: Int) -> Image {
         let uiimage = UIImage(named: "image\(imageID).jpg")!
-        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: self.expectedHomePlateAngle, filePath: self.fileInterface.filePath, processingState: Int32(self.processingState.rawValue))
+        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: self.fileInterface.filePath, processingState: Int32(self.processingCoordinator.processingState.rawValue))
         try! fileInterface.loadDataIntoPlayersByPosition()
         return Image(uiImage: res)
     }
@@ -68,5 +68,6 @@ struct TestImageProcessingView: View {
 struct TestProcessingView_Previews: PreviewProvider {
     static var previews: some View {
         TestImageProcessingView(fileInterface: FileIO(fileName: "ProcessingResult", fileExtension: "txt"))
+            .previewLayout(.fixed(width: 568, height: 320))
     }
 }

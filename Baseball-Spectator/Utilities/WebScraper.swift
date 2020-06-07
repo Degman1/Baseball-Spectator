@@ -20,7 +20,7 @@ class WebScraper {
         
         var html = ""
         
-        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data else {
                 print("data was nil")
                 return
@@ -33,6 +33,12 @@ class WebScraper {
             html = htmlString
         }
         
+        task.resume()
+        
         return html
+    }
+    
+    func getData(hmtlString: String, leftSideString: String, rightSideString: String) -> String? {
+        return nil
     }
 }
