@@ -9,10 +9,15 @@
 import SwiftUI
 
 struct TestImageProcessingView: View {
-    var fileInterface: FileIO
+    let fileInterface: FileIO = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
+    let webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/")
     @State var imageID = 1
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
     @ObservedObject var selectedPlayer = SelectedPlayer()
+    
+    init() {
+        self.webScraper.getWebsiteHTML(teamLookupName: BOSTON_RED_SOX.lookupName)
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -31,15 +36,16 @@ struct TestImageProcessingView: View {
                         }
                         self.processingCoordinator.processingState = .UserSelectHome
                         self.selectedPlayer.unselectPlayer()
+                        self.webScraper.getWebsiteHTML(teamLookupName: BOSTON_RED_SOX.lookupName)
                     }, onDecrement: {
                         if self.imageID > 1 {
                             self.imageID -= 1
                         }
                         self.processingCoordinator.processingState = .UserSelectHome
                         self.selectedPlayer.unselectPlayer()
+                        self.webScraper.getWebsiteHTML(teamLookupName: BOSTON_RED_SOX.lookupName)
                     }, label: {
                         return Text("ImageID: \(self.imageID)").background(Color.white)
-                        
                     })
                     
                     HStack {
@@ -69,7 +75,7 @@ struct TestImageProcessingView: View {
 
 struct TestProcessingView_Previews: PreviewProvider {
     static var previews: some View {
-        TestImageProcessingView(fileInterface: FileIO(fileName: "ProcessingResult", fileExtension: "txt"))
+        TestImageProcessingView()
             .previewLayout(.fixed(width: 568, height: 320))
     }
 }

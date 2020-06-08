@@ -9,10 +9,9 @@
 import SwiftUI
 
 struct ContentView: View {
-    let fileInterface = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
     
     var body: some View {
-        TestImageProcessingView(fileInterface: fileInterface)
+        TestImageProcessingView()
     }
 }
 
