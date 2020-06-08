@@ -11,11 +11,19 @@ import SwiftUI
 
 class SelectedPlayer: CustomStringConvertible, ObservableObject {
     @Published var positionID: Int? = nil
-    @Published var coordinate: CGPoint? = nil
+    @Published var realCoordinate: CGPoint? = nil   // corresponding to the full size image
+    @Published var viewCoordinate: CGPoint? = nil   // corresponding to the image displayed on the screen
     
-    func setSelectedPlayer(positionID: Int, coordinate: CGPoint) {
+    func setPlayer(positionID: Int, realCoordinate: CGPoint, viewCoordinate: CGPoint) {
         self.positionID = positionID
-        self.coordinate = coordinate
+        self.realCoordinate = realCoordinate
+        self.viewCoordinate = viewCoordinate
+    }
+    
+    func unselectPlayer() {
+        self.positionID = nil
+        self.realCoordinate = nil
+        self.viewCoordinate = nil
     }
     
     var description: String {

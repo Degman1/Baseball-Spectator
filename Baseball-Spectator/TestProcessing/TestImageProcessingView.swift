@@ -30,16 +30,18 @@ struct TestImageProcessingView: View {
                             self.imageID += 1
                         }
                         self.processingCoordinator.processingState = .UserSelectHome
+                        self.selectedPlayer.unselectPlayer()
                     }, onDecrement: {
                         if self.imageID > 1 {
                             self.imageID -= 1
                         }
                         self.processingCoordinator.processingState = .UserSelectHome
+                        self.selectedPlayer.unselectPlayer()
                     }, label: {
                         return Text("ImageID: \(self.imageID)").background(Color.white)
                         
                     })
-                    //Stepper("ImageID: \(self.imageID)", value: self.$imageID, in: 1...11)
+                    
                     HStack {
                         if self.processingCoordinator.processingState == .UserSelectHome {
                             Text("Select Home Plate").background(Color.white)
@@ -50,7 +52,7 @@ struct TestImageProcessingView: View {
                     }
                 }
                 
-                if self.selectedPlayer.coordinate != nil {
+                if self.selectedPlayer.positionID != nil {
                     PlayerInfoBarView(geometry: geometry, imageID: self.$imageID, selectedPlayer: self.selectedPlayer)
                 }
             }

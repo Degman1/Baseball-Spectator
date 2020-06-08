@@ -32,14 +32,15 @@ struct DraggableOverlayView: View {
     func dragOperation(value: DragGesture.Value) {
         if self.processingCoordinator.processingState == .Processing && self.fileInterface.playersByPosition.count == 0 { return }
         
-        let res = TEST_IMAGE_RESOLUTIONS[self.imageID - 1]
-        let imageDisplayWidth = (res.width / res.height) * geometry.size.height
+        let originalResolution = TEST_IMAGE_RESOLUTIONS[self.imageID - 1]
+        let imageDisplayWidth = (originalResolution.width / originalResolution.height) * geometry.size.height
         
         if value.location.x < 0 || value.location.y < 0 || value.location.x > imageDisplayWidth || value.location.y > geometry.size.height {
             return
         }
         
-        let loc = value.location.scale(from: CGSize(width: imageDisplayWidth, height: geometry.size.height), to: res)
+        let viewImageSize = CGSize(width: imageDisplayWidth, height: geometry.size.height)
+        let loc = value.location.scale(from: viewImageSize, to: originalResolution)
         
         // if the use has not yet selected which base is home plate
         if self.processingCoordinator.processingState == .UserSelectHome {
@@ -57,11 +58,12 @@ struct DraggableOverlayView: View {
                 return
             }
             
+            let viewCoordinate = closestPlayerCoordinateToDrag.scale(from: originalResolution, to: viewImageSize)
+            
             for i in 0..<9 {
                 for position in self.fileInterface.playersByPosition[i] {
                     if position == closestPlayerCoordinateToDrag {
-                        self.selectedPlayer.positionID = i
-                        self.selectedPlayer.coordinate = position
+                        self.selectedPlayer.setPlayer(positionID: i, realCoordinate: closestPlayerCoordinateToDrag, viewCoordinate: viewCoordinate)
                         
                         return
                     }

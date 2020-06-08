@@ -550,7 +550,7 @@ class ImageProcessor {
             cv::Point lowestPoint = contourCopy[0];
             
             int closestPositionIndex = -1;
-            int closestDistance = -1;
+            int closestDistance = -1;       // TODO: do not include coordinate if the coordinate is greater than 90 ft away from the closest point (if the closest point is in the infield?)
                         
             for (int i = 0; i < 9; i++) {
                 int dist = getDistBetweenPoints(lowestPoint, expectedPositions[i]);
