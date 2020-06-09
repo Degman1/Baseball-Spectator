@@ -10,15 +10,17 @@ import Foundation
 
 struct PlayerInfo: CustomStringConvertible {
     let name: String
-    let number: Int
+    //let number: Int
     let position: String
     
+    // TODO: add this in later
+    /*
     // statistics
     let avg: Float      // batting average
     let slg: Float      // slugging percentage
     let rbi: Int        // runs batted in
     let obp: Float      // on base perentage
-    
+    */
     var description: String {
         return "\(name), \(position)"
     }
