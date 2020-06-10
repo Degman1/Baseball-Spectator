@@ -118,34 +118,11 @@ class WebScraper {
         
         let tableEndIndices = htmlString.indices(of: "</table>")
         
-        guard let table1 = self.getHTMLsnippetUnknownEndpoint(string: htmlString, from: tableStartIndices[0], to: tableEndIndices), let table2 = self.getHTMLsnippetUnknownEndpoint(string: htmlString, from: tableStartIndices[1], to: tableEndIndices) else {
+        guard let table1 = htmlString.getHTMLsnippetUnknownEndpoint(from: tableStartIndices[0], to: tableEndIndices), let table2 = htmlString.getHTMLsnippetUnknownEndpoint(from: tableStartIndices[1], to: tableEndIndices) else {
             print("ERROR: Extracting data from hmtlString failed - no table end index found")
             return nil
         }
         
         return table1 + table2
-    }
-    
-    func getHTMLsnippetUnknownEndpoint(string: String, from startIndex: Int, to endIndices: [Int]) -> String? {
-        // gets the substring range from the start index to the next index in endIndices
-        
-        var endIndex: Int = -1
-        
-        for index in endIndices {
-            if index > startIndex {
-                endIndex = index       // the table ends at the </table> that occurs first after the start index
-                break
-            }
-        }
-        
-        if endIndex == -1 {
-            return nil
-        }
-        
-        // must turn the int values into string index values to get the substring
-        let start = string.index(string.startIndex, offsetBy: startIndex)
-        let end = string.index(string.startIndex, offsetBy: endIndex)
-        
-        return String(string[start...end])
     }
 }

@@ -45,4 +45,27 @@ extension String {
         
         return substring
     }
+    
+    func getHTMLsnippetUnknownEndpoint(from startIndex: Int, to endIndices: [Int]) -> String? {
+        // gets the substring range from the start index to the next index in endIndices
+        
+        var endIndex: Int = -1
+        
+        for index in endIndices {
+            if index > startIndex {
+                endIndex = index       // the table ends at the </table> that occurs first after the start index
+                break
+            }
+        }
+        
+        if endIndex == -1 {
+            return nil
+        }
+        
+        // must turn the int values into string index values to get the substring
+        let start = self.index(self.startIndex, offsetBy: startIndex)
+        let end = self.index(self.startIndex, offsetBy: endIndex)
+        
+        return String(self[start...end])
+    }
 }
