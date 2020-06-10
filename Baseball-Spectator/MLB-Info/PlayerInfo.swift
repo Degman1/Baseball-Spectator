@@ -22,6 +22,6 @@ struct PlayerInfo: CustomStringConvertible {
     let obp: Float      // on base perentage
     */
     var description: String {
-        return "\(name), \(position)"
+        return "\(name) (\(position))"
     }
 }

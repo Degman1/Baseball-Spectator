@@ -32,4 +32,17 @@ extension String {
         }
         return indices
     }
+    
+    func getSubstring(from startIndex: Int, to endIndicator: String) -> String {
+        var offset = 0
+        var substring = ""
+        var ind = self.index(self.startIndex, offsetBy: startIndex)
+        while self[ind] != "<" {
+            substring += String(self[ind])
+            offset += 1
+            ind = self.index(self.startIndex, offsetBy: startIndex + offset)
+        }
+        
+        return substring
+    }
 }
