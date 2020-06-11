@@ -10,7 +10,12 @@ import SwiftUI
 
 struct PlayerExpandedView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        GeometryReader { geometry in
+            Rectangle()
+                .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
+                .foregroundColor(.green)
+                .border(Color.black)
+        }
     }
 }
 

@@ -58,7 +58,7 @@ struct TestImageProcessingView: View {
                     }
                 }
                 
-                PlayerInfoBarView(geometry: geometry, playerRemoteInfo: self.webScraper.playerInfo, imageID: self.$imageID, selectedPlayer: self.selectedPlayer)
+                PlayerInfoBarViewTesting(geometry: geometry, playerRemoteInfo: self.webScraper.playerInfo, imageID: self.$imageID, selectedPlayer: self.selectedPlayer)
             }
         }
     }

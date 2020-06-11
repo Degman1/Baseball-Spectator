@@ -16,8 +16,8 @@ struct Player: CustomStringConvertible {
     
     // TODO: add this in later
     /*
-    //let number: Int
-    // statistics
+    let statisticsLink: String = nil
+    let number: Int
     let avg: Float      // batting average
     let slg: Float      // slugging percentage
     let rbi: Int        // runs batted in

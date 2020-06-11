@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct PlayerInfoBarView: View {
+struct PlayerInfoBarViewTesting: View {
     let geometry: GeometryProxy
     let playerRemoteInfo: [Player]
     @Binding var imageID: Int
@@ -41,7 +41,7 @@ struct PlayerInfoBarView: View {
             return CGSize(width: 0, height: 0)
         }
         
-        let imageWidth = TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width / TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height * self.geometry.size.height       //TODO: Change this for the real thing - hardcode this
+        let imageWidth = TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width / TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height * self.geometry.size.height
         
         // the view starts in the center of the screen, so shift it to be at  (0, 0) of the image and add the player coordinate
         let x0 = -imageWidth / 2
@@ -56,7 +56,7 @@ struct PlayerInfoBarView: View {
     }
 }
 /*
-struct PlayerInfoBarView_Previews: PreviewProvider {
+struct PlayerInfoBarViewTesting_Previews: PreviewProvider {
     static var previews: some View {
         PlayerInfoBarView(selectedPlayer: SelectedPlayer())
     }
