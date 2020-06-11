@@ -123,10 +123,10 @@ class ImageProcessor {
             return image;
         }
         
-        // Draw contours on image for DEBUG
-        cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 0, 0), 3);
+        // Draw contours on image
+        cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 0, 0), 5);
         
-        // Draw expected positions on image for debugging
+        // Draw expected positions on image for DEBUG
         /*int b = 0;
         int add = int(255 / expectedPositions.size());     // change the color to differentiate the bases
         for (cv::Point pt : expectedPositions) {

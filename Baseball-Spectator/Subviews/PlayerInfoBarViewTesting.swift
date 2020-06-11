@@ -18,14 +18,12 @@ struct PlayerInfoBarViewTesting: View {
         ZStack {
             if self.selectedPlayer.positionID != nil && self.playerRemoteInfo.count > 0 {
                 Text(self.playerRemoteInfo[self.selectedPlayer.positionID!].description)
-                    .font(.system(size: 13))
                     .padding(5.0)
                     .background(Color.green)
                     .border(Color.black)
                     .offset(calculateOffset())
             } else if self.selectedPlayer.positionID != nil && self.playerRemoteInfo.count == 0 {
                 Text(self.selectedPlayer.description)
-                    .font(.system(size: 13))
                     .padding(5.0)
                     .background(Color.green)
                     .border(Color.black)
