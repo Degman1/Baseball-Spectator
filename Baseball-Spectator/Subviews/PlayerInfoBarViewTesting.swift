@@ -1,5 +1,5 @@
 //
-//  PlayerInfoBarView.swift
+//  PlayerInfoBarViewTesting.swift
 //  Baseball-Spectator
 //
 //  Created by David Gerard on 6/7/20.
@@ -10,16 +10,30 @@ import SwiftUI
 
 struct PlayerInfoBarView: View {
     let geometry: GeometryProxy
+    let playerRemoteInfo: [Player]
     @Binding var imageID: Int
     @ObservedObject var selectedPlayer: SelectedPlayer
     
     var body: some View {
-        Text(self.selectedPlayer.description)
-            .font(.system(size: 13))
-            .padding(5.0)
-            .background(Color.green)
-            .border(Color.black)
-            .offset(calculateOffset())
+        ZStack {
+            if self.selectedPlayer.positionID != nil && self.playerRemoteInfo.count > 0 {
+                Text(self.playerRemoteInfo[self.selectedPlayer.positionID!].description)
+                    .font(.system(size: 13))
+                    .padding(5.0)
+                    .background(Color.green)
+                    .border(Color.black)
+                    .offset(calculateOffset())
+            } else if self.selectedPlayer.positionID != nil && self.playerRemoteInfo.count == 0 {
+                Text(self.selectedPlayer.description)
+                    .font(.system(size: 13))
+                    .padding(5.0)
+                    .background(Color.green)
+                    .border(Color.black)
+                    .offset(calculateOffset())
+            }/* else if self.selectedPlayer.positionID == nil {
+                Spacer()
+            }*/
+        }
     }
     
     func calculateOffset() -> CGSize {
@@ -27,7 +41,7 @@ struct PlayerInfoBarView: View {
             return CGSize(width: 0, height: 0)
         }
         
-        let imageWidth = TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width / TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height * self.geometry.size.height       //TODO: Change this for the real thing
+        let imageWidth = TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width / TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height * self.geometry.size.height       //TODO: Change this for the real thing - hardcode this
         
         // the view starts in the center of the screen, so shift it to be at  (0, 0) of the image and add the player coordinate
         let x0 = -imageWidth / 2

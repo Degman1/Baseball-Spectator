@@ -11,7 +11,7 @@ import Foundation
 class WebScraper {
     var baseURL: String
     var webpageHTML: String? = nil
-    var playerInfo: [PlayerInfo] = []
+    var playerInfo: [Player] = []
     
     init(baseURL: String) {
         self.baseURL = baseURL
@@ -50,7 +50,7 @@ class WebScraper {
             guard let table = self.extractLineupTablesFromHTML(htmlString: htmlString) else {
                 return
             }
-            
+                        
             self.loadPlayerInfoFromLineupTable(table: table)
         }
         
@@ -58,10 +58,13 @@ class WebScraper {
     }
     
     func loadPlayerInfoFromLineupTable(table: String) {
-        var playerInfoTemp: [PlayerInfo] = []
+        var playerInfoTemp: [Player] = []
+        
+        // this number changes, so must find what it is in the latest download of html script
+        let scNum = table.getSubstring(from: table.index(of: "_ngcontent-sc")!.encodedOffset + 13, to: "=")
         
         let positionIdentifier = """
-            <td _ngcontent-sc211="" class="position-col">
+            <td _ngcontent-sc\(scNum)="" class="position-col">
             """
         
         let nameIdentifier = """
@@ -79,12 +82,11 @@ class WebScraper {
         for i in 0..<9 {
             let position = table.getSubstring(from: positionIndices[i] + positionIdentifier.count, to: "<")
             let name = table.getSubstring(from: nameIndices[i] + nameIdentifier.count, to: "<")
-            playerInfoTemp.append(PlayerInfo(name: name, position: position))
+            playerInfoTemp.append(Player(name: name, position: position))
         }
         
         if playerInfoTemp.count == 9 {
-            print(playerInfoTemp)
-            playerInfo = playerInfoTemp
+            playerInfo = playerInfoTemp.sorted(by: { $0.positionID < $1.positionID })
         }
     }
     
@@ -106,8 +108,9 @@ class WebScraper {
          end: <
         */
         
+        // don't include the sc # since it changes
         let tableStartID = """
-            <table _ngcontent-sc211="" class="static-table stats-table table table-bordered starting-pitcher-table">
+            class="static-table stats-table table table-bordered starting-pitcher-table">
             """
         let tableStartIndices = htmlString.indices(of: tableStartID)
         

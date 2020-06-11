@@ -17,10 +17,10 @@
 		635AB6E7247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */; };
 		636152F8247FFDC60043AFA1 /* TestImageProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636152F7247FFDC60043AFA1 /* TestImageProcessingView.swift */; };
 		6373CE5F248EEE4F00E43720 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6373CE5E248EEE4F00E43720 /* StringExtension.swift */; };
-		6373CE61248EF44900E43720 /* PlayerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6373CE60248EF44900E43720 /* PlayerInfo.swift */; };
+		6373CE61248EF44900E43720 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6373CE60248EF44900E43720 /* Player.swift */; };
 		637AA5B0248D6E5900FC15B8 /* SelectedPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637AA5AF248D6E5900FC15B8 /* SelectedPlayer.swift */; };
 		637AA5B3248D719A00FC15B8 /* ProcessingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637AA5B2248D719A00FC15B8 /* ProcessingCoordinator.swift */; };
-		637AA5B9248D826B00FC15B8 /* PlayerInfoBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637AA5B8248D826B00FC15B8 /* PlayerInfoBarView.swift */; };
+		637AA5B9248D826B00FC15B8 /* PlayerInfoBarViewTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637AA5B8248D826B00FC15B8 /* PlayerInfoBarViewTesting.swift */; };
 		638826502486CCF800C9FB4E /* DraggableOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */; };
 		638826542486DB4500C9FB4E /* TestImageResolutions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638826532486DB4500C9FB4E /* TestImageResolutions.swift */; };
 		63C46CAF24887ADF00EC3E67 /* ProcessingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C46CAE24887ADF00EC3E67 /* ProcessingState.swift */; };
@@ -57,10 +57,10 @@
 		635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectedHomePlateAngles.swift; sourceTree = "<group>"; };
 		636152F7247FFDC60043AFA1 /* TestImageProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImageProcessingView.swift; sourceTree = "<group>"; };
 		6373CE5E248EEE4F00E43720 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
-		6373CE60248EF44900E43720 /* PlayerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfo.swift; sourceTree = "<group>"; };
+		6373CE60248EF44900E43720 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		637AA5AF248D6E5900FC15B8 /* SelectedPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedPlayer.swift; sourceTree = "<group>"; };
 		637AA5B2248D719A00FC15B8 /* ProcessingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingCoordinator.swift; sourceTree = "<group>"; };
-		637AA5B8248D826B00FC15B8 /* PlayerInfoBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfoBarView.swift; sourceTree = "<group>"; };
+		637AA5B8248D826B00FC15B8 /* PlayerInfoBarViewTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfoBarViewTesting.swift; sourceTree = "<group>"; };
 		6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableOverlayView.swift; sourceTree = "<group>"; };
 		638826532486DB4500C9FB4E /* TestImageResolutions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImageResolutions.swift; sourceTree = "<group>"; };
 		63C46CAE24887ADF00EC3E67 /* ProcessingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingState.swift; sourceTree = "<group>"; };
@@ -146,20 +146,20 @@
 				63564B4224802C7200BFAF7B /* ViewControllerRepresentable.swift */,
 				63564B4024802BD600BFAF7B /* ViewController.swift */,
 				6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */,
-				637AA5B8248D826B00FC15B8 /* PlayerInfoBarView.swift */,
+				637AA5B8248D826B00FC15B8 /* PlayerInfoBarViewTesting.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
 		};
-		63D44F94248ACF3200049CD8 /* MLB-Info */ = {
+		63D44F94248ACF3200049CD8 /* TeamsAndPlayers */ = {
 			isa = PBXGroup;
 			children = (
 				63D44F95248ACF6600049CD8 /* Team.swift */,
 				63D44F97248AD7EC00049CD8 /* TeamLookup.swift */,
 				637AA5AF248D6E5900FC15B8 /* SelectedPlayer.swift */,
-				6373CE60248EF44900E43720 /* PlayerInfo.swift */,
+				6373CE60248EF44900E43720 /* Player.swift */,
 			);
-			path = "MLB-Info";
+			path = TeamsAndPlayers;
 			sourceTree = "<group>";
 		};
 		F63EE5FF23BFAE0D00B155B8 = {
@@ -188,7 +188,7 @@
 				F63EE60F23BFAE0D00B155B8 /* ContentView.swift */,
 				638826522486CD6400C9FB4E /* Subviews */,
 				637AA5B1248D70DA00FC15B8 /* ImageProcessingState */,
-				63D44F94248ACF3200049CD8 /* MLB-Info */,
+				63D44F94248ACF3200049CD8 /* TeamsAndPlayers */,
 				630E2A1324859782008DEF17 /* TestProcessing */,
 				F63EE61F23BFB02400B155B8 /* OpenCVWrapper */,
 				638826512486CD4000C9FB4E /* Utilities */,
@@ -303,7 +303,7 @@
 				63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */,
 				6373CE5F248EEE4F00E43720 /* StringExtension.swift in Sources */,
 				63FD24B0247994CE002D0728 /* ContourInfo.mm in Sources */,
-				637AA5B9248D826B00FC15B8 /* PlayerInfoBarView.swift in Sources */,
+				637AA5B9248D826B00FC15B8 /* PlayerInfoBarViewTesting.swift in Sources */,
 				637AA5B3248D719A00FC15B8 /* ProcessingCoordinator.swift in Sources */,
 				630E2A1524859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift in Sources */,
 				630E2A1224858C8E008DEF17 /* VideoParser.swift in Sources */,
@@ -322,7 +322,7 @@
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,
 				F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */,
 				635AB6E7247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift in Sources */,
-				6373CE61248EF44900E43720 /* PlayerInfo.swift in Sources */,
+				6373CE61248EF44900E43720 /* Player.swift in Sources */,
 				F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */,
 				F6CA649A24799F7E009721E0 /* Scoreboard.swift in Sources */,
 				63D44F96248ACF6600049CD8 /* Team.swift in Sources */,

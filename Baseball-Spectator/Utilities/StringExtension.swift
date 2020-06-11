@@ -33,11 +33,15 @@ extension String {
         return indices
     }
     
-    func getSubstring(from startIndex: Int, to endIndicator: String) -> String {
+    func index<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> Index? {
+        range(of: string, options: options)?.lowerBound
+    }
+    
+    func getSubstring(from startIndex: Int, to endIndicator: Character) -> String {
         var offset = 0
         var substring = ""
         var ind = self.index(self.startIndex, offsetBy: startIndex)
-        while self[ind] != "<" {
+        while self[ind] != endIndicator {
             substring += String(self[ind])
             offset += 1
             ind = self.index(self.startIndex, offsetBy: startIndex + offset)

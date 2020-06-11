@@ -10,8 +10,9 @@ import Foundation
 import SwiftUI
 
 class SelectedPlayer: CustomStringConvertible, ObservableObject {
+    // this is to be used to keep track of the current selected player for UI refernce purposes. it points to the player info gathered by WebScraper
+    
     @Published var positionID: Int? = nil
-    @Published var name: String? = nil
     @Published var realCoordinate: CGPoint? = nil   // corresponding to the full size image
     @Published var viewCoordinate: CGPoint? = nil   // corresponding to the image displayed on the screen
     
