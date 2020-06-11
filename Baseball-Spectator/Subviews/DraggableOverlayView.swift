@@ -23,7 +23,7 @@ struct DraggableOverlayView: View {
                 width: TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width / TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height * geometry.size.height,
                 height: self.geometry.size.height)
             .gesture(DragGesture(minimumDistance: CGFloat.zero, coordinateSpace: .local)
-                .onChanged { value in
+                .onEnded { value in
                     self.dragOperation(value: value)
                 }
             )
@@ -31,6 +31,11 @@ struct DraggableOverlayView: View {
     
     func dragOperation(value: DragGesture.Value) {
         if self.processingCoordinator.processingState == .Processing && self.fileInterface.playersByPosition.count == 0 { return }
+        
+        if self.selectedPlayer.positionID != nil {
+            self.selectedPlayer.unselectPlayer()
+            return
+        }
         
         let originalResolution = TEST_IMAGE_RESOLUTIONS[self.imageID - 1]
         let imageDisplayWidth = (originalResolution.width / originalResolution.height) * geometry.size.height
