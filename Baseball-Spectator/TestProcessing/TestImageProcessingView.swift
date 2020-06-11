@@ -16,7 +16,7 @@ struct TestImageProcessingView: View {
     @ObservedObject var selectedPlayer = SelectedPlayer()
     
     init() {
-        self.webScraper.getWebsiteHTML(teamLookupName: BOSTON_RED_SOX.lookupName)
+        self.webScraper.fetchRemoteStatistics(teamLookupName: BOSTON_RED_SOX.lookupName)
     }
     
     var body: some View {
@@ -36,14 +36,14 @@ struct TestImageProcessingView: View {
                         }
                         self.processingCoordinator.processingState = .UserSelectHome
                         self.selectedPlayer.unselectPlayer()
-                        self.webScraper.getWebsiteHTML(teamLookupName: BOSTON_RED_SOX.lookupName)
+                        self.webScraper.fetchRemoteStatistics(teamLookupName: BOSTON_RED_SOX.lookupName)
                     }, onDecrement: {
                         if self.imageID > 1 {
                             self.imageID -= 1
                         }
                         self.processingCoordinator.processingState = .UserSelectHome
                         self.selectedPlayer.unselectPlayer()
-                        self.webScraper.getWebsiteHTML(teamLookupName: BOSTON_RED_SOX.lookupName)
+                        self.webScraper.fetchRemoteStatistics(teamLookupName: BOSTON_RED_SOX.lookupName)
                     }, label: {
                         return Text("ImageID: \(self.imageID)").background(Color.white)
                     })

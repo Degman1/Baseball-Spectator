@@ -17,7 +17,7 @@ class WebScraper {
         self.baseURL = baseURL
     }
     
-    func getWebsiteHTML(teamLookupName: String) {
+    func fetchRemoteStatistics(teamLookupName: String) {
         // fetches the html code from the provided webpage and provided team to look up
         // places the html in the class property webpageHTML for later reference
         
@@ -25,7 +25,7 @@ class WebScraper {
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if error != nil {       // don't clear playerInfo, so if not having network connection, it just shows the last data it could fetch from the webpage
-                print(error!)
+                print("ERROR: \(error!)")
                 return
             }
             
@@ -36,12 +36,12 @@ class WebScraper {
             }
             
             guard let data = data else {
-                print("data was nil")
+                print("ERROR: html data was nil")
                 return
             }
             
             guard let htmlString = String(data: data, encoding: .utf8) else {
-                print("couldn't cast data into String")
+                print("ERROR: couldn't cast html data into String")
                 return
             }
             
@@ -50,14 +50,14 @@ class WebScraper {
             guard let table = self.extractLineupTablesFromHTML(htmlString: htmlString) else {
                 return
             }
-                        
-            self.loadPlayerInfoFromLineupTable(table: table)
+            
+            self.loadPlayerInfoFromLineupTable(html: htmlString, table: table)
         }
         
         task.resume()
     }
     
-    func loadPlayerInfoFromLineupTable(table: String) {
+    func loadPlayerInfoFromLineupTable(html: String, table: String) {
         var playerInfoTemp: [Player] = []
         
         // this number changes, so must find what it is in the latest download of html script
@@ -82,7 +82,16 @@ class WebScraper {
         for i in 0..<9 {
             let position = table.getSubstring(from: positionIndices[i] + positionIdentifier.count, to: "<")
             let name = table.getSubstring(from: nameIndices[i] + nameIdentifier.count, to: "<")
-            playerInfoTemp.append(Player(name: name, position: position))
+            
+            let linkIdentifier = """
+                "@type":"Person","name":"\(name)","url":"
+                """
+            let linkIndex = html.indices(of: linkIdentifier)[0]
+            let link = html.getSubstring(from: linkIndex + linkIdentifier.count, to: """
+            "
+            """)
+            
+            playerInfoTemp.append(Player(name: name, position: position, statisticsLink: link))
         }
         
         if playerInfoTemp.count == 9 {
