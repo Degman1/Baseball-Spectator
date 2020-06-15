@@ -10,7 +10,7 @@ import SwiftUI
 
 struct TestImageProcessingView: View {
     let fileInterface: FileIO = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
-    @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/")
+    @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/", debug: true)
     @State var imageID = 1
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
     @ObservedObject var selectedPlayer = SelectedPlayer()
@@ -58,7 +58,7 @@ struct TestImageProcessingView: View {
                     }
                 }
                 
-                PlayerInfoBarViewTesting(geometry: geometry, playerRemoteInfo: self.webScraper.playerInfo, imageID: self.$imageID, selectedPlayer: self.selectedPlayer)
+                PlayerInfoBarViewTesting(geometry: geometry, imageID: self.$imageID, selectedPlayer: self.selectedPlayer, webScraper: self.webScraper)
                 
                 if self.selectedPlayer.isExpanded {
                     PlayerExpandedView()

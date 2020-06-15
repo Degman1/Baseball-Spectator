@@ -10,23 +10,24 @@ import SwiftUI
 
 struct PlayerInfoBarViewTesting: View {
     let geometry: GeometryProxy
-    let playerRemoteInfo: [Player]
     @Binding var imageID: Int
     @ObservedObject var selectedPlayer: SelectedPlayer
+    @ObservedObject var webScraper: WebScraper
     
     var body: some View {
         ZStack {
-            if self.selectedPlayer.positionID != nil && self.playerRemoteInfo.count > 0 {
+            if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count > 0 {
                 Button(action: {
                     self.selectedPlayer.isExpanded = true
+                    self.webScraper.fetchStatistics(selectedPlayer: self.webScraper.playerInfo[self.selectedPlayer.positionID!])
                 }) {
-                    Text(self.playerRemoteInfo[self.selectedPlayer.positionID!].description + " >")
+                    Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)
                         .padding(5.0)
                         .background(Color.green)
                         .border(Color.black)
                         .foregroundColor(.black)
                 }.offset(calculateOffset())
-            } else if self.selectedPlayer.positionID != nil && self.playerRemoteInfo.count == 0 {
+            } else if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count == 0 {
                 Text(self.selectedPlayer.description)
                     .padding(5.0)
                     .background(Color.green)

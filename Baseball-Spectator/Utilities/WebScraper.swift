@@ -11,37 +11,38 @@ import Foundation
 class WebScraper: ObservableObject {
     var baseURL: String
     @Published var playerInfo: [Player] = []
+    let debug: Bool
     
-    init(baseURL: String) {
+    init(baseURL: String, debug: Bool = false) {
         self.baseURL = baseURL
+        self.debug = debug
     }
     
-    func createURLSessionTask(toRun action: @escaping (String) -> Void, withURL url: URL, debug: Bool = false) {
+    func createURLSessionTask(toRun action: @escaping (String) -> Void, withURL url: URL) {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if error != nil {       // don't clear playerInfo, so if not having network connection, it just shows the last data it could fetch from the webpage
-                if debug {
+                if self.debug {
                     print("ERROR: \(error!)")
                 }
                 return
             }
             
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                if debug {
+            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+                if self.debug {
                     print(response!)
                 }
                 return
             }
             
             guard let data = data else {
-                if debug {
+                if self.debug {
                     print("ERROR: html data was nil")
                 }
                 return
             }
             
             guard let htmlString = String(data: data, encoding: .utf8) else {
-                if debug {
+                if self.debug {
                     print("ERROR: couldn't cast html data into String")
                 }
                 return
@@ -56,8 +57,23 @@ class WebScraper: ObservableObject {
     //------------------------------------------------------------------------------------------------------
     // Load statistics of selectedplayer
     
-    func fetchStatistics(currentPlayerPositionID: Int) {
+    func fetchStatistics(selectedPlayer: Player) {
+        // fetches the html code from the provided player stats
+        // adds the player statistics to the playerInfo player
         
+        guard let playerURL = URL(string: selectedPlayer.statisticsLink) else {
+            print("ERROR: the team URL cannot be converted from a string to a URL")
+            return
+        }
+        
+        self.createURLSessionTask(toRun: fetchStatisticsTaskHelper, withURL: playerURL)
+    }
+    
+    func fetchStatisticsTaskHelper(_ html: String) {
+        
+        
+        /*<tr _ngcontent-sc325="" class="t-content">
+        <td _ngcontent-sc325="">*/
     }
     
     //------------------------------------------------------------------------------------------------------
@@ -67,8 +83,12 @@ class WebScraper: ObservableObject {
         // fetches the html code from the provided webpage and provided team to look up
         // searches for the up to date lineup and places the player information in playerInfo
         
-        let teamURL = URL(string: self.baseURL + teamLookupName)!
-        self.createURLSessionTask(toRun: fetchLineUpTaskHelper, withURL: teamURL, debug: true)
+        guard let teamURL = URL(string: self.baseURL + teamLookupName) else {
+            print("ERROR: the team URL cannot be converted from a string to a URL")
+            return
+        }
+        
+        self.createURLSessionTask(toRun: fetchLineUpTaskHelper, withURL: teamURL)
     }
     
     private func fetchLineUpTaskHelper(_ html: String) {
