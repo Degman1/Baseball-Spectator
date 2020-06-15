@@ -16,49 +16,70 @@ class WebScraper: ObservableObject {
         self.baseURL = baseURL
     }
     
-    func fetchRemoteStatistics(teamLookupName: String) {
-        // fetches the html code from the provided webpage and provided team to look up
-        // searches for the up to date lineup and places the player information in playerInfo
-        
-        let url = URL(string: self.baseURL + teamLookupName)!
-        
+    func createURLSessionTask(toRun action: @escaping (String) -> Void, withURL url: URL, debug: Bool = false) {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if error != nil {       // don't clear playerInfo, so if not having network connection, it just shows the last data it could fetch from the webpage
-                print("ERROR: \(error!)")
+                if debug {
+                    print("ERROR: \(error!)")
+                }
                 return
             }
             
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
-                print(response!)
+                if debug {
+                    print(response!)
+                }
                 return
             }
             
             guard let data = data else {
-                print("ERROR: html data was nil")
+                if debug {
+                    print("ERROR: html data was nil")
+                }
                 return
             }
             
             guard let htmlString = String(data: data, encoding: .utf8) else {
-                print("ERROR: couldn't cast html data into String")
-                return
-            }
-                        
-            guard let table = self.extractLineupTablesFromHTML(htmlString: htmlString) else {
+                if debug {
+                    print("ERROR: couldn't cast html data into String")
+                }
                 return
             }
             
-            self.loadPlayerInfoFromLineupTable(html: htmlString, table: table)
+            action(htmlString)
         }
         
         task.resume()
     }
     
-    func loadPlayersStatisticsFromIndividualPage() {
+    //------------------------------------------------------------------------------------------------------
+    // Load statistics of selectedplayer
+    
+    func fetchStatistics(currentPlayerPositionID: Int) {
         
     }
     
-    func loadPlayerInfoFromLineupTable(html: String, table: String) {
+    //------------------------------------------------------------------------------------------------------
+    // Load Line-up (names,  positions, statistics links)
+    
+    func fetchLineUpInformation(teamLookupName: String) {
+        // fetches the html code from the provided webpage and provided team to look up
+        // searches for the up to date lineup and places the player information in playerInfo
+        
+        let teamURL = URL(string: self.baseURL + teamLookupName)!
+        self.createURLSessionTask(toRun: fetchLineUpTaskHelper, withURL: teamURL, debug: true)
+    }
+    
+    private func fetchLineUpTaskHelper(_ html: String) {
+        guard let table = self.extractLineupTablesFromHTML(htmlString: html) else {
+            return
+        }
+        
+        self.loadPlayerInfoFromLineupTable(html: html, table: table)
+    }
+    
+    private func loadPlayerInfoFromLineupTable(html: String, table: String) {
         var playerInfoTemp: [Player] = []
         
         // this number changes, so must find what it is in the latest download of html script
@@ -102,7 +123,7 @@ class WebScraper: ObservableObject {
         }
     }
     
-    func extractLineupTablesFromHTML(htmlString: String) -> String? {
+    private func extractLineupTablesFromHTML(htmlString: String) -> String? {
         // finds the characters wrapped by the occurenceNumber (1st, 2nd, 3rd...) occurence of the start indicator and the end indicator
         // return the table containing the (1st) pitcher's stats and (2nd) the rest of the players' stats
 
