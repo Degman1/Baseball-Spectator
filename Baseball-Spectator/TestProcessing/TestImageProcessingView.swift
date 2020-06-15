@@ -10,7 +10,7 @@ import SwiftUI
 
 struct TestImageProcessingView: View {
     let fileInterface: FileIO = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
-    let webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/")
+    @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/")
     @State var imageID = 1
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
     @ObservedObject var selectedPlayer = SelectedPlayer()

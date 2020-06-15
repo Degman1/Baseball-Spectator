@@ -8,10 +8,9 @@
 
 import Foundation
 
-class WebScraper {
+class WebScraper: ObservableObject {
     var baseURL: String
-    var webpageHTML: String? = nil
-    var playerInfo: [Player] = []
+    @Published var playerInfo: [Player] = []
     
     init(baseURL: String) {
         self.baseURL = baseURL
@@ -19,7 +18,7 @@ class WebScraper {
     
     func fetchRemoteStatistics(teamLookupName: String) {
         // fetches the html code from the provided webpage and provided team to look up
-        // places the html in the class property webpageHTML for later reference
+        // searches for the up to date lineup and places the player information in playerInfo
         
         let url = URL(string: self.baseURL + teamLookupName)!
         
@@ -44,9 +43,7 @@ class WebScraper {
                 print("ERROR: couldn't cast html data into String")
                 return
             }
-            
-            self.webpageHTML = htmlString
-            
+                        
             guard let table = self.extractLineupTablesFromHTML(htmlString: htmlString) else {
                 return
             }
@@ -95,7 +92,9 @@ class WebScraper {
         }
         
         if playerInfoTemp.count == 9 {
-            playerInfo = playerInfoTemp.sorted(by: { $0.positionID < $1.positionID })
+            DispatchQueue.main.async {      // cannot mutate published properties in an observed object from a background thread, so must do so in the main thread
+                self.playerInfo = playerInfoTemp.sorted(by: { $0.positionID < $1.positionID })
+            }
         }
     }
     
