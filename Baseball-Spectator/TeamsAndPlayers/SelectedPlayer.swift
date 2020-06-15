@@ -15,8 +15,9 @@ class SelectedPlayer: CustomStringConvertible, ObservableObject {
     @Published var positionID: Int? = nil
     @Published var realCoordinate: CGPoint? = nil   // corresponding to the full size image
     @Published var viewCoordinate: CGPoint? = nil   // corresponding to the image displayed on the screen
+    @Published var isExpanded: Bool = false
     
-    func setPlayer(positionID: Int, realCoordinate: CGPoint, viewCoordinate: CGPoint) {
+    func selectPlayer(positionID: Int, realCoordinate: CGPoint, viewCoordinate: CGPoint) {
         self.positionID = positionID
         self.realCoordinate = realCoordinate
         self.viewCoordinate = viewCoordinate

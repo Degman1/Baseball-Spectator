@@ -69,7 +69,7 @@ struct DraggableOverlayView: View {
             for i in 0..<9 {
                 for position in self.fileInterface.playersByPosition[i] {
                     if position == closestPlayerCoordinateToDrag {
-                        self.selectedPlayer.setPlayer(positionID: i, realCoordinate: closestPlayerCoordinateToDrag, viewCoordinate: viewCoordinate)
+                        self.selectedPlayer.selectPlayer(positionID: i, realCoordinate: closestPlayerCoordinateToDrag, viewCoordinate: viewCoordinate)
                         
                         return
                     }

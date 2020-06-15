@@ -22,5 +22,6 @@ struct PlayerExpandedView: View {
 struct PlayerExpandedView_Previews: PreviewProvider {
     static var previews: some View {
         PlayerExpandedView()
+            .previewLayout(.fixed(width: 1792, height: 828))
     }
 }

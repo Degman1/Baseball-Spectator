@@ -54,6 +54,10 @@ class WebScraper: ObservableObject {
         task.resume()
     }
     
+    func loadPlayersStatisticsFromIndividualPage() {
+        
+    }
+    
     func loadPlayerInfoFromLineupTable(html: String, table: String) {
         var playerInfoTemp: [Player] = []
         

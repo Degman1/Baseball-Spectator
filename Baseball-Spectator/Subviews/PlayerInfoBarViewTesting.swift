@@ -17,20 +17,23 @@ struct PlayerInfoBarViewTesting: View {
     var body: some View {
         ZStack {
             if self.selectedPlayer.positionID != nil && self.playerRemoteInfo.count > 0 {
-                Text(self.playerRemoteInfo[self.selectedPlayer.positionID!].description)
-                    .padding(5.0)
-                    .background(Color.green)
-                    .border(Color.black)
-                    .offset(calculateOffset())
+                Button(action: {
+                    self.selectedPlayer.isExpanded = true
+                }) {
+                    Text(self.playerRemoteInfo[self.selectedPlayer.positionID!].description + " >")
+                        .padding(5.0)
+                        .background(Color.green)
+                        .border(Color.black)
+                        .foregroundColor(.black)
+                }.offset(calculateOffset())
             } else if self.selectedPlayer.positionID != nil && self.playerRemoteInfo.count == 0 {
                 Text(self.selectedPlayer.description)
                     .padding(5.0)
                     .background(Color.green)
                     .border(Color.black)
+                    .foregroundColor(.black)
                     .offset(calculateOffset())
-            }/* else if self.selectedPlayer.positionID == nil {
-                Spacer()
-            }*/
+            }
         }
     }
     

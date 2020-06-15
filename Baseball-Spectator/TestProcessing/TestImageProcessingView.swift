@@ -59,6 +59,10 @@ struct TestImageProcessingView: View {
                 }
                 
                 PlayerInfoBarViewTesting(geometry: geometry, playerRemoteInfo: self.webScraper.playerInfo, imageID: self.$imageID, selectedPlayer: self.selectedPlayer)
+                
+                if self.selectedPlayer.isExpanded {
+                    PlayerExpandedView()
+                }
             }
         }
     }
@@ -74,6 +78,6 @@ struct TestImageProcessingView: View {
 struct TestProcessingView_Previews: PreviewProvider {
     static var previews: some View {
         TestImageProcessingView()
-            .previewLayout(.fixed(width: 568, height: 320))
+            .previewLayout(.fixed(width: 1792, height: 828))
     }
 }
