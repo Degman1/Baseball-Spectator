@@ -58,10 +58,12 @@ struct TestImageProcessingView: View {
                     }
                 }
                 
-                PlayerInfoBarViewTesting(geometry: geometry, imageID: self.$imageID, selectedPlayer: self.selectedPlayer, webScraper: self.webScraper)
+                if !self.selectedPlayer.isExpanded {
+                    PlayerInfoBarViewTesting(geometry: geometry, imageID: self.$imageID, selectedPlayer: self.selectedPlayer, webScraper: self.webScraper)
+                }
                 
                 if self.selectedPlayer.isExpanded {
-                    PlayerExpandedView()
+                    PlayerExpandedView(webScraper: self.webScraper)
                 }
             }
         }

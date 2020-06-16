@@ -9,19 +9,26 @@
 import SwiftUI
 
 struct PlayerExpandedView: View {
+    @ObservedObject var webScraper: WebScraper
+    
     var body: some View {
         GeometryReader { geometry in
-            Rectangle()
-                .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
-                .foregroundColor(.green)
-                .border(Color.black)
+            ZStack {
+                Rectangle()
+                    .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
+                    .foregroundColor(.green)
+                    .border(Color.black)
+                
+                Text(self.webScraper.playerInfo[self.webScraper.selectedPlayerID!].description)
+            }
         }
     }
 }
-
+/*
 struct PlayerExpandedView_Previews: PreviewProvider {
     static var previews: some View {
-        PlayerExpandedView()
+        PlayerExpandedView(webScraper: WebScraper(baseURL: ""))
             .previewLayout(.fixed(width: 1792, height: 828))
     }
 }
+*/

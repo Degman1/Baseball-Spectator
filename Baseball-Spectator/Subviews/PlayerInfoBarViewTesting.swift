@@ -19,7 +19,7 @@ struct PlayerInfoBarViewTesting: View {
             if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count > 0 {
                 Button(action: {
                     self.selectedPlayer.isExpanded = true
-                    self.webScraper.fetchStatistics(selectedPlayer: self.webScraper.playerInfo[self.selectedPlayer.positionID!])
+                    self.webScraper.fetchStatistics(selectedPlayerID: self.selectedPlayer.positionID!)
                 }) {
                     Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)
                         .padding(5.0)

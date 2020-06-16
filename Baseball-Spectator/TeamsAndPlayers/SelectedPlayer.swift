@@ -27,6 +27,7 @@ class SelectedPlayer: CustomStringConvertible, ObservableObject {
         self.positionID = nil
         self.realCoordinate = nil
         self.viewCoordinate = nil
+        self.isExpanded = false
     }
     
     var description: String {

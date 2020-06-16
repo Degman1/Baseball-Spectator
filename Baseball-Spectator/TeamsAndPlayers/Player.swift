@@ -11,19 +11,17 @@ import Foundation
 struct Player: CustomStringConvertible {
     // this is to be used only to store information on players gathered from online
     
+    // reset every x seconds automatically
     let name: String
     let position: String
     let statisticsLink: String
     
-    // TODO: add this in later
-    /*
-    
-    let number: Int
-    let avg: Float      // batting average
-    let slg: Float      // slugging percentage
-    let rbi: Int        // runs batted in
-    let obp: Float      // on base perentage
-    */
+    // reset when the player is selected
+    // just keep the values as strings b/c don't need to do anything with them except display
+    var avg: String? = nil      // batting average
+    var slg: String? = nil      // slugging percentage
+    var rbi: String? = nil        // runs batted in
+    var obp: String? = nil      // on base perentage
     
     var positionID: Int {
         switch self.position {
@@ -51,6 +49,9 @@ struct Player: CustomStringConvertible {
     }
     
     var description: String {
-        return "\(name) (\(position))"
+        if self.avg == nil {
+            return "\(name) (\(position))"
+        }
+        return "\(name), (\(position))\n  avg: \(avg!), slg: \(slg!), rbi: \(rbi!), obp: \(obp!)"
     }
 }

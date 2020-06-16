@@ -9,6 +9,12 @@
 import Foundation
 
 extension String {
+    func removeWhiteSpace() -> String {
+        return self.components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            .joined(separator: "")
+    }
+    
     func indices(of occurrence: String) -> [Int] {
         var indices = [Int]()
         var position = startIndex
@@ -37,6 +43,10 @@ extension String {
         range(of: string, options: options)?.lowerBound
     }
     
+    func getSubstring(from startIndex: Index, to endIndex: Index) -> String {
+        return String(self[startIndex..<endIndex])
+    }
+    
     func getSubstring(from startIndex: Int, to endIndicator: Character) -> String {
         var offset = 0
         var substring = ""
@@ -49,6 +59,40 @@ extension String {
         
         return substring
     }
+    
+    func getSubstring(from: String, to: String) -> String? {
+        return (range(of: from)?.upperBound).flatMap { substringFrom in
+            (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
+                String(self[substringFrom..<substringTo])
+            }
+        }
+    }
+    
+    // this method is not working
+    /*func getSubstring(from startIndex: Int, to endIndicator: String) -> String {
+        var offset = 0
+        var substring = ""
+        var ind = self.index(self.startIndex, offsetBy: startIndex)
+        var finished = true
+        print(self)
+        while finished {
+            if startIndex + offset == self.count {
+                finished = false
+                continue
+            }
+            
+            if self[ind] == endIndicator[endIndicator.startIndex] && getSubstring(from: ind, to: index(ind, offsetBy: endIndicator.count)) == endIndicator {
+                finished = false
+                continue
+            }
+            
+            substring += String(self[ind])
+            offset += 1
+            ind = self.index(self.startIndex, offsetBy: startIndex + offset)
+        }
+        
+        return substring
+    }*/
     
     func getHTMLsnippetUnknownEndpoint(from startIndex: Int, to endIndices: [Int]) -> String? {
         // gets the substring range from the start index to the next index in endIndices

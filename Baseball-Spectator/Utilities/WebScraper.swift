@@ -12,6 +12,7 @@ class WebScraper: ObservableObject {
     var baseURL: String
     @Published var playerInfo: [Player] = []
     let debug: Bool
+    var selectedPlayerID: Int? = nil        // set when the fetchStatistics method is called
     
     init(baseURL: String, debug: Bool = false) {
         self.baseURL = baseURL
@@ -57,11 +58,13 @@ class WebScraper: ObservableObject {
     //------------------------------------------------------------------------------------------------------
     // Load statistics of selectedplayer
     
-    func fetchStatistics(selectedPlayer: Player) {
+    func fetchStatistics(selectedPlayerID: Int) {
         // fetches the html code from the provided player stats
         // adds the player statistics to the playerInfo player
         
-        guard let playerURL = URL(string: selectedPlayer.statisticsLink) else {
+        self.selectedPlayerID = selectedPlayerID
+        
+        guard let playerURL = URL(string: playerInfo[selectedPlayerID].statisticsLink) else {
             print("ERROR: the team URL cannot be converted from a string to a URL")
             return
         }
@@ -70,10 +73,48 @@ class WebScraper: ObservableObject {
     }
     
     func fetchStatisticsTaskHelper(_ html: String) {
+        // method to be passed to createURLSessionTask(:, :)
         
+        if self.selectedPlayerID == nil { return }
+
+        guard let i = html.index(of: "<td _ngcontent-sc") else {
+            print("ERROR: Could not locate the scNum related to this version of the HTML script")
+            return
+        }
+
+        // this number changes, so must find what it is in the latest download of html script
+        guard let scNum = Int(html.getSubstring(from: html.distance(from: html.startIndex, to: i) + 17, to: "=")) else {
+            print("ERROR: Could not convert scNum to an Int")
+            return
+        }
+
+        let start = """
+            <tr _ngcontent-sc\(scNum)="" class="t-content">
+            """ + "\n                  " + """
+            <td _ngcontent-sc\(scNum)="">
+            """
+            
+        let end = """
+            </td><!---->
+            """ + "\n                " + """
+            </tr><!---->
+            """
+        guard let statsString = html.getSubstring(from: start, to: end) else {
+            print("ERROR: Could not find the player statistics table entries")
+            return
+        }
         
-        /*<tr _ngcontent-sc325="" class="t-content">
-        <td _ngcontent-sc325="">*/
+        let dividor = """
+            </td><td_ngcontent-sc\(scNum)=\"\">
+            """
+        let stats = statsString.removeWhiteSpace().components(separatedBy: dividor)
+        
+        DispatchQueue.main.async {      // cannot mutate published properties in an observed object from a background thread, so must do so in the main thread
+            self.playerInfo[self.selectedPlayerID!].rbi = stats[8]
+            self.playerInfo[self.selectedPlayerID!].avg = stats[11]
+            self.playerInfo[self.selectedPlayerID!].obp = stats[12]
+            self.playerInfo[self.selectedPlayerID!].slg = stats[13]
+        }
     }
     
     //------------------------------------------------------------------------------------------------------
@@ -92,6 +133,8 @@ class WebScraper: ObservableObject {
     }
     
     private func fetchLineUpTaskHelper(_ html: String) {
+        // wrapping method to be passed to createURLSessionTask(:, :)
+        
         guard let table = self.extractLineupTablesFromHTML(htmlString: html) else {
             return
         }
@@ -102,8 +145,16 @@ class WebScraper: ObservableObject {
     private func loadPlayerInfoFromLineupTable(html: String, table: String) {
         var playerInfoTemp: [Player] = []
         
+        guard let i = table.index(of: "_ngcontent-sc") else {
+            print("ERROR: Could not locate the scNum related to this version of the HTML script")
+            return
+        }
+        
         // this number changes, so must find what it is in the latest download of html script
-        let scNum = table.getSubstring(from: table.index(of: "_ngcontent-sc")!.encodedOffset + 13, to: "=")
+        guard let scNum = Int(table.getSubstring(from: table.distance(from: table.startIndex, to: i) + 13, to: "=")) else {
+            print("ERROR: Could not convert scNum to an Int")
+            return
+        }
         
         let positionIdentifier = """
             <td _ngcontent-sc\(scNum)="" class="position-col">
