@@ -10,10 +10,11 @@ import SwiftUI
 
 struct MainView: View {
     let fileInterface = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
+    @ObservedObject var processingCoordinator = ProcessingCoordinator()
     
     var body: some View {
         ZStack {
-            ViewControllerRepresentable(fileInterface: fileInterface)
+            ImageStreamViewControllerRepresentable(fileInterface: fileInterface, processingCoordinator: processingCoordinator)
             VStack {
                 HStack {
                     Scoreboard()

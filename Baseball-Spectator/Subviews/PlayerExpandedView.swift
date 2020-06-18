@@ -10,25 +10,43 @@ import SwiftUI
 
 struct PlayerExpandedView: View {
     @ObservedObject var webScraper: WebScraper
+    @ObservedObject var selectedPlayer: SelectedPlayer
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Rectangle()
-                    .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
-                    .foregroundColor(.green)
-                    .border(Color.black)
+                Text("Hello").font(.title)
+                self.getViewBackground(geometry: geometry)
                 
-                Text(self.webScraper.playerInfo[self.webScraper.selectedPlayerID!].description)
+                //Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)   // force unwrap since this view should only be created if a player is selected
             }
         }
     }
+    
+    func getViewBackground(geometry: GeometryProxy) -> some View {
+        Rectangle()
+            .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
+            .foregroundColor(.white)
+            .cornerRadius(geometry.size.height / 15)
+            .overlay(
+                Rectangle()
+                    //.stroke(Color.white, lineWidth: 70)
+                    .frame(width: geometry.size.width * 0.7 - (geometry.size.height * 0.02),
+                           height: geometry.size.height * 0.8 - (geometry.size.height * 0.02))
+                    .cornerRadius(geometry.size.height / 15)
+                    .foregroundColor(darkGreen)
+                    .opacity(0.7)
+            )
+            .shadow(radius: geometry.size.height / 20)
+            
+    }
 }
-/*
+
 struct PlayerExpandedView_Previews: PreviewProvider {
     static var previews: some View {
-        PlayerExpandedView(webScraper: WebScraper(baseURL: ""))
+        let player = SelectedPlayer()
+        player.positionID = 5
+        return PlayerExpandedView(webScraper: WebScraper(baseURL: ""), selectedPlayer: player)
             .previewLayout(.fixed(width: 1792, height: 828))
     }
 }
-*/

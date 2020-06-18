@@ -7,12 +7,14 @@
 //
 
 import Foundation
+import SwiftUI
 
 class WebScraper: ObservableObject {
     var baseURL: String
     @Published var playerInfo: [Player] = []
     let debug: Bool
-    var selectedPlayerID: Int? = nil        // set when the fetchStatistics method is called
+    private var selectedPlayerIndex: Int? = nil        // set when the fetchStatistics method is called
+                                                       // to store the selected player index since an observable object
     
     init(baseURL: String, debug: Bool = false) {
         self.baseURL = baseURL
@@ -58,24 +60,24 @@ class WebScraper: ObservableObject {
     //------------------------------------------------------------------------------------------------------
     // Load statistics of selectedplayer
     
-    func fetchStatistics(selectedPlayerID: Int) {
+    func fetchStatistics(selectedPlayerIndex: Int) {
         // fetches the html code from the provided player stats
         // adds the player statistics to the playerInfo player
         
-        self.selectedPlayerID = selectedPlayerID
+        self.selectedPlayerIndex = selectedPlayerIndex
         
-        guard let playerURL = URL(string: playerInfo[selectedPlayerID].statisticsLink) else {
+        guard let playerURL = URL(string: playerInfo[selectedPlayerIndex].statisticsLink) else {
             print("ERROR: the team URL cannot be converted from a string to a URL")
             return
         }
         
-        self.createURLSessionTask(toRun: fetchStatisticsTaskHelper, withURL: playerURL)
+        self.createURLSessionTask(toRun: fetchStatisticsURLSessionTaskHelper, withURL: playerURL)
     }
     
-    func fetchStatisticsTaskHelper(_ html: String) {
+    func fetchStatisticsURLSessionTaskHelper(_ html: String) {
         // method to be passed to createURLSessionTask(:, :)
         
-        if self.selectedPlayerID == nil { return }
+        if self.selectedPlayerIndex == nil { return }
 
         guard let i = html.index(of: "<td _ngcontent-sc") else {
             print("ERROR: Could not locate the scNum related to this version of the HTML script")
@@ -110,10 +112,10 @@ class WebScraper: ObservableObject {
         let stats = statsString.removeWhiteSpace().components(separatedBy: dividor)
         
         DispatchQueue.main.async {      // cannot mutate published properties in an observed object from a background thread, so must do so in the main thread
-            self.playerInfo[self.selectedPlayerID!].rbi = stats[8]
-            self.playerInfo[self.selectedPlayerID!].avg = stats[11]
-            self.playerInfo[self.selectedPlayerID!].obp = stats[12]
-            self.playerInfo[self.selectedPlayerID!].slg = stats[13]
+            self.playerInfo[self.selectedPlayerIndex!].rbi = stats[8]
+            self.playerInfo[self.selectedPlayerIndex!].avg = stats[11]
+            self.playerInfo[self.selectedPlayerIndex!].obp = stats[12]
+            self.playerInfo[self.selectedPlayerIndex!].slg = stats[13]
         }
     }
     
@@ -129,10 +131,10 @@ class WebScraper: ObservableObject {
             return
         }
         
-        self.createURLSessionTask(toRun: fetchLineUpTaskHelper, withURL: teamURL)
+        self.createURLSessionTask(toRun: fetchLineUpURLSessionTaskHelper, withURL: teamURL)
     }
     
-    private func fetchLineUpTaskHelper(_ html: String) {
+    private func fetchLineUpURLSessionTaskHelper(_ html: String) {
         // wrapping method to be passed to createURLSessionTask(:, :)
         
         guard let table = self.extractLineupTablesFromHTML(htmlString: html) else {

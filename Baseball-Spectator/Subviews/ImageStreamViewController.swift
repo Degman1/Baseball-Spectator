@@ -9,16 +9,17 @@
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
+class ImageStreamViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var captureSession: AVCaptureSession = AVCaptureSession()
     private let videoDataOutput = AVCaptureVideoDataOutput()
     private var skipFrame = 0;
     private let context = CIContext()
     public var playersByPosition: [[CGPoint]] = []
-    var processingState: ProcessingState = .UserSelectHome
     var fileInterface: FileIO
+    var processingCoordinator: ProcessingCoordinator
     
-    init(fileInterface: FileIO) {
+    init(fileInterface: FileIO, processingCoordinator: ProcessingCoordinator) {
+        self.processingCoordinator = processingCoordinator
         self.fileInterface = fileInterface
         super.init(nibName: nil, bundle: nil)
     }
@@ -75,7 +76,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         DispatchQueue.main.async {
             if self.skipFrame % 2 == 0 {
-                self.imageView.image = OpenCVWrapper.processImage(image, expectedHomePlateAngle: HOME_PLATE_ANGLES[4], filePath: self.fileInterface.filePath, processingState: Int32(self.processingState.rawValue))
+                self.imageView.image = OpenCVWrapper.processImage(image, expectedHomePlateAngle: HOME_PLATE_ANGLES[4], filePath: self.fileInterface.filePath, processingState: Int32(self.processingCoordinator.processingState.rawValue))
             }
             
             self.skipFrame += 1
