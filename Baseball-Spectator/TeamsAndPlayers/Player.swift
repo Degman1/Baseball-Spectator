@@ -48,10 +48,15 @@ struct Player: CustomStringConvertible {
         }
     }
     
-    var description: String {
-        if self.avg == nil {
+    var detailedDescription: String {
+        if self.avg != nil {
+            return "\(name), (\(position))\n\tavg: \(avg!), slg: \(slg!), rbi: \(rbi!), obp: \(obp!)"
+        } else {
             return "\(name) (\(position))"
         }
-        return "\(name), (\(position))\n  avg: \(avg!), slg: \(slg!), rbi: \(rbi!), obp: \(obp!)"
+    }
+    
+    var description: String {
+        return "\(name) (\(position))"
     }
 }

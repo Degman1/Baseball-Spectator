@@ -9,23 +9,23 @@
 import Foundation
 
 class ConsoleCommunication {
-    static private func generateOutput(messageType: String, withMessage: String, source: String) {
+    static private func printMessage(messageType: String, withMessage: String, source: String) {
         print("\(messageType): (\(source == "" ? "No Source Provided" : source)) \(withMessage)")
     }
     
     static func printWarning(withMessage: String, source: String = "") {
-        generateOutput(messageType: "⚠️ WARNING", withMessage: withMessage, source: source)
+        printMessage(messageType: "⚠️ WARNING", withMessage: withMessage, source: source)
     }
 
     static func printDocumentation(withMessage: String, source: String = "") {
-        generateOutput(messageType: "📝 DOCUMENTATION", withMessage: withMessage, source: source)
+        printMessage(messageType: "📝 DOCUMENTATION", withMessage: withMessage, source: source)
     }
     
     static func printResult(withMessage: String, source: String = "") {
-        generateOutput(messageType: "✅ RESULT", withMessage: withMessage, source: source)
+        printMessage(messageType: "✅ RESULT", withMessage: withMessage, source: source)
     }
     
     static func printError(withMessage: String, source: String = "") {
-        generateOutput(messageType: "💥 ERROR", withMessage: withMessage, source: source)
+        printMessage(messageType: "💥 ERROR", withMessage: withMessage, source: source)
     }
 }

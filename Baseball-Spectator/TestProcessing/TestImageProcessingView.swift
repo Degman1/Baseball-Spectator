@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TestImageProcessingView: View {
     @State var imageID = 1
+    @State var selectedTeam: ActiveTeam = .Defense
     let fileInterface: FileIO = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
     @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/", debug: true)
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
@@ -28,8 +29,11 @@ struct TestImageProcessingView: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                 
                 DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, imageID: self.$imageID, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
+                    .disabled(self.selectedPlayer.isExpanded)
                 
                 VStack {
+                    Spacer()
+                    
                     Stepper(onIncrement: {
                         if self.imageID < 11 {
                             self.imageID += 1
@@ -56,12 +60,30 @@ struct TestImageProcessingView: View {
                         }
                         Spacer()
                     }
-                }
+                    
+                    Spacer()
+                    
+                    HStack {
+                        Spacer()
+                                                
+                        Picker("Select Team:", selection: self.$selectedTeam) {
+                            Text("Offense").tag(ActiveTeam.Offense)
+                            Text("Defense").tag(ActiveTeam.Defense)
+                        }.pickerStyle(SegmentedPickerStyle())
+                            .font(.largeTitle)
+                            .background(opaqueWhite)    // so that it can be seen on top of any background
+                            .cornerRadius(8)
+                            .padding()
+                            .frame(width: geometry.size.width / 3)
+                                                
+                        Spacer()
+                    }
+                }.disabled(self.selectedPlayer.isExpanded)
                 
                 if !self.selectedPlayer.isExpanded {
                     PlayerInfoBarViewTesting(geometry: geometry, imageID: self.$imageID, selectedPlayer: self.selectedPlayer, webScraper: self.webScraper)
                 }
-                
+            
                 if self.selectedPlayer.isExpanded {
                     PlayerExpandedView(webScraper: self.webScraper, selectedPlayer: self.selectedPlayer)
                 }

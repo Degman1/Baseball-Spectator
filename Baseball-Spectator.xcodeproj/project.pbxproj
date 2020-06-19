@@ -26,6 +26,7 @@
 		637AA5B9248D826B00FC15B8 /* PlayerInfoBarViewTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637AA5B8248D826B00FC15B8 /* PlayerInfoBarViewTesting.swift */; };
 		638826502486CCF800C9FB4E /* DraggableOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */; };
 		638826542486DB4500C9FB4E /* TestImageResolutions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638826532486DB4500C9FB4E /* TestImageResolutions.swift */; };
+		639999D2249D4F260072C5E7 /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639999D1249D4F260072C5E7 /* IntExtension.swift */; };
 		63A2F0B0249D185400D8D79A /* ConsoleCommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A2F0AF249D185400D8D79A /* ConsoleCommunication.swift */; };
 		63C46CAF24887ADF00EC3E67 /* ProcessingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C46CAE24887ADF00EC3E67 /* ProcessingState.swift */; };
 		63D44F96248ACF6600049CD8 /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D44F95248ACF6600049CD8 /* Team.swift */; };
@@ -41,7 +42,6 @@
 		F60482392475992700F71A68 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F60482382475992700F71A68 /* opencv2.framework */; };
 		F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */; };
 		F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */; };
-		F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63EE60F23BFAE0D00B155B8 /* ContentView.swift */; };
 		F63EE61223BFAE1300B155B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61123BFAE1300B155B8 /* Assets.xcassets */; };
 		F63EE61523BFAE1300B155B8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61423BFAE1300B155B8 /* Preview Assets.xcassets */; };
 		F63EE61823BFAE1300B155B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */; };
@@ -70,6 +70,7 @@
 		637AA5B8248D826B00FC15B8 /* PlayerInfoBarViewTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfoBarViewTesting.swift; sourceTree = "<group>"; };
 		6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableOverlayView.swift; sourceTree = "<group>"; };
 		638826532486DB4500C9FB4E /* TestImageResolutions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImageResolutions.swift; sourceTree = "<group>"; };
+		639999D1249D4F260072C5E7 /* IntExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
 		63A2F0AF249D185400D8D79A /* ConsoleCommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleCommunication.swift; sourceTree = "<group>"; };
 		63C46CAE24887ADF00EC3E67 /* ProcessingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingState.swift; sourceTree = "<group>"; };
 		63D44F95248ACF6600049CD8 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
@@ -87,7 +88,6 @@
 		F63EE60823BFAE0D00B155B8 /* Baseball-Spectator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Baseball-Spectator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		F63EE60F23BFAE0D00B155B8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F63EE61123BFAE1300B155B8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F63EE61423BFAE1300B155B8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F63EE61723BFAE1300B155B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -150,6 +150,7 @@
 				63A2F0AF249D185400D8D79A /* ConsoleCommunication.swift */,
 				63DAA5CD248157FF0022F9AA /* CGPointExtension.swift */,
 				63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */,
+				639999D1249D4F260072C5E7 /* IntExtension.swift */,
 				6373CE5E248EEE4F00E43720 /* StringExtension.swift */,
 			);
 			path = Utilities;
@@ -204,7 +205,6 @@
 			children = (
 				F63EE60B23BFAE0D00B155B8 /* AppDelegate.swift */,
 				F63EE60D23BFAE0D00B155B8 /* SceneDelegate.swift */,
-				F63EE60F23BFAE0D00B155B8 /* ContentView.swift */,
 				638826522486CD6400C9FB4E /* Subviews */,
 				63636C08249AF0B300938269 /* InterfaceStyle */,
 				63D44F94248ACF3200049CD8 /* TeamsAndPlayers */,
@@ -342,11 +342,11 @@
 				638826502486CCF800C9FB4E /* DraggableOverlayView.swift in Sources */,
 				637AA5B0248D6E5900FC15B8 /* SelectedPlayer.swift in Sources */,
 				F63EE60E23BFAE0D00B155B8 /* SceneDelegate.swift in Sources */,
+				639999D2249D4F260072C5E7 /* IntExtension.swift in Sources */,
 				F6CD4AD223C4E32800DA0E1E /* OpenCVWrapper.mm in Sources */,
 				635AB6E7247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift in Sources */,
 				63457FAB2491B7E700FDB6D7 /* PlayerExpandedView.swift in Sources */,
 				6373CE61248EF44900E43720 /* Player.swift in Sources */,
-				F63EE61023BFAE0D00B155B8 /* ContentView.swift in Sources */,
 				F6CA649A24799F7E009721E0 /* Scoreboard.swift in Sources */,
 				63D44F96248ACF6600049CD8 /* Team.swift in Sources */,
 				63457FA92491B52000FDB6D7 /* PlayerInfoBarView.swift in Sources */,

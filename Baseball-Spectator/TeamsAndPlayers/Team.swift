@@ -33,3 +33,7 @@ enum League {
 enum Division {
     case East, Central, West
 }
+
+enum ActiveTeam {
+    case Offense, Defense
+}

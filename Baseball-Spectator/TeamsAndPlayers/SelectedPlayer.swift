@@ -30,6 +30,32 @@ class SelectedPlayer: CustomStringConvertible, ObservableObject {
         self.isExpanded = false
     }
     
+    func nextPlayer() {
+        //for use only in the expanded view state
+        
+        if self.positionID != nil {
+            print(self.positionID)
+            self.positionID = (self.positionID! + 1) %% 9
+            print(self.positionID)
+            print()
+            self.realCoordinate = nil
+            self.viewCoordinate = nil
+        }
+    }
+    
+    func previousPlayer() {
+        //for use only in the expanded view state
+        
+        if self.positionID != nil {
+            print(self.positionID)
+            self.positionID = (self.positionID! - 1) %% 9
+            print(self.positionID)
+            print()
+            self.realCoordinate = nil
+            self.viewCoordinate = nil
+        }
+    }
+    
     var description: String {
         switch self.positionID {
             case 0:

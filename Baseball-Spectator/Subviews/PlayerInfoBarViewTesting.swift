@@ -22,17 +22,23 @@ struct PlayerInfoBarViewTesting: View {
                     self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
                 }) {
                     Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)
-                        .padding(5.0)
-                        .background(Color.green)
-                        .border(Color.black)
+                        .padding(6.0)
+                        .background(darkGreen)
+                        .cornerRadius(geometry.size.height / 15)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: geometry.size.height / 15)
+                                .stroke(Color.white, lineWidth: 3)
+                        )
                         .foregroundColor(.black)
+                        .opacity(0.75)
+                        .shadow(radius: geometry.size.height / 10)
                 }.offset(calculateOffset())
             } else if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count == 0 {
                 Text(self.selectedPlayer.description)
-                    .padding(5.0)
-                    .background(Color.green)
-                    .border(Color.black)
+                    .padding(6.0)
+                    .background(darkGreen)
                     .foregroundColor(.black)
+                    .cornerRadius(geometry.size.height / 15)
                     .offset(calculateOffset())
             }
         }
