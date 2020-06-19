@@ -15,10 +15,11 @@ struct PlayerExpandedView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Text("Hello").font(.title)
                 self.getViewBackground(geometry: geometry)
                 
-                //Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)   // force unwrap since this view should only be created if a player is selected
+                if self.selectedPlayer.positionID != nil && !self.webScraper.playerInfo.isEmpty {
+                    Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)
+                }
             }
         }
     }
@@ -30,14 +31,17 @@ struct PlayerExpandedView: View {
             .cornerRadius(geometry.size.height / 15)
             .overlay(
                 Rectangle()
-                    //.stroke(Color.white, lineWidth: 70)
                     .frame(width: geometry.size.width * 0.7 - (geometry.size.height * 0.02),
                            height: geometry.size.height * 0.8 - (geometry.size.height * 0.02))
+                    .foregroundColor(lightGreen)
+                    /*.background(
+                        RadialGradient(gradient: Gradient(colors: [darkGreen, .white]), center: .center, startRadius: 200, endRadius: geometry.size.height * 0.4)
+                    )*/
                     .cornerRadius(geometry.size.height / 15)
-                    .foregroundColor(darkGreen)
-                    .opacity(0.7)
             )
+            
             .shadow(radius: geometry.size.height / 20)
+            .opacity(0.7)
             
     }
 }
@@ -46,7 +50,8 @@ struct PlayerExpandedView_Previews: PreviewProvider {
     static var previews: some View {
         let player = SelectedPlayer()
         player.positionID = 5
-        return PlayerExpandedView(webScraper: WebScraper(baseURL: ""), selectedPlayer: player)
+        let scraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/")
+        return PlayerExpandedView(webScraper: scraper, selectedPlayer: player)
             .previewLayout(.fixed(width: 1792, height: 828))
     }
 }

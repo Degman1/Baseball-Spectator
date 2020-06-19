@@ -39,7 +39,7 @@ struct TestVideoProcessingView: View {
         
         try! fileInterface.loadDataIntoPlayersByPosition()
         for pos in fileInterface.playersByPosition {
-            print(pos)
+            ConsoleCommunication.printResult(withMessage: "\(pos)")
         }
         
         /*if self.videoParser.frames.count - 1 > self.imageIndex {

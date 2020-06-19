@@ -59,7 +59,7 @@ struct Scoreboard: View {
                                    VStack {
                                        awayInnings
                                        homeInnings
-                                   }.background(Color.green)
+                                   }.background(darkGreen)
                                 }
                             }
                             Spacer()
@@ -97,7 +97,7 @@ struct Scoreboard: View {
                             }
                         }
                     }
-                }.background(Color.green)
+                }.background(darkGreen)
             }
             .frame(width: self.wFrame, height: self.hFrame)
     }

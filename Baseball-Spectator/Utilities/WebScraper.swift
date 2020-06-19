@@ -10,9 +10,9 @@ import Foundation
 import SwiftUI
 
 class WebScraper: ObservableObject {
-    var baseURL: String
-    @Published var playerInfo: [Player] = []
+    let baseURL: String
     let debug: Bool
+    @Published var playerInfo: [Player] = []
     private var selectedPlayerIndex: Int? = nil        // set when the fetchStatistics method is called
                                                        // to store the selected player index since an observable object
     
@@ -22,31 +22,33 @@ class WebScraper: ObservableObject {
     }
     
     func createURLSessionTask(toRun action: @escaping (String) -> Void, withURL url: URL) {
+        let source = "WebScraper - createURLSessionTask"
+        
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if error != nil {       // don't clear playerInfo, so if not having network connection, it just shows the last data it could fetch from the webpage
                 if self.debug {
-                    print("ERROR: \(error!)")
+                    ConsoleCommunication.printError(withMessage: "\(error!)", source: source)
                 }
                 return
             }
             
             guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
                 if self.debug {
-                    print(response!)
+                    ConsoleCommunication.printError(withMessage: "\(response!)", source: source)
                 }
                 return
             }
             
             guard let data = data else {
                 if self.debug {
-                    print("ERROR: html data was nil")
+                    ConsoleCommunication.printError(withMessage: "the downloaded HTML data was nil", source: source)
                 }
                 return
             }
             
             guard let htmlString = String(data: data, encoding: .utf8) else {
                 if self.debug {
-                    print("ERROR: couldn't cast html data into String")
+                    ConsoleCommunication.printError(withMessage: "couldn't cast html data into a String", source: source)
                 }
                 return
             }
@@ -67,26 +69,28 @@ class WebScraper: ObservableObject {
         self.selectedPlayerIndex = selectedPlayerIndex
         
         guard let playerURL = URL(string: playerInfo[selectedPlayerIndex].statisticsLink) else {
-            print("ERROR: the team URL cannot be converted from a string to a URL")
+            ConsoleCommunication.printError(withMessage: "the team URL cannot be converted from a string to a URL", source: "WebScraper - fetchStatistics")
             return
         }
         
         self.createURLSessionTask(toRun: fetchStatisticsURLSessionTaskHelper, withURL: playerURL)
     }
     
-    func fetchStatisticsURLSessionTaskHelper(_ html: String) {
+    private func fetchStatisticsURLSessionTaskHelper(_ html: String) {
         // method to be passed to createURLSessionTask(:, :)
+        
+        let source = "WebScraper - fetchStatisticsURLSessionTaskHelper"
         
         if self.selectedPlayerIndex == nil { return }
 
         guard let i = html.index(of: "<td _ngcontent-sc") else {
-            print("ERROR: Could not locate the scNum related to this version of the HTML script")
+            ConsoleCommunication.printError(withMessage: "could not locate the scNum related to the current version of the downloaded HTML script", source: source)
             return
         }
 
         // this number changes, so must find what it is in the latest download of html script
         guard let scNum = Int(html.getSubstring(from: html.distance(from: html.startIndex, to: i) + 17, to: "=")) else {
-            print("ERROR: Could not convert scNum to an Int")
+            ConsoleCommunication.printError(withMessage: "could not convert scNum to an Int", source: source)
             return
         }
 
@@ -102,7 +106,7 @@ class WebScraper: ObservableObject {
             </tr><!---->
             """
         guard let statsString = html.getSubstring(from: start, to: end) else {
-            print("ERROR: Could not find the player statistics table entries")
+            ConsoleCommunication.printError(withMessage: "could not find the player statistics table entries", source: source)
             return
         }
         
@@ -122,12 +126,12 @@ class WebScraper: ObservableObject {
     //------------------------------------------------------------------------------------------------------
     // Load Line-up (names,  positions, statistics links)
     
-    func fetchLineUpInformation(teamLookupName: String) {
+    func fetchLineupInformation(teamLookupName: String) {
         // fetches the html code from the provided webpage and provided team to look up
         // searches for the up to date lineup and places the player information in playerInfo
         
         guard let teamURL = URL(string: self.baseURL + teamLookupName) else {
-            print("ERROR: the team URL cannot be converted from a string to a URL")
+            ConsoleCommunication.printError(withMessage: "the team URL cannot be converted from a string to a URL", source: "WebStatistics - fetchLineupInformation")
             return
         }
         
@@ -145,16 +149,17 @@ class WebScraper: ObservableObject {
     }
     
     private func loadPlayerInfoFromLineupTable(html: String, table: String) {
+        let source = "WebStatistics - fetchLineupInformation"
         var playerInfoTemp: [Player] = []
         
         guard let i = table.index(of: "_ngcontent-sc") else {
-            print("ERROR: Could not locate the scNum related to this version of the HTML script")
+            ConsoleCommunication.printError(withMessage: "could not locate the scNum related to this version of the HTML script", source: source)
             return
         }
         
         // this number changes, so must find what it is in the latest download of html script
         guard let scNum = Int(table.getSubstring(from: table.distance(from: table.startIndex, to: i) + 13, to: "=")) else {
-            print("ERROR: Could not convert scNum to an Int")
+            ConsoleCommunication.printError(withMessage: "could not convert scNum to an Int", source: source)
             return
         }
         
@@ -170,7 +175,7 @@ class WebScraper: ObservableObject {
         let nameIndices = table.indices(of: nameIdentifier)
         
         if positionIndices.count != nameIndices.count || positionIndices.count != 9 {
-            print("ERROR: the number of positions and/or player names is incorrect in website stats fetching")
+            ConsoleCommunication.printError(withMessage: "the number of positions and/or player names is incorrect in website stats fetching", source: source)
             return
         }
         
@@ -214,6 +219,8 @@ class WebScraper: ObservableObject {
          end: <
         */
         
+        let source = "WebScraper - extractLineupTablesFromHTML"
+        
         // don't include the sc # since it changes
         let tableStartID = """
             class="static-table stats-table table table-bordered starting-pitcher-table">
@@ -221,14 +228,14 @@ class WebScraper: ObservableObject {
         let tableStartIndices = htmlString.indices(of: tableStartID)
         
         if tableStartIndices.count < 2 {
-            print("ERROR: Extracting data from hmtlString failed - no table start index found")
+            ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table start index found", source: source)
             return nil
         }
         
         let tableEndIndices = htmlString.indices(of: "</table>")
         
         guard let table1 = htmlString.getHTMLsnippetUnknownEndpoint(from: tableStartIndices[0], to: tableEndIndices), let table2 = htmlString.getHTMLsnippetUnknownEndpoint(from: tableStartIndices[1], to: tableEndIndices) else {
-            print("ERROR: Extracting data from hmtlString failed - no table end index found")
+            ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table end index found", source: source)
             return nil
         }
         

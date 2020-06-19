@@ -33,7 +33,7 @@ struct MainView: View {
     
     var importButton: some View {
         Button(action: {
-            print("import")
+            //print("import")
         }) {
             Image(systemName: "plus.square")
         }

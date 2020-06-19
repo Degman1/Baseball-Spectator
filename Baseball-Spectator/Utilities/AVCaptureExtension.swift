@@ -11,10 +11,12 @@ import AVFoundation
 
 extension AVCaptureDevice {
     func set(frameRate: Double) {
+        let source = "AVCaptureDevice - set"
+        
         guard let range = activeFormat.videoSupportedFrameRateRanges.first,
             range.minFrameRate...range.maxFrameRate ~= frameRate
             else {
-                print("Requested FPS is not supported by the device's activeFormat !")
+                ConsoleCommunication.printError(withMessage: "requested FPS is not supported by the device's activeFormat", source: source)
                 return
         }
 
@@ -23,7 +25,7 @@ extension AVCaptureDevice {
             activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: Int32(frameRate))
             unlockForConfiguration()
         } catch {
-            print("LockForConfiguration failed with error: \(error.localizedDescription)")
+            ConsoleCommunication.printError(withMessage: "\(error.localizedDescription)", source: source)
         }
     }
 }
