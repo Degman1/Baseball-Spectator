@@ -66,20 +66,15 @@ struct PlayerExpandedView: View {
     }
     
     func getViewBackground(geometry: GeometryProxy) -> some View {
-        Rectangle()
+        RoundedRectangle(cornerRadius: geometry.size.height / 15)
             .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
-            .foregroundColor(.white)
-            .cornerRadius(geometry.size.height / 15)
+            .foregroundColor(darkGreen)
             .overlay(
-                Rectangle()
-                    .frame(width: geometry.size.width * 0.7 - (geometry.size.height * 0.02),
-                           height: geometry.size.height * 0.8 - (geometry.size.height * 0.02))
-                    .foregroundColor(darkGreen)
-                    .cornerRadius(geometry.size.height / 15)
+                RoundedRectangle(cornerRadius: geometry.size.height / 15)
+                    .stroke(Color.white, lineWidth: 5)
             )
-            
-            .shadow(radius: geometry.size.height / 20)
-            .opacity(0.75)
+            .opacity(0.9)
+            .shadow(color: Color.black, radius: geometry.size.height / 20)
     }
 }
 

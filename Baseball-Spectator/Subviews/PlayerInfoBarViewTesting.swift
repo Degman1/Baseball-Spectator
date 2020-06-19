@@ -27,11 +27,11 @@ struct PlayerInfoBarViewTesting: View {
                         .cornerRadius(geometry.size.height / 15)
                         .overlay(
                             RoundedRectangle(cornerRadius: geometry.size.height / 15)
-                                .stroke(Color.white, lineWidth: 3)
+                                .stroke(Color.white, lineWidth: 5)
                         )
                         .foregroundColor(.black)
-                        .opacity(0.75)
-                        .shadow(radius: geometry.size.height / 10)
+                        .opacity(0.8)
+                        .shadow(color: Color.black, radius: geometry.size.height / 20)
                 }.offset(calculateOffset())
             } else if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count == 0 {
                 Text(self.selectedPlayer.description)
