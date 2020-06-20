@@ -11,6 +11,7 @@ import SwiftUI
 struct TestImageProcessingView: View {
     @State var imageID = 1
     @State var selectedTeam: ActiveTeam = .Defense
+    @State var showHomePlateMessageView = true
     let fileInterface: FileIO = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
     @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/", debug: true)
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
@@ -41,6 +42,7 @@ struct TestImageProcessingView: View {
                         self.processingCoordinator.processingState = .UserSelectHome
                         self.selectedPlayer.unselectPlayer()
                         self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
+                        self.showHomePlateMessageView = true
                     }, onDecrement: {
                         if self.imageID > 1 {
                             self.imageID -= 1
@@ -48,6 +50,7 @@ struct TestImageProcessingView: View {
                         self.processingCoordinator.processingState = .UserSelectHome
                         self.selectedPlayer.unselectPlayer()
                         self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
+                        self.showHomePlateMessageView = true
                     }, label: {
                         return Text("ImageID: \(self.imageID)").background(Color.white)
                     })
@@ -79,6 +82,10 @@ struct TestImageProcessingView: View {
                         Spacer()
                     }
                 }.disabled(self.selectedPlayer.isExpanded)
+                
+                if self.processingCoordinator.processingState == .UserSelectHome && self.showHomePlateMessageView {
+                    HomePlateMessageView(showHomePlateMessageView: self.$showHomePlateMessageView)
+                }
                 
                 if !self.selectedPlayer.isExpanded {
                     PlayerInfoBarViewTesting(geometry: geometry, imageID: self.$imageID, selectedPlayer: self.selectedPlayer, webScraper: self.webScraper)

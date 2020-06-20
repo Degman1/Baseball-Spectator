@@ -11,6 +11,7 @@
 		630E2A1224858C8E008DEF17 /* VideoParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A1124858C8E008DEF17 /* VideoParser.swift */; };
 		630E2A1524859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E2A1424859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift */; };
 		630E2A172485A271008DEF17 /* videoplayback.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 630E2A162485A051008DEF17 /* videoplayback.mp4 */; };
+		6314A721249E914400046E88 /* HomePlateMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6314A720249E914400046E88 /* HomePlateMessageView.swift */; };
 		63457FA92491B52000FDB6D7 /* PlayerInfoBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63457FA82491B52000FDB6D7 /* PlayerInfoBarView.swift */; };
 		63457FAB2491B7E700FDB6D7 /* PlayerExpandedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63457FAA2491B7E700FDB6D7 /* PlayerExpandedView.swift */; };
 		63564B4124802BD600BFAF7B /* ImageStreamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63564B4024802BD600BFAF7B /* ImageStreamViewController.swift */; };
@@ -55,6 +56,7 @@
 		630E2A1124858C8E008DEF17 /* VideoParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoParser.swift; sourceTree = "<group>"; };
 		630E2A1424859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewControllerRepresentable.swift; sourceTree = "<group>"; };
 		630E2A162485A051008DEF17 /* videoplayback.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = videoplayback.mp4; sourceTree = "<group>"; };
+		6314A720249E914400046E88 /* HomePlateMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePlateMessageView.swift; sourceTree = "<group>"; };
 		63457FA82491B52000FDB6D7 /* PlayerInfoBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerInfoBarView.swift; sourceTree = "<group>"; };
 		63457FAA2491B7E700FDB6D7 /* PlayerExpandedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerExpandedView.swift; sourceTree = "<group>"; };
 		63564B4024802BD600BFAF7B /* ImageStreamViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStreamViewController.swift; sourceTree = "<group>"; };
@@ -167,6 +169,7 @@
 				637AA5B8248D826B00FC15B8 /* PlayerInfoBarViewTesting.swift */,
 				63457FA82491B52000FDB6D7 /* PlayerInfoBarView.swift */,
 				63457FAA2491B7E700FDB6D7 /* PlayerExpandedView.swift */,
+				6314A720249E914400046E88 /* HomePlateMessageView.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				63564B4324802C7200BFAF7B /* ImageStreamViewControllerRepresentable.swift in Sources */,
 				63FD24AC247993AF002D0728 /* Timer.mm in Sources */,
 				630E2A1024858758008DEF17 /* TestVideoProcessingView.swift in Sources */,
+				6314A721249E914400046E88 /* HomePlateMessageView.swift in Sources */,
 				63DAA5CE248157FF0022F9AA /* CGPointExtension.swift in Sources */,
 				F63EE60C23BFAE0D00B155B8 /* AppDelegate.swift in Sources */,
 				63C46CAF24887ADF00EC3E67 /* ProcessingState.swift in Sources */,

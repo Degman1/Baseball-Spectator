@@ -34,10 +34,7 @@ class SelectedPlayer: CustomStringConvertible, ObservableObject {
         //for use only in the expanded view state
         
         if self.positionID != nil {
-            print(self.positionID)
             self.positionID = (self.positionID! + 1) %% 9
-            print(self.positionID)
-            print()
             self.realCoordinate = nil
             self.viewCoordinate = nil
         }
@@ -47,10 +44,7 @@ class SelectedPlayer: CustomStringConvertible, ObservableObject {
         //for use only in the expanded view state
         
         if self.positionID != nil {
-            print(self.positionID)
             self.positionID = (self.positionID! - 1) %% 9
-            print(self.positionID)
-            print()
             self.realCoordinate = nil
             self.viewCoordinate = nil
         }

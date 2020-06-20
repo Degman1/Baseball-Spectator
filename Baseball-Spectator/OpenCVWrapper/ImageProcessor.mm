@@ -96,7 +96,10 @@ class ImageProcessor {
             // draw a circle over home, first, second, and third
             
             for (int i = 0; i < 4; i++) {
-                cv::circle(resizedMat, expectedPositions[i], 15, cv::Scalar(0, 0, 255), cv::FILLED);
+                // white outside
+                cv::circle(resizedMat, expectedPositions[i], 25, cv::Scalar(255, 255, 255), cv::FILLED);
+                // dark green inside
+                cv::circle(resizedMat, expectedPositions[i], 15, cv::Scalar(94, 138, 100), cv::FILLED);
             }
             
             writeBasesToFile(expectedPositions, filePath);
