@@ -108,7 +108,7 @@ struct Scoreboard: View {
                     .stroke(Color.white, lineWidth: 5)
             )
             .shadow(color: Color.black, radius: 30)
-            .padding(.top, 20)
+            .padding(20)
     }
     
     var awayInnings: some View {

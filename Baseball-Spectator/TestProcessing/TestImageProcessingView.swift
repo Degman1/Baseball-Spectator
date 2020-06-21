@@ -33,7 +33,7 @@ struct TestImageProcessingView: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                 
                 DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, imageID: self.$imageID, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
-                    .disabled(self.selectedPlayer.isExpanded)
+                    .disabled(self.selectedPlayer.isExpanded || self.interfaceCoordinator.showHomePlateMessageView)
                 
                 VStack {
                     HStack {
@@ -60,7 +60,7 @@ struct TestImageProcessingView: View {
                         self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
                         self.interfaceCoordinator.showHomePlateMessageView = true
                     }, label: {
-                        return Text("ImageID: \(self.imageID)").background(Color.white)
+                        return Text("ImageID: \(self.imageID)")
                     })
                     
                     Spacer()
@@ -83,8 +83,8 @@ struct TestImageProcessingView: View {
                 
                 // small home plate message view
                 if self.processingCoordinator.processingState == .UserSelectHome && !self.interfaceCoordinator.showHomePlateMessageView {
-                        GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: "Please Select Home Plate", widthPercent: 0.3, heightPercent: 0.1, closable: false)
-                            .offset(x: (-geometry.size.width / 2) + 125, y: (geometry.size.height / 2) - 30)
+                        GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: "Select Home Plate", widthPercent: 0.25, heightPercent: 0.1, closable: false)
+                            .offset(x: (-geometry.size.width / 2) + 110, y: (geometry.size.height / 2) - 30)
                 }
                 
                 // player info bar on top of the selected player

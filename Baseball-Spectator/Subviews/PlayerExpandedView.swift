@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct PlayerExpandedView: View {
+struct PlayerExpandedView: View {   //TODO: change this to use generic message view as a foundation
     @ObservedObject var webScraper: WebScraper
     @ObservedObject var selectedPlayer: SelectedPlayer
     
