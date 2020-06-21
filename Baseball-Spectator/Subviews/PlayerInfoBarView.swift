@@ -10,27 +10,34 @@ import SwiftUI
 
 struct PlayerInfoBarView: View {
     let geometry: GeometryProxy
-    let playerRemoteInfo: [Player]
     @ObservedObject var selectedPlayer: SelectedPlayer
+    @ObservedObject var webScraper: WebScraper
     
     var body: some View {
         ZStack {
-            if self.selectedPlayer.positionID != nil && self.playerRemoteInfo.count > 0 {
+            if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count > 0 {
                 Button(action: {
                     self.selectedPlayer.isExpanded = true
+                    self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
                 }) {
-                    Text(self.playerRemoteInfo[self.selectedPlayer.positionID!].description + " >")
-                        .padding(5.0)
-                        .background(Color.green)
-                        .border(Color.black)
+                    Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)
+                        .padding(6.0)
+                        .background(darkGreen)
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.white, lineWidth: 5)
+                        )
                         .foregroundColor(.black)
+                        .opacity(0.8)
+                        .shadow(color: Color.black, radius: 30)
                 }.offset(calculateOffset())
-            } else if self.selectedPlayer.positionID != nil && self.playerRemoteInfo.count == 0 {
+            } else if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count == 0 {
                 Text(self.selectedPlayer.description)
-                    .padding(5.0)
-                    .background(Color.green)
-                    .border(Color.black)
+                    .padding(6.0)
+                    .background(darkGreen)
                     .foregroundColor(.black)
+                    .cornerRadius(20)
                     .offset(calculateOffset())
             }
         }

@@ -38,8 +38,8 @@ struct Scoreboard: View {
     @State var awayInningNine = 0
     
     @State private var isPressed = false
-    @State private var wFrame: CGFloat = 200
-    @State private var hFrame: CGFloat = 160
+    @State private var wFrame: CGFloat = 160
+    @State private var hFrame: CGFloat = 90
     
     var body: some View {
             ZStack {
@@ -47,13 +47,13 @@ struct Scoreboard: View {
                     VStack {
                         HStack {
                             VStack {
-                                Text(awayTeam).font(.largeTitle)
-                                Text(homeTeam).font(.largeTitle)
+                                Text(awayTeam)
+                                Text(homeTeam)
                             }
                             ZStack {
                                 VStack {
-                                    Text("\(awayTeamScore)").font(.largeTitle)
-                                    Text("\(homeTeamScore)").font(.largeTitle)
+                                    Text("\(awayTeamScore)")
+                                    Text("\(homeTeamScore)")
                                 }
                                 if isPressed {
                                    VStack {
@@ -80,65 +80,74 @@ struct Scoreboard: View {
                         Button(action: {
                             self.isPressed.toggle()
                             if self.isPressed {
-                                self.wFrame = 350
-                                self.hFrame = 185
+                                self.wFrame = 250
+                                self.hFrame = 90
                             } else {
-                                self.wFrame = 200
-                                self.hFrame = 160
+                                self.wFrame = 160
+                                self.hFrame = 90
                             }
                         }) {
                             Divider().rotationEffect(.degrees(180))
                             if isPressed {
                                 Image(systemName: "chevron.left")
-                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
+                                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
+                                    .foregroundColor(.white)
                             } else {
                                 Image(systemName: "chevron.right")
-                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
+                                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
+                                    .foregroundColor(.white)
                             }
                         }
                     }
-                }.background(darkGreen)
+                }.background(darkGreen.opacity(0.8))
             }
             .frame(width: self.wFrame, height: self.hFrame)
+            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.white, lineWidth: 5)
+            )
+            .shadow(color: Color.black, radius: 30)
+            .padding(.top, 20)
     }
     
     var awayInnings: some View {
         HStack {
             VStack {
                 Text("1")
-                Text("\(awayInningOne)").font(.largeTitle)
+                Text("\(awayInningOne)")
             }
             VStack {
                 Text("2")
-                Text("\(awayInningTwo)").font(.largeTitle)
+                Text("\(awayInningTwo)")
             }
             VStack {
                 Text("3")
-                Text("\(awayInningThree)").font(.largeTitle)
+                Text("\(awayInningThree)")
             }
             VStack {
                 Text("4")
-                Text("\(awayInningFour)").font(.largeTitle)
+                Text("\(awayInningFour)")
             }
             VStack {
                 Text("5")
-                Text("\(awayInningFive)").font(.largeTitle)
+                Text("\(awayInningFive)")
             }
             VStack {
                 Text("6")
-                Text("\(awayInningSix)").font(.largeTitle)
+                Text("\(awayInningSix)")
             }
             VStack {
                 Text("7")
-                Text("\(awayInningSeven)").font(.largeTitle)
+                Text("\(awayInningSeven)")
             }
             VStack {
                 Text("8")
-                Text("\(awayInningEight)").font(.largeTitle)
+                Text("\(awayInningEight)")
             }
             VStack {
                 Text("9")
-                Text("\(awayInningNine)").font(.largeTitle)
+                Text("\(awayInningNine)")
             }
         }
     }
@@ -146,37 +155,37 @@ struct Scoreboard: View {
     var homeInnings: some View {
         HStack {
             VStack {
-                Text("\(homeInningOne)").font(.largeTitle)
+                Text("\(homeInningOne)")
             }
             VStack {
-                Text("\(homeInningTwo)").font(.largeTitle)
+                Text("\(homeInningTwo)")
             }
             VStack {
-                Text("\(homeInningThree)").font(.largeTitle)
+                Text("\(homeInningThree)")
             }
             VStack {
-                Text("\(homeInningFour)").font(.largeTitle)
+                Text("\(homeInningFour)")
             }
             VStack {
-                Text("\(homeInningFive)").font(.largeTitle)
+                Text("\(homeInningFive)")
             }
             VStack {
-                Text("\(homeInningSix)").font(.largeTitle)
+                Text("\(homeInningSix)")
             }
             VStack {
-                Text("\(homeInningSeven)").font(.largeTitle)
+                Text("\(homeInningSeven)")
             }
             VStack {
-                Text("\(homeInningEight)").font(.largeTitle)
+                Text("\(homeInningEight)")
             }
             VStack {
-                Text("\(homeInningNine)").font(.largeTitle)
+                Text("\(homeInningNine)")
             }
         }
     }
     
     var ballstrikesView: some View {
-        Text("\(balls)-\(strikes)").font(.largeTitle)
+        Text("\(balls)-\(strikes)")
     }
     
     var outsView: some View {

@@ -28,7 +28,7 @@ struct PlayerExpandedView: View {
                         .padding(5)
                         .foregroundColor(.gray)
                         .background(Color.white)
-                        .cornerRadius(geometry.size.height / 15)
+                        .cornerRadius(20)
                 }.offset(x: -geometry.size.width * 0.31, y: -geometry.size.height * 0.32)
                 
                 HStack {
@@ -40,7 +40,7 @@ struct PlayerExpandedView: View {
                             .padding(5)
                             .foregroundColor(.gray)
                             .background(Color.white)
-                            .cornerRadius(geometry.size.height / 15)
+                            .cornerRadius(20)
                     }
                     
                     Text("Previous")
@@ -57,7 +57,7 @@ struct PlayerExpandedView: View {
                             .padding(5)
                             .foregroundColor(.gray)
                             .background(Color.white)
-                            .cornerRadius(geometry.size.height / 15)
+                            .cornerRadius(20)
                     }.labelsHidden()
                 }.offset(x: geometry.size.width * 0.275, y: geometry.size.height * 0.32)
                 
@@ -66,15 +66,15 @@ struct PlayerExpandedView: View {
     }
     
     func getViewBackground(geometry: GeometryProxy) -> some View {
-        RoundedRectangle(cornerRadius: geometry.size.height / 15)
+        RoundedRectangle(cornerRadius: 20)
             .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
             .foregroundColor(darkGreen)
             .overlay(
-                RoundedRectangle(cornerRadius: geometry.size.height / 15)
+                RoundedRectangle(cornerRadius: 20)
                     .stroke(Color.white, lineWidth: 5)
             )
             .opacity(0.9)
-            .shadow(color: Color.black, radius: geometry.size.height / 20)
+            .shadow(color: Color.black, radius: 30)
     }
 }
 

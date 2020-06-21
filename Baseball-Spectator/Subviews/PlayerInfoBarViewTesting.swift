@@ -19,26 +19,27 @@ struct PlayerInfoBarViewTesting: View {
             if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count > 0 {
                 Button(action: {
                     self.selectedPlayer.isExpanded = true
+                    
                     self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
                 }) {
                     Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)
                         .padding(6.0)
                         .background(darkGreen)
-                        .cornerRadius(geometry.size.height / 15)
+                        .cornerRadius(20)
                         .overlay(
-                            RoundedRectangle(cornerRadius: geometry.size.height / 15)
+                            RoundedRectangle(cornerRadius: 20)
                                 .stroke(Color.white, lineWidth: 5)
                         )
                         .foregroundColor(.black)
                         .opacity(0.8)
-                        .shadow(color: Color.black, radius: geometry.size.height / 20)
+                        .shadow(color: Color.black, radius: 30)
                 }.offset(calculateOffset())
             } else if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count == 0 {
                 Text(self.selectedPlayer.description)
                     .padding(6.0)
                     .background(darkGreen)
                     .foregroundColor(.black)
-                    .cornerRadius(geometry.size.height / 15)
+                    .cornerRadius(20)
                     .offset(calculateOffset())
             }
         }

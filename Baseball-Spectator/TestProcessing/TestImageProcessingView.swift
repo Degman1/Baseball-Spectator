@@ -10,15 +10,18 @@ import SwiftUI
 
 struct TestImageProcessingView: View {
     @State var imageID = 1
-    @State var selectedTeam: ActiveTeam = .Defense
-    @State var showHomePlateMessageView = true
     let fileInterface: FileIO = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
     @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/", debug: true)
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
     @ObservedObject var selectedPlayer = SelectedPlayer()
+    @ObservedObject var interfaceCoordinator = InterfaceCoordinator()
     
     init() {
         self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
+    }
+    
+    var disableControls: Bool {
+        return self.selectedPlayer.isExpanded || self.processingCoordinator.processingState == .UserSelectHome
     }
     
     var body: some View {
@@ -33,6 +36,11 @@ struct TestImageProcessingView: View {
                     .disabled(self.selectedPlayer.isExpanded)
                 
                 VStack {
+                    HStack {
+                        Scoreboard()
+                        Spacer()
+                    }
+                    
                     Spacer()
                     
                     Stepper(onIncrement: {
@@ -42,7 +50,7 @@ struct TestImageProcessingView: View {
                         self.processingCoordinator.processingState = .UserSelectHome
                         self.selectedPlayer.unselectPlayer()
                         self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-                        self.showHomePlateMessageView = true
+                        self.interfaceCoordinator.showHomePlateMessageView = true
                     }, onDecrement: {
                         if self.imageID > 1 {
                             self.imageID -= 1
@@ -50,50 +58,45 @@ struct TestImageProcessingView: View {
                         self.processingCoordinator.processingState = .UserSelectHome
                         self.selectedPlayer.unselectPlayer()
                         self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-                        self.showHomePlateMessageView = true
+                        self.interfaceCoordinator.showHomePlateMessageView = true
                     }, label: {
                         return Text("ImageID: \(self.imageID)").background(Color.white)
                     })
                     
-                    HStack {
-                        if self.processingCoordinator.processingState == .UserSelectHome {
-                            Text("Select Home Plate").background(Color.white)
-                        } else {
-                            Text("All Set!").background(Color.white)
-                        }
-                        Spacer()
-                    }
-                    
                     Spacer()
                     
-                    HStack {
-                        Spacer()
-                                                
-                        Picker("Select Team:", selection: self.$selectedTeam) {
-                            Text("Offense").tag(ActiveTeam.Offense)
-                            Text("Defense").tag(ActiveTeam.Defense)
-                        }.pickerStyle(SegmentedPickerStyle())
-                            .font(.largeTitle)
-                            .background(opaqueWhite)    // so that it can be seen on top of any background
-                            .cornerRadius(8)
-                            .padding()
-                            .frame(width: geometry.size.width / 3)
-                                                
-                        Spacer()
-                    }
-                }.disabled(self.selectedPlayer.isExpanded)
+                    Picker("Select Team:", selection: self.$interfaceCoordinator.selectedTeam) {
+                        Text("Offense").tag(ActiveTeam.Offense)
+                        Text("Defense").tag(ActiveTeam.Defense)
+                    }.pickerStyle(SegmentedPickerStyle())
+                        .font(.largeTitle)
+                        .background(opaqueWhite)    // so that it can be seen on top of any background
+                        .cornerRadius(8)
+                        .padding()
+                        .frame(width: geometry.size.width / 3)
+                }.disabled(self.disableControls)
                 
-                if self.processingCoordinator.processingState == .UserSelectHome && self.showHomePlateMessageView {
-                    HomePlateMessageView(showHomePlateMessageView: self.$showHomePlateMessageView)
+                // large home plate message view
+                if self.processingCoordinator.processingState == .UserSelectHome && self.interfaceCoordinator.showHomePlateMessageView {
+                    GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: "Select the Circle Representing Home Plate", widthPercent: 0.6, heightPercent: 0.35, closable: true)
                 }
                 
+                // small home plate message view
+                if self.processingCoordinator.processingState == .UserSelectHome && !self.interfaceCoordinator.showHomePlateMessageView {
+                        GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: "Please Select Home Plate", widthPercent: 0.3, heightPercent: 0.1, closable: false)
+                            .offset(x: (-geometry.size.width / 2) + 125, y: (geometry.size.height / 2) - 30)
+                }
+                
+                // player info bar on top of the selected player
                 if !self.selectedPlayer.isExpanded {
                     PlayerInfoBarViewTesting(geometry: geometry, imageID: self.$imageID, selectedPlayer: self.selectedPlayer, webScraper: self.webScraper)
                 }
-            
+                
+                // expanded player statistics view
                 if self.selectedPlayer.isExpanded {
                     PlayerExpandedView(webScraper: self.webScraper, selectedPlayer: self.selectedPlayer)
                 }
+                
             }
         }
     }
