@@ -17,7 +17,7 @@ struct MainView: View {
             ImageStreamViewControllerRepresentable(fileInterface: fileInterface, processingCoordinator: processingCoordinator)
             VStack {
                 HStack {
-                    Scoreboard()
+                    Scoreboard(processingCoordinator: self.processingCoordinator)
                         .padding(EdgeInsets(top: 11, leading: 10, bottom: 0, trailing: 0))
                     
                     Spacer()

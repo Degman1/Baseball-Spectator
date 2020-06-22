@@ -16,7 +16,13 @@ struct PlayerExpandedView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                GenericMessageView(message: self.text, closableBinding: self.$selectedPlayer.isExpanded)
+                if self.selectedPlayer.positionID == nil {  // just in case someone is dumb in the future
+                    GenericMessageView(message: Text(""), closableBinding: self.$selectedPlayer.isExpanded)
+                } else {
+                    GenericMessageView(message: Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].detailedDescription), closableBinding: self.$selectedPlayer.isExpanded) {
+                        self.selectedPlayer.unselectPlayer()
+                    }
+                }
                 
                 Button(action: {
                     self.selectedPlayer.previousPlayer()
@@ -35,6 +41,7 @@ struct PlayerExpandedView: View {
                 
                 Button(action: {
                     self.selectedPlayer.nextPlayer()
+                    
                     self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
                 }) {
                     HStack {

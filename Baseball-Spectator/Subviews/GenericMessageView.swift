@@ -8,20 +8,22 @@
 
 import SwiftUI
 
-struct GenericMessageView: View {
+struct GenericMessageView<Content: View>: View {
     var isViewShowing: Binding<Bool>?   // do this instead of @Binding in order to be able to make the variable an optional
-    let message: Text
+    let message: Content
     let textAlignment: Alignment
+    var closingActions: () -> Void = {}
     
     // use this initializer for a closable message view
-    init(message: Text, textAlignment: Alignment = .center, closableBinding: Binding<Bool>?) {
+    init(message: Content, textAlignment: Alignment = .center, closableBinding: Binding<Bool>?, closingActions: @escaping () -> Void = {}) {
         self.isViewShowing = closableBinding
         self.message = message
         self.textAlignment = textAlignment
+        self.closingActions = closingActions
     }
     
     // use this initializer for an unclosable message view
-    init(message: Text, textAlignment: Alignment = .center) {
+    init(message: Content, textAlignment: Alignment = .center) {
         self.isViewShowing = nil
         self.message = message
         self.textAlignment = textAlignment
@@ -39,7 +41,7 @@ struct GenericMessageView: View {
                     
                     self.message
                         .frame(alignment: self.textAlignment)
-                        .padding(.leading)
+                        .padding([.leading, .trailing])
                     
                     if self.textAlignment == .leading {
                         Spacer()
@@ -49,6 +51,7 @@ struct GenericMessageView: View {
                 if self.isViewShowing != nil {
                     Button(action: {
                         self.isViewShowing!.wrappedValue = false
+                        self.closingActions()
                     }) {
                         Text("  x  ")
                             .padding(5)

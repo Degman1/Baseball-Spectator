@@ -14,8 +14,11 @@ struct GenericButton: View {
     
     var body: some View {
         Button(action: self.action) {
-            Text(self.label + "  >")
-                .padding(8.0)
+            HStack {
+                Text(self.label)
+                Image(systemName: "chevron.right")
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 3))
+            }.padding(8.0)
                 .background(Color.white)
                 .cornerRadius(cornerRad)
                 .overlay(

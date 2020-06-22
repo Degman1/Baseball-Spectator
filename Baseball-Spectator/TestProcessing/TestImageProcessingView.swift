@@ -39,7 +39,7 @@ struct TestImageProcessingView: View {
                 
                 VStack {
                     HStack {
-                        Scoreboard()
+                        Scoreboard(processingCoordinator: self.processingCoordinator)
                         Spacer()
                     }
                     

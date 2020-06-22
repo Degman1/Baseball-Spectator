@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct Scoreboard: View {
+    @ObservedObject var processingCoordinator: ProcessingCoordinator
+    
     @State var homeTeam: String = "BOS"
     @State var awayTeam: String = "STL"
     @State var homeTeamScore: Int = 0
@@ -90,12 +92,20 @@ struct Scoreboard: View {
                             Divider().rotationEffect(.degrees(180))
                             if isPressed {
                                 Image(systemName: "chevron.left")
+                                    .padding(6)
+                                    .foregroundColor(.black)
+                                    .background(Color.white)
+                                    .cornerRadius(cornerRad)
                                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
-                                    .foregroundColor(.white)
+                                    .opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.4 : 0.9)
                             } else {
                                 Image(systemName: "chevron.right")
+                                    .padding(6)
+                                    .foregroundColor(.black)
+                                    .background(Color.white)
+                                    .cornerRadius(cornerRad)
                                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
-                                    .foregroundColor(.white)
+                                    .opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.4 : 0.9)
                             }
                         }
                     }
@@ -253,9 +263,10 @@ struct Scoreboard: View {
         }
     }
 }
-
+/*
 struct Scoreboard_Previews: PreviewProvider {
     static var previews: some View {
         Scoreboard()
     }
 }
+*/
