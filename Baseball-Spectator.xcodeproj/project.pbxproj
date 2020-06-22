@@ -174,8 +174,8 @@
 				6388264F2486CCF800C9FB4E /* DraggableOverlayView.swift */,
 				637AA5B8248D826B00FC15B8 /* PlayerInfoBarViewTesting.swift */,
 				63457FA82491B52000FDB6D7 /* PlayerInfoBarView.swift */,
-				63457FAA2491B7E700FDB6D7 /* PlayerExpandedView.swift */,
 				636FEE50249EFD2E00CC3379 /* GenericMessageView.swift */,
+				63457FAA2491B7E700FDB6D7 /* PlayerExpandedView.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";

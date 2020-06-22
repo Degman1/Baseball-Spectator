@@ -15,6 +15,7 @@ struct TestImageProcessingView: View {
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
     @ObservedObject var selectedPlayer = SelectedPlayer()
     @ObservedObject var interfaceCoordinator = InterfaceCoordinator()
+    @Environment(\.colorScheme) var colorScheme
     
     init() {
         self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
@@ -49,7 +50,7 @@ struct TestImageProcessingView: View {
                     Spacer()
                     
                     HStack {
-                        GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: "Select Home Plate", closable: false, textAlignment: .leading)
+                        GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: Text("Select Home Plate"), closable: false, textAlignment: .leading)
                             .frame(width: geometry.size.width / 3.5, height: 40)
                             .opacity(self.processingCoordinator.processingState == .UserSelectHome && !self.interfaceCoordinator.showHomePlateMessageView ? 1.0: 0.0)
                             
@@ -60,7 +61,7 @@ struct TestImageProcessingView: View {
                         Spacer()
                         
                         self.getResetHomePlateSelectionButton(geometry: geometry)
-                            .opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.5 : 1.0)
+                            .opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.4 : 1.0)
                     }
                 }.padding()
                     .disabled(self.disableControls)
@@ -68,7 +69,7 @@ struct TestImageProcessingView: View {
                 
                 // large home plate message view
                 if self.processingCoordinator.processingState == .UserSelectHome && self.interfaceCoordinator.showHomePlateMessageView {
-                    GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: "Please Select the Circle Representing Home Plate", closable: true)
+                    GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: Text("Please Select the Circle Representing Home Plate"), closable: true)
                         .padding(geometry.size.height / 4)
                 }
                                 
@@ -80,8 +81,8 @@ struct TestImageProcessingView: View {
                 // expanded player statistics view
                 if self.selectedPlayer.isExpanded {
                     PlayerExpandedView(webScraper: self.webScraper, selectedPlayer: self.selectedPlayer)
+                        .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.7)
                 }
-                
             }
         }
     }
@@ -92,7 +93,7 @@ struct TestImageProcessingView: View {
             self.selectedPlayer.unselectPlayer()
         }) {
             Text("Reset Home plate  >")
-                .frame(width: geometry.size.width / 4, height: 40)
+                .frame(width: geometry.size.width / 3.8, height: 40)
                 .foregroundColor(.black)
                 .background(Color.white)
                 .cornerRadius(cornerRad)
@@ -110,7 +111,7 @@ struct TestImageProcessingView: View {
             Text("Defense").tag(ActiveTeam.Defense)
         }.pickerStyle(SegmentedPickerStyle())
             .font(.largeTitle)
-            .background(opaqueWhite)    // so that it can be seen on top of any background
+            .background(self.colorScheme == .dark ? .gray : opaqueWhite)  // more visible this way
             .cornerRadius(8)
             .frame(width: geometry.size.width / 3)
     }

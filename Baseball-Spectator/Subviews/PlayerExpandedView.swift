@@ -8,73 +8,55 @@
 
 import SwiftUI
 
-struct PlayerExpandedView: View {   //TODO: change this to use generic message view as a foundation
+struct PlayerExpandedView: View {
     @ObservedObject var webScraper: WebScraper
     @ObservedObject var selectedPlayer: SelectedPlayer
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                self.getViewBackground(geometry: geometry)
-                
-                if self.selectedPlayer.positionID != nil && !self.webScraper.playerInfo.isEmpty {
-                    Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].detailedDescription)
-                }
+                GenericMessageView(isViewShowing: self.$selectedPlayer.isExpanded, message: self.text, closable: true)
                 
                 Button(action: {
-                    self.selectedPlayer.unselectPlayer()
+                    self.selectedPlayer.previousPlayer()
+                    self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
                 }) {
-                    Text("  x  ")
-                        .padding(5)
-                        .foregroundColor(.gray)
-                        .background(Color.white)
-                        .cornerRadius(cornerRad)
-                }.offset(x: -geometry.size.width * 0.31, y: -geometry.size.height * 0.32)
-                
-                HStack {
-                    Button(action: {
-                        self.selectedPlayer.previousPlayer()
-                        self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
-                    }) {
+                    HStack {
                         Text("  <  ")
                             .padding(5)
                             .foregroundColor(.gray)
                             .background(Color.white)
                             .cornerRadius(cornerRad)
+                        Text("Previous")
+                            .foregroundColor(self.colorScheme == .dark ? .white : .black)
                     }
-                    
-                    Text("Previous")
-                }.offset(x: -geometry.size.width * 0.26, y: geometry.size.height * 0.32)
+                }.offset(x: (-geometry.size.width / 2) + 70, y: (geometry.size.height / 2) - 30)
                 
-                HStack {
-                    Text("Next")
-                    
-                    Button(action: {
-                        self.selectedPlayer.nextPlayer()
-                        self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
-                    }) {
+                Button(action: {
+                    self.selectedPlayer.nextPlayer()
+                    self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
+                }) {
+                    HStack {
+                        Text("Next")
+                            .foregroundColor(self.colorScheme == .dark ? .white : .black)
                         Text("  >  ")
                             .padding(5)
                             .foregroundColor(.gray)
                             .background(Color.white)
                             .cornerRadius(cornerRad)
-                    }.labelsHidden()
-                }.offset(x: geometry.size.width * 0.275, y: geometry.size.height * 0.32)
-                
+                    }
+                }.offset(x: (geometry.size.width / 2) - 55, y: (geometry.size.height / 2) - 30)
             }
         }
     }
     
-    func getViewBackground(geometry: GeometryProxy) -> some View {
-        RoundedRectangle(cornerRadius: cornerRad)
-            .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
-            .foregroundColor(darkGreen)
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRad)
-                    .stroke(Color.white, lineWidth: 5)
-            )
-            .opacity(0.9)
-            .shadow(color: Color.black, radius: 30)
+    var text: Text {
+        if self.selectedPlayer.positionID != nil && !self.webScraper.playerInfo.isEmpty {
+            return Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].detailedDescription)
+        } else {
+            return Text("Currently unable to retrive player statistics")
+        }
     }
 }
 

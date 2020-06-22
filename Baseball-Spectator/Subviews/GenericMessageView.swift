@@ -10,11 +10,11 @@ import SwiftUI
 
 struct GenericMessageView: View {
     @Binding var isViewShowing: Bool    // throw something random in here is not needed
-    let message: String
+    let message: Text
     let closable: Bool
     let textAlignment: Alignment
     
-    init(isViewShowing: Binding<Bool>, message: String, closable: Bool, textAlignment: Alignment = .center) {
+    init(isViewShowing: Binding<Bool>, message: Text, closable: Bool, textAlignment: Alignment = .center) {
         self._isViewShowing = isViewShowing
         self.message = message
         self.closable = closable
@@ -26,7 +26,7 @@ struct GenericMessageView: View {
             ZStack {
                 self.getViewBackground(geometry: geometry)
                 
-                Text(self.message)
+                self.message
                     .frame(alignment: self.textAlignment)
                 
                 if self.closable {
