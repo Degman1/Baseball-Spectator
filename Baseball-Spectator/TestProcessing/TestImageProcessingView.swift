@@ -31,7 +31,7 @@ struct TestImageProcessingView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                    .blur(radius: self.interfaceCoordinator.showHomePlateMessageView ? 8 : 0)
+                    .blur(radius: self.interfaceCoordinator.showHomePlateMessageView || self.selectedPlayer.isExpanded ? 8 : 0)
                 
                 DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, imageID: self.$imageID, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
                     .disabled(self.selectedPlayer.isExpanded || self.interfaceCoordinator.showHomePlateMessageView)
@@ -64,7 +64,7 @@ struct TestImageProcessingView: View {
                     }
                 }.padding()
                     .disabled(self.disableControls)
-                    .blur(radius: self.interfaceCoordinator.showHomePlateMessageView ? 8 : 0)
+                    .blur(radius: self.interfaceCoordinator.showHomePlateMessageView || self.selectedPlayer.isExpanded ? 8 : 0)
                 
                 // large home plate message view
                 if self.processingCoordinator.processingState == .UserSelectHome && self.interfaceCoordinator.showHomePlateMessageView {
