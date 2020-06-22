@@ -36,7 +36,7 @@ class InfieldContourFitting {
         
         // redraw the shifted contour onto the new image (perfectly fits in the image)
         cv::drawContours(contourPlot, displacedContourForDrawing, -1, cv::Scalar(255, 255, 255), 2);
-        //TODO: TURNS OUT, that when you draw with a width of 2 pixels, on average the sorting of best lines works better??! Realistically, drawing with 2 pixels will reduce the accuracy, but for some reason here it is helping.
+        //WARNING: TURNS OUT, that when you draw with a width of 2 pixels, on average the sorting of best lines works better??! Realistically, drawing with 2 pixels will reduce the accuracy, but for some reason here it is helping.
                 
         // find all the hough lines in the image
         vector<cv::Vec2f> lines;

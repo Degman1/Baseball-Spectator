@@ -23,9 +23,9 @@ struct PlayerInfoBarView: View {
                     Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)
                         .padding(6.0)
                         .background(darkGreen)
-                        .cornerRadius(20)
+                        .cornerRadius(cornerRad)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 20)
+                            RoundedRectangle(cornerRadius: cornerRad)
                                 .stroke(Color.white, lineWidth: 5)
                         )
                         .foregroundColor(.black)
@@ -37,7 +37,7 @@ struct PlayerInfoBarView: View {
                     .padding(6.0)
                     .background(darkGreen)
                     .foregroundColor(.black)
-                    .cornerRadius(20)
+                    .cornerRadius(cornerRad)
                     .offset(calculateOffset())
             }
         }

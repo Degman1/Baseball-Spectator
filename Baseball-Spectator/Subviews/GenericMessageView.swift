@@ -11,9 +11,15 @@ import SwiftUI
 struct GenericMessageView: View {
     @Binding var isViewShowing: Bool    // throw something random in here is not needed
     let message: String
-    let widthPercent: CGFloat     // percent of the total height provided by GeometryReader
-    let heightPercent: CGFloat    // percent of the total width "                          "
     let closable: Bool
+    let textAlignment: Alignment
+    
+    init(isViewShowing: Binding<Bool>, message: String, closable: Bool, textAlignment: Alignment = .center) {
+        self._isViewShowing = isViewShowing
+        self.message = message
+        self.closable = closable
+        self.textAlignment = textAlignment
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -21,6 +27,7 @@ struct GenericMessageView: View {
                 self.getViewBackground(geometry: geometry)
                 
                 Text(self.message)
+                    .frame(alignment: self.textAlignment)
                 
                 if self.closable {
                     Button(action: {
@@ -30,20 +37,19 @@ struct GenericMessageView: View {
                             .padding(5)
                             .foregroundColor(.gray)
                             .background(Color.white)
-                            .cornerRadius(20)
-                    }.offset(x: -geometry.size.width * (self.widthPercent / 2) + 30,
-                             y: -geometry.size.height * (self.heightPercent / 2) + 30)
+                            .cornerRadius(cornerRad)
+                    }.offset(x: (-geometry.size.width / 2) + 30,
+                             y: (-geometry.size.height / 2) + 30)
                 }
             }
         }
     }
     
     func getViewBackground(geometry: GeometryProxy) -> some View {
-        RoundedRectangle(cornerRadius: 20)
-            .frame(width: geometry.size.width * self.widthPercent, height: geometry.size.height * self.heightPercent)
+        RoundedRectangle(cornerRadius: cornerRad)
             .foregroundColor(darkGreen)
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: cornerRad)
                     .stroke(Color.white, lineWidth: 5)
             )
             .opacity(0.9)

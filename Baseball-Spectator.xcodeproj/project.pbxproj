@@ -36,6 +36,7 @@
 		63D44F9A248AD93F00049CD8 /* WebScraper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D44F99248AD93F00049CD8 /* WebScraper.swift */; };
 		63DAA5CA248156940022F9AA /* FileIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5C9248156930022F9AA /* FileIO.swift */; };
 		63DAA5CE248157FF0022F9AA /* CGPointExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5CD248157FF0022F9AA /* CGPointExtension.swift */; };
+		63F3988B24A046940006884C /* AttributeConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F3988A24A046940006884C /* AttributeConstants.swift */; };
 		63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24A924799375002D0728 /* InfieldContourFitting.mm */; };
 		63FD24AC247993AF002D0728 /* Timer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AB247993AF002D0728 /* Timer.mm */; };
 		63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AD24799445002D0728 /* ImageProcessor.mm */; };
@@ -82,6 +83,7 @@
 		63D44F99248AD93F00049CD8 /* WebScraper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebScraper.swift; sourceTree = "<group>"; };
 		63DAA5C9248156930022F9AA /* FileIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIO.swift; sourceTree = "<group>"; };
 		63DAA5CD248157FF0022F9AA /* CGPointExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGPointExtension.swift; sourceTree = "<group>"; };
+		63F3988A24A046940006884C /* AttributeConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeConstants.swift; sourceTree = "<group>"; };
 		63FD24A924799375002D0728 /* InfieldContourFitting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InfieldContourFitting.mm; sourceTree = "<group>"; wrapsLines = 1; };
 		63FD24AB247993AF002D0728 /* Timer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Timer.mm; sourceTree = "<group>"; };
 		63FD24AD24799445002D0728 /* ImageProcessor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageProcessor.mm; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				63636C09249AF11600938269 /* ColorScheme.swift */,
+				63F3988A24A046940006884C /* AttributeConstants.swift */,
 			);
 			path = InterfaceStyle;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 				630E2A1224858C8E008DEF17 /* VideoParser.swift in Sources */,
 				F604822B247591A900F71A68 /* MainView.swift in Sources */,
 				63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */,
+				63F3988B24A046940006884C /* AttributeConstants.swift in Sources */,
 				63564B4124802BD600BFAF7B /* ImageStreamViewController.swift in Sources */,
 				63564B4324802C7200BFAF7B /* ImageStreamViewControllerRepresentable.swift in Sources */,
 				63FD24AC247993AF002D0728 /* Timer.mm in Sources */,

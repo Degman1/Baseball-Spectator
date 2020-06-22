@@ -28,7 +28,7 @@ struct PlayerExpandedView: View {   //TODO: change this to use generic message v
                         .padding(5)
                         .foregroundColor(.gray)
                         .background(Color.white)
-                        .cornerRadius(20)
+                        .cornerRadius(cornerRad)
                 }.offset(x: -geometry.size.width * 0.31, y: -geometry.size.height * 0.32)
                 
                 HStack {
@@ -40,7 +40,7 @@ struct PlayerExpandedView: View {   //TODO: change this to use generic message v
                             .padding(5)
                             .foregroundColor(.gray)
                             .background(Color.white)
-                            .cornerRadius(20)
+                            .cornerRadius(cornerRad)
                     }
                     
                     Text("Previous")
@@ -57,7 +57,7 @@ struct PlayerExpandedView: View {   //TODO: change this to use generic message v
                             .padding(5)
                             .foregroundColor(.gray)
                             .background(Color.white)
-                            .cornerRadius(20)
+                            .cornerRadius(cornerRad)
                     }.labelsHidden()
                 }.offset(x: geometry.size.width * 0.275, y: geometry.size.height * 0.32)
                 
@@ -66,11 +66,11 @@ struct PlayerExpandedView: View {   //TODO: change this to use generic message v
     }
     
     func getViewBackground(geometry: GeometryProxy) -> some View {
-        RoundedRectangle(cornerRadius: 20)
+        RoundedRectangle(cornerRadius: cornerRad)
             .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
             .foregroundColor(darkGreen)
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: cornerRad)
                     .stroke(Color.white, lineWidth: 5)
             )
             .opacity(0.9)

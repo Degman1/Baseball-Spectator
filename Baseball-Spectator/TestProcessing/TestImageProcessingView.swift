@@ -31,6 +31,7 @@ struct TestImageProcessingView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: geometry.size.width, height: geometry.size.height)
+                    .blur(radius: self.interfaceCoordinator.showHomePlateMessageView ? 8 : 0)
                 
                 DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, imageID: self.$imageID, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
                     .disabled(self.selectedPlayer.isExpanded || self.interfaceCoordinator.showHomePlateMessageView)
@@ -43,50 +44,34 @@ struct TestImageProcessingView: View {
                     
                     Spacer()
                     
-                    Stepper(onIncrement: {
-                        if self.imageID < 11 {
-                            self.imageID += 1
-                        }
-                        self.processingCoordinator.processingState = .UserSelectHome
-                        self.selectedPlayer.unselectPlayer()
-                        self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-                        self.interfaceCoordinator.showHomePlateMessageView = true
-                    }, onDecrement: {
-                        if self.imageID > 1 {
-                            self.imageID -= 1
-                        }
-                        self.processingCoordinator.processingState = .UserSelectHome
-                        self.selectedPlayer.unselectPlayer()
-                        self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-                        self.interfaceCoordinator.showHomePlateMessageView = true
-                    }, label: {
-                        return Text("ImageID: \(self.imageID)")
-                    })
+                    self.getStepper()
                     
                     Spacer()
                     
-                    Picker("Select Team:", selection: self.$interfaceCoordinator.selectedTeam) {
-                        Text("Offense").tag(ActiveTeam.Offense)
-                        Text("Defense").tag(ActiveTeam.Defense)
-                    }.pickerStyle(SegmentedPickerStyle())
-                        .font(.largeTitle)
-                        .background(opaqueWhite)    // so that it can be seen on top of any background
-                        .cornerRadius(8)
-                        .padding()
-                        .frame(width: geometry.size.width / 3)
-                }.disabled(self.disableControls)
+                    HStack {
+                        GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: "Select Home Plate", closable: false, textAlignment: .leading)
+                            .frame(width: geometry.size.width / 3.5, height: 40)
+                            .opacity(self.processingCoordinator.processingState == .UserSelectHome && !self.interfaceCoordinator.showHomePlateMessageView ? 1.0: 0.0)
+                            
+                        Spacer()
+                        
+                        self.getPicker(geometry: geometry)
+                        
+                        Spacer()
+                        
+                        self.getResetHomePlateSelectionButton(geometry: geometry)
+                            .opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.5 : 1.0)
+                    }
+                }.padding()
+                    .disabled(self.disableControls)
+                    .blur(radius: self.interfaceCoordinator.showHomePlateMessageView ? 8 : 0)
                 
                 // large home plate message view
                 if self.processingCoordinator.processingState == .UserSelectHome && self.interfaceCoordinator.showHomePlateMessageView {
-                    GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: "Select the Circle Representing Home Plate", widthPercent: 0.6, heightPercent: 0.35, closable: true)
+                    GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: "Please Select the Circle Representing Home Plate", closable: true)
+                        .padding(geometry.size.height / 4)
                 }
-                
-                // small home plate message view
-                if self.processingCoordinator.processingState == .UserSelectHome && !self.interfaceCoordinator.showHomePlateMessageView {
-                        GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: "Select Home Plate", widthPercent: 0.25, heightPercent: 0.1, closable: false)
-                            .offset(x: (-geometry.size.width / 2) + 110, y: (geometry.size.height / 2) - 30)
-                }
-                
+                                
                 // player info bar on top of the selected player
                 if !self.selectedPlayer.isExpanded {
                     PlayerInfoBarViewTesting(geometry: geometry, imageID: self.$imageID, selectedPlayer: self.selectedPlayer, webScraper: self.webScraper)
@@ -99,6 +84,57 @@ struct TestImageProcessingView: View {
                 
             }
         }
+    }
+    
+    func getResetHomePlateSelectionButton(geometry: GeometryProxy) -> some View {
+        Button(action: {
+            self.processingCoordinator.processingState = .UserSelectHome
+            self.selectedPlayer.unselectPlayer()
+        }) {
+            Text("Reset Home plate  >")
+                .frame(width: geometry.size.width / 4, height: 40)
+                .foregroundColor(.black)
+                .background(Color.white)
+                .cornerRadius(cornerRad)
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRad)
+                        .stroke(darkGreen, lineWidth: 5)
+                )
+                .shadow(color: Color.black, radius: 30)
+        }
+    }
+    
+    func getPicker(geometry: GeometryProxy) -> some View {
+        Picker("Select Team:", selection: self.$interfaceCoordinator.selectedTeam) {
+            Text("Offense").tag(ActiveTeam.Offense)
+            Text("Defense").tag(ActiveTeam.Defense)
+        }.pickerStyle(SegmentedPickerStyle())
+            .font(.largeTitle)
+            .background(opaqueWhite)    // so that it can be seen on top of any background
+            .cornerRadius(8)
+            .frame(width: geometry.size.width / 3)
+    }
+    
+    func getStepper() -> some View {
+        Stepper(onIncrement: {
+            if self.imageID < 11 {
+                self.imageID += 1
+            }
+            self.processingCoordinator.processingState = .UserSelectHome
+            self.selectedPlayer.unselectPlayer()
+            self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
+            self.interfaceCoordinator.showHomePlateMessageView = true
+        }, onDecrement: {
+            if self.imageID > 1 {
+                self.imageID -= 1
+            }
+            self.processingCoordinator.processingState = .UserSelectHome
+            self.selectedPlayer.unselectPlayer()
+            self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
+            self.interfaceCoordinator.showHomePlateMessageView = true
+        }, label: {
+            return Text("ImageID: \(self.imageID)")
+        })
     }
     
     func testProcessing(imageID: Int) -> Image {

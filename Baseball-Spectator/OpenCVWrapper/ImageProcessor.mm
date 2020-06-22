@@ -115,6 +115,12 @@ class ImageProcessor {
             return result;
         }
         
+        // draw only home plate
+        // white outside
+        cv::circle(resizedMat, expectedPositions[1], 25, cv::Scalar(255, 255, 255), cv::FILLED);
+        // dark green inside
+        cv::circle(resizedMat, expectedPositions[1], 15, cv::Scalar(94, 138, 100), cv::FILLED);
+        
         // Get the location of each of the actual players on the field
         vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
         
@@ -553,7 +559,7 @@ class ImageProcessor {
             cv::Point lowestPoint = contourCopy[0];
             
             int closestPositionIndex = -1;
-            int closestDistance = -1;       // TODO: do not include coordinate if the coordinate is greater than 90 ft away from the closest point (if the closest point is in the infield?)
+            int closestDistance = -1;
                         
             for (int i = 0; i < 9; i++) {
                 int dist = getDistBetweenPoints(lowestPoint, expectedPositions[i]);

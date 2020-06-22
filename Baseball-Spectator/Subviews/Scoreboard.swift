@@ -102,13 +102,12 @@ struct Scoreboard: View {
                 }.background(darkGreen.opacity(0.8))
             }
             .frame(width: self.wFrame, height: self.hFrame)
-            .cornerRadius(20)
+            .cornerRadius(cornerRad)
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: cornerRad)
                     .stroke(Color.white, lineWidth: 5)
             )
             .shadow(color: Color.black, radius: 30)
-            .padding(20)
     }
     
     var awayInnings: some View {

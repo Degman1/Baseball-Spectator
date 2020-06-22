@@ -25,9 +25,9 @@ struct PlayerInfoBarViewTesting: View {
                     Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)
                         .padding(6.0)
                         .background(darkGreen)
-                        .cornerRadius(20)
+                        .cornerRadius(cornerRad)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 20)
+                            RoundedRectangle(cornerRadius: cornerRad)
                                 .stroke(Color.white, lineWidth: 5)
                         )
                         .foregroundColor(.black)
@@ -39,7 +39,7 @@ struct PlayerInfoBarViewTesting: View {
                     .padding(6.0)
                     .background(darkGreen)
                     .foregroundColor(.black)
-                    .cornerRadius(20)
+                    .cornerRadius(cornerRad)
                     .offset(calculateOffset())
             }
         }
@@ -57,8 +57,6 @@ struct PlayerInfoBarViewTesting: View {
         let y0 = -geometry.size.height / 2
         
         let offset = self.selectedPlayer.viewCoordinate!.y > (self.geometry.size.height / 2) ? CGFloat(-35) : CGFloat(20)
-        
-        //TODO: write the highest point to the result file if the player is above the halfway mark of the image, otherwise return the lowest point. Not for processing, just for closest click and for info bar placement
         
         return CGSize(width: x0 + self.selectedPlayer.viewCoordinate!.x,
                       height: y0 + self.selectedPlayer.viewCoordinate!.y + offset)
