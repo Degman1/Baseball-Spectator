@@ -59,7 +59,7 @@ struct DraggableOverlayView: View {
                 self.processingCoordinator.processingState = .Processing
                 return
             }
-        } else {        // if the app is  in the process of processing images
+        } else {        // if the app is in the process of processing images
             guard let closestPlayerCoordinateToDrag = loc.getClosestPointFromHere(to: self.fileInterface.playersByPosition.flatMap{$0}) else {
                 return
             }

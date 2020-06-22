@@ -9,15 +9,21 @@
 import SwiftUI
 
 struct GenericMessageView: View {
-    @Binding var isViewShowing: Bool    // throw something random in here is not needed
+    var isViewShowing: Binding<Bool>?   // do this instead of @Binding in order to be able to make the variable an optional
     let message: Text
-    let closable: Bool
     let textAlignment: Alignment
     
-    init(isViewShowing: Binding<Bool>, message: Text, closable: Bool, textAlignment: Alignment = .center) {
-        self._isViewShowing = isViewShowing
+    // use this initializer for a closable message view
+    init(message: Text, textAlignment: Alignment = .center, closableBinding: Binding<Bool>?) {
+        self.isViewShowing = closableBinding
         self.message = message
-        self.closable = closable
+        self.textAlignment = textAlignment
+    }
+    
+    // use this initializer for an unclosable message view
+    init(message: Text, textAlignment: Alignment = .center) {
+        self.isViewShowing = nil
+        self.message = message
         self.textAlignment = textAlignment
     }
     
@@ -26,12 +32,23 @@ struct GenericMessageView: View {
             ZStack {
                 self.getViewBackground(geometry: geometry)
                 
-                self.message
-                    .frame(alignment: self.textAlignment)
+                HStack {
+                    if self.textAlignment == .trailing {
+                        Spacer()
+                    }
+                    
+                    self.message
+                        .frame(alignment: self.textAlignment)
+                        .padding(.leading)
+                    
+                    if self.textAlignment == .leading {
+                        Spacer()
+                    }
+                }
                 
-                if self.closable {
+                if self.isViewShowing != nil {
                     Button(action: {
-                        self.isViewShowing = false
+                        self.isViewShowing!.wrappedValue = false
                     }) {
                         Text("  x  ")
                             .padding(5)

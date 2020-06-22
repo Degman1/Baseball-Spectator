@@ -50,9 +50,9 @@ struct TestImageProcessingView: View {
                     Spacer()
                     
                     HStack {
-                        GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: Text("Select Home Plate"), closable: false, textAlignment: .leading)
+                        GenericMessageView(message: Text(self.processingCoordinator.processingState == .UserSelectHome ? "Select Home Plate" : "Tap Players for Statistics"), textAlignment: .leading)
                             .frame(width: geometry.size.width / 3.5, height: 40)
-                            .opacity(self.processingCoordinator.processingState == .UserSelectHome && !self.interfaceCoordinator.showHomePlateMessageView ? 1.0: 0.0)
+                            .opacity(!self.interfaceCoordinator.showHomePlateMessageView ? 1.0: 0.0)    // doing this makes sure that it is still there as a placeholder so formatting doesn't change
                             
                         Spacer()
                         
@@ -60,8 +60,10 @@ struct TestImageProcessingView: View {
                         
                         Spacer()
                         
-                        self.getResetHomePlateSelectionButton(geometry: geometry)
-                            .opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.4 : 1.0)
+                        GenericButton(label: "Reset Home Plate") {
+                            self.processingCoordinator.processingState = .UserSelectHome
+                            self.selectedPlayer.unselectPlayer()
+                        }.opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.3 : 1.0)
                     }
                 }.padding()
                     .disabled(self.disableControls)
@@ -69,7 +71,7 @@ struct TestImageProcessingView: View {
                 
                 // large home plate message view
                 if self.processingCoordinator.processingState == .UserSelectHome && self.interfaceCoordinator.showHomePlateMessageView {
-                    GenericMessageView(isViewShowing: self.$interfaceCoordinator.showHomePlateMessageView, message: Text("Please Select the Circle Representing Home Plate"), closable: true)
+                    GenericMessageView(message: Text("Please Select the Circle Representing Home Plate"), closableBinding: self.$interfaceCoordinator.showHomePlateMessageView)
                         .padding(geometry.size.height / 4)
                 }
                                 

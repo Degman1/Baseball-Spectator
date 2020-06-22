@@ -17,23 +17,11 @@ struct PlayerInfoBarViewTesting: View {
     var body: some View {
         ZStack {
             if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count > 0 {
-                Button(action: {
+                GenericButton(label: self.webScraper.playerInfo[self.selectedPlayer.positionID!].description) {
                     self.selectedPlayer.isExpanded = true
-                    
                     self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
-                }) {
-                    Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].description)
-                        .padding(6.0)
-                        .background(darkGreen)
-                        .cornerRadius(cornerRad)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: cornerRad)
-                                .stroke(Color.white, lineWidth: 5)
-                        )
-                        .foregroundColor(.black)
-                        .opacity(0.8)
-                        .shadow(color: Color.black, radius: 30)
-                }.offset(calculateOffset())
+                }
+                    .offset(calculateOffset())
             } else if self.selectedPlayer.positionID != nil && self.webScraper.playerInfo.count == 0 {
                 Text(self.selectedPlayer.description)
                     .padding(6.0)

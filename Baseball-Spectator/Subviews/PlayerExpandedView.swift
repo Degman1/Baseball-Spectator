@@ -16,7 +16,7 @@ struct PlayerExpandedView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                GenericMessageView(isViewShowing: self.$selectedPlayer.isExpanded, message: self.text, closable: true)
+                GenericMessageView(message: self.text, closableBinding: self.$selectedPlayer.isExpanded)
                 
                 Button(action: {
                     self.selectedPlayer.previousPlayer()
