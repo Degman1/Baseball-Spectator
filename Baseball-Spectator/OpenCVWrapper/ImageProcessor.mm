@@ -210,7 +210,7 @@ class ImageProcessor {
         }
         
         // Sort the list of contours from biggest area to smallest
-        sort(infieldContours.begin(), infieldContours.end(), sortByArea);
+        //sort(infieldContours.begin(), infieldContours.end(), sortByArea);
         
         ContourInfo infield = ContourInfo();
         infield.x = -1;
@@ -220,9 +220,10 @@ class ImageProcessor {
             
             if (ratio < 0.4 and (infield.x == -1 or cnt.width < infield.width) and cv::contourArea(cnt.contour) > 10000) {
                 infield = cnt;
+                cout << "Setting Infield" << "\n";
             }
         }
-        
+        cout << "\n";
         if (infield.x == -1) { return failedVec; }
         
         // use the hull of the infield instead of the original infield contour
@@ -241,7 +242,7 @@ class ImageProcessor {
             infieldCorners.push_back(getAveragePoint(infieldCorners));
             return infieldCorners;
         }
-                
+        
         vector<cv::Point> bases = putBasesInOrder(infieldCorners, expectedHomePlateAngle);      // get the bases in order of pitcher, home, first, second, third
         
         vector<cv::Point> expectedPositions = calculateExpectedPositions(bases[1], bases[2], bases[3], bases[4]);
@@ -284,7 +285,7 @@ class ImageProcessor {
             cv::Rect rect = cv::boundingRect(c);
             double area = rect.height * rect.width;
             
-            if (area > 270 and area < 2000) {
+            if (area > 270 and area < 7000) {       //TODO: make these numbers dependant on the infield size
                 ContourInfo cnt;
                 cnt.contour = c;
                 cnt.x = rect.x;

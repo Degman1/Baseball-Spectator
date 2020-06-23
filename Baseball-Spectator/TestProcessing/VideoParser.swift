@@ -20,6 +20,7 @@ class VideoParser {
     
     func setVideoURL(forResource name: String, ofType ext: String) -> Bool {
         guard let path = Bundle.main.path(forResource: name, ofType: ext) else {
+            ConsoleCommunication.printError(withMessage: "could not find a video matching the provided path", source: "VideoParser")
             return false
         }
         self.videoURL = URL(fileURLWithPath: path)

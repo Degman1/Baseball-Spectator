@@ -12,7 +12,7 @@ import AVKit
 
 struct VideoPlayerViewControllerRepresentable: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        let path = Bundle.main.path(forResource: "videoplayback", ofType:"mp4")!
+        let path = Bundle.main.path(forResource: "sampleVideo", ofType:"mp4")!
         let player = AVPlayer(url: URL(fileURLWithPath: path))
         let playerController = AVPlayerViewController()
         playerController.player = player
