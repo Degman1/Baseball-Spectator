@@ -22,33 +22,31 @@ class WebScraper: ObservableObject {
     }
     
     func createURLSessionTask(toRun action: @escaping (String) -> Void, withURL url: URL) {
-        let source = "WebScraper - createURLSessionTask"
-        
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if error != nil {       // don't clear playerInfo, so if not having network connection, it just shows the last data it could fetch from the webpage
                 if self.debug {
-                    ConsoleCommunication.printError(withMessage: "\(error!)", source: source)
+                    ConsoleCommunication.printError(withMessage: "\(error!)", source: "\(#function)")
                 }
                 return
             }
             
             guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
                 if self.debug {
-                    ConsoleCommunication.printError(withMessage: "\(response!)", source: source)
+                    ConsoleCommunication.printError(withMessage: "\(response!)", source: "\(#function)")
                 }
                 return
             }
             
             guard let data = data else {
                 if self.debug {
-                    ConsoleCommunication.printError(withMessage: "the downloaded HTML data was nil", source: source)
+                    ConsoleCommunication.printError(withMessage: "the downloaded HTML data was nil", source: "\(#function)")
                 }
                 return
             }
             
             guard let htmlString = String(data: data, encoding: .utf8) else {
                 if self.debug {
-                    ConsoleCommunication.printError(withMessage: "couldn't cast html data into a String", source: source)
+                    ConsoleCommunication.printError(withMessage: "couldn't cast html data into a String", source: "\(#function)")
                 }
                 return
             }
@@ -69,7 +67,7 @@ class WebScraper: ObservableObject {
         self.selectedPlayerIndex = selectedPlayerIndex
         
         guard let playerURL = URL(string: playerInfo[selectedPlayerIndex].statisticsLink) else {
-            ConsoleCommunication.printError(withMessage: "the team URL cannot be converted from a string to a URL", source: "WebScraper - fetchStatistics")
+            ConsoleCommunication.printError(withMessage: "the team URL cannot be converted from a string to a URL", source: "\(#function)")
             return
         }
         
@@ -78,19 +76,17 @@ class WebScraper: ObservableObject {
     
     private func fetchStatisticsURLSessionTaskHelper(_ html: String) {
         // method to be passed to createURLSessionTask(:, :)
-        
-        let source = "WebScraper - fetchStatisticsURLSessionTaskHelper"
-        
+                
         if self.selectedPlayerIndex == nil { return }
 
         guard let i = html.index(of: "<td _ngcontent-sc") else {
-            ConsoleCommunication.printError(withMessage: "could not locate the scNum related to the current version of the downloaded HTML script", source: source)
+            ConsoleCommunication.printError(withMessage: "could not locate the scNum related to the current version of the downloaded HTML script", source: "\(#function)")
             return
         }
 
         // this number changes, so must find what it is in the latest download of html script
         guard let scNum = Int(html.getSubstring(from: html.distance(from: html.startIndex, to: i) + 17, to: "=")) else {
-            ConsoleCommunication.printError(withMessage: "could not convert scNum to an Int", source: source)
+            ConsoleCommunication.printError(withMessage: "could not convert scNum to an Int", source: "\(#function)")
             return
         }
 
@@ -106,7 +102,7 @@ class WebScraper: ObservableObject {
             </tr><!---->
             """
         guard let statsString = html.getSubstring(from: start, to: end) else {
-            ConsoleCommunication.printError(withMessage: "could not find the player statistics table entries", source: source)
+            ConsoleCommunication.printError(withMessage: "could not find the player statistics table entries", source: "\(#function)")
             return
         }
         
@@ -131,7 +127,7 @@ class WebScraper: ObservableObject {
         // searches for the up to date lineup and places the player information in playerInfo
         
         guard let teamURL = URL(string: self.baseURL + teamLookupName) else {
-            ConsoleCommunication.printError(withMessage: "the team URL cannot be converted from a string to a URL", source: "WebStatistics - fetchLineupInformation")
+            ConsoleCommunication.printError(withMessage: "the team URL cannot be converted from a string to a URL", source: "\(#function)")
             return
         }
         
@@ -149,17 +145,16 @@ class WebScraper: ObservableObject {
     }
     
     private func loadPlayerInfoFromLineupTable(html: String, table: String) {
-        let source = "WebStatistics - fetchLineupInformation"
         var playerInfoTemp: [Player] = []
         
         guard let i = table.index(of: "_ngcontent-sc") else {
-            ConsoleCommunication.printError(withMessage: "could not locate the scNum related to this version of the HTML script", source: source)
+            ConsoleCommunication.printError(withMessage: "could not locate the scNum related to this version of the HTML script", source: "\(#function)")
             return
         }
         
         // this number changes, so must find what it is in the latest download of html script
         guard let scNum = Int(table.getSubstring(from: table.distance(from: table.startIndex, to: i) + 13, to: "=")) else {
-            ConsoleCommunication.printError(withMessage: "could not convert scNum to an Int", source: source)
+            ConsoleCommunication.printError(withMessage: "could not convert scNum to an Int", source: "\(#function)")
             return
         }
         
@@ -175,7 +170,7 @@ class WebScraper: ObservableObject {
         let nameIndices = table.indices(of: nameIdentifier)
         
         if positionIndices.count != nameIndices.count || positionIndices.count != 9 {
-            ConsoleCommunication.printError(withMessage: "the number of positions and/or player names is incorrect in website stats fetching", source: source)
+            ConsoleCommunication.printError(withMessage: "the number of positions and/or player names is incorrect in website stats fetching", source: "\(#function)")
             return
         }
         
@@ -218,9 +213,7 @@ class WebScraper: ObservableObject {
              <span class="player-name-col-lg">
          end: <
         */
-        
-        let source = "WebScraper - extractLineupTablesFromHTML"
-        
+                
         // don't include the sc # since it changes
         let tableStartID = """
             class="static-table stats-table table table-bordered starting-pitcher-table">
@@ -228,14 +221,14 @@ class WebScraper: ObservableObject {
         let tableStartIndices = htmlString.indices(of: tableStartID)
         
         if tableStartIndices.count < 2 {
-            ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table start index found", source: source)
+            ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table start index found", source: "\(#function)")
             return nil
         }
         
         let tableEndIndices = htmlString.indices(of: "</table>")
         
         guard let table1 = htmlString.getHTMLsnippetUnknownEndpoint(from: tableStartIndices[0], to: tableEndIndices), let table2 = htmlString.getHTMLsnippetUnknownEndpoint(from: tableStartIndices[1], to: tableEndIndices) else {
-            ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table end index found", source: source)
+            ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table end index found", source: "\(#function)")
             return nil
         }
         

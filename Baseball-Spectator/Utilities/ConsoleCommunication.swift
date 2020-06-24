@@ -9,8 +9,10 @@
 import Foundation
 
 class ConsoleCommunication {
+    static var debug = false
+    
     static private func printMessage(messageType: String, withMessage: String, source: String) {
-        print("\(messageType): (\(source == "" ? "No Source Provided" : source)) \(withMessage)")
+        print("\(messageType): (source: \(source == "" ? "No Source Provided" : source)) \(withMessage)")
     }
     
     static func printWarning(withMessage: String, source: String = "") {
@@ -22,7 +24,9 @@ class ConsoleCommunication {
     }
     
     static func printResult(withMessage: String, source: String = "") {
-        printMessage(messageType: "✅ RESULT", withMessage: withMessage, source: source)
+        if debug {
+            printMessage(messageType: "✅ RESULT", withMessage: withMessage, source: source)
+        }
     }
     
     static func printError(withMessage: String, source: String = "") {

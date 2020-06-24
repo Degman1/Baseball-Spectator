@@ -8,8 +8,12 @@
 
 import Foundation
 import AVKit
+import SwiftUI
 
-class VideoParser {
+class VideoParser: ObservableObject {
+    @Published var imageIndex = 0
+    private var duration: Float? = nil
+    var fps: Float = 1
     private var videoURL: URL? = nil
     var frames: [UIImage] = []
     private var generator: AVAssetImageGenerator! = nil
@@ -20,7 +24,7 @@ class VideoParser {
     
     func setVideoURL(forResource name: String, ofType ext: String) -> Bool {
         guard let path = Bundle.main.path(forResource: name, ofType: ext) else {
-            ConsoleCommunication.printError(withMessage: "could not find a video matching the provided path", source: "VideoParser")
+            ConsoleCommunication.printError(withMessage: "could not find a video matching the provided path", source: "\(#function)")
             return false
         }
         self.videoURL = URL(fileURLWithPath: path)
@@ -33,13 +37,16 @@ class VideoParser {
         }
         
         let asset: AVAsset = AVAsset(url: url)
-        let duration: Float64 = CMTimeGetSeconds(asset.duration)
+        let duration = Float(CMTimeGetSeconds(asset.duration))
         self.generator = AVAssetImageGenerator(asset:asset)
         self.generator.appliesPreferredTrackTransform = true
         self.frames = []
         
-        for index in 0..<Int(duration) {
+        var index: Float = 0.0
+        
+        while index < duration {
             self.getFrame(fromTime:Float64(index))
+            index += 1 / self.fps
         }
         
         return self.frames
@@ -55,5 +62,17 @@ class VideoParser {
         }
         self.frames.append(UIImage(cgImage:image))
     }
-
+    
+    func playFrames() {
+        let queue = DispatchQueue(label: "com.playback.queue")
+        
+        queue.async {
+            while true {
+                usleep(UInt32(1000000 / self.fps))
+                DispatchQueue.main.async {
+                    self.imageIndex = (self.imageIndex + 1) % self.frames.count
+                }
+            }
+        }
+    }
 }

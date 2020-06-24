@@ -25,6 +25,10 @@ struct TestImageProcessingView: View {
         return self.selectedPlayer.isExpanded || self.processingCoordinator.processingState == .UserSelectHome
     }
     
+    func getImageWidth(geometry: GeometryProxy) -> CGFloat {
+        return TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width / TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height * geometry.size.height
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -34,7 +38,7 @@ struct TestImageProcessingView: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .blur(radius: self.interfaceCoordinator.showHomePlateMessageView || self.selectedPlayer.isExpanded ? 8 : 0)
                 
-                DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, imageID: self.$imageID, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
+                DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, imageID: self.$imageID, imageWidth: self.getImageWidth(geometry: geometry), processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
                     .disabled(self.selectedPlayer.isExpanded || self.interfaceCoordinator.showHomePlateMessageView)
                 
                 VStack {

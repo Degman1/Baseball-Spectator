@@ -12,6 +12,7 @@ struct DraggableOverlayView: View {
     let geometry: GeometryProxy
     let fileInterface: FileIO
     @Binding var imageID: Int
+    let imageWidth: CGFloat
     @ObservedObject var processingCoordinator: ProcessingCoordinator
     @ObservedObject var selectedPlayer: SelectedPlayer
     
@@ -20,7 +21,7 @@ struct DraggableOverlayView: View {
             .foregroundColor(.white)
             .opacity(0.1)
             .frame(
-                width: TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width / TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height * geometry.size.height,
+                width: self.imageWidth,
                 height: self.geometry.size.height)
             .gesture(DragGesture(minimumDistance: CGFloat.zero, coordinateSpace: .local)
                 .onEnded { value in

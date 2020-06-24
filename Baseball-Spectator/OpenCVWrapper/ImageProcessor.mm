@@ -220,7 +220,7 @@ class ImageProcessor {
             
             if (ratio < 0.4 and (infield.x == -1 or cnt.width < infield.width) and cv::contourArea(cnt.contour) > 10000) {
                 infield = cnt;
-                cout << "Setting Infield" << "\n";
+                //cout << "Setting Infield" << "\n";
             }
         }
         cout << "\n";
