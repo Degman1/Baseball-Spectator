@@ -44,6 +44,7 @@ struct TestImageProcessingView: View {
                 VStack {
                     HStack {
                         Scoreboard(processingCoordinator: self.processingCoordinator)
+                            .disabled(self.disableControls)
                         Spacer()
                     }
                     
@@ -61,6 +62,7 @@ struct TestImageProcessingView: View {
                         Spacer()
                         
                         self.getPicker(geometry: geometry)
+                            .disabled(self.disableControls)
                         
                         Spacer()
                         
@@ -68,9 +70,9 @@ struct TestImageProcessingView: View {
                             self.processingCoordinator.processingState = .UserSelectHome
                             self.selectedPlayer.unselectPlayer()
                         }.opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.3 : 1.0)
+                            .disabled(self.disableControls)
                     }
                 }.padding()
-                    .disabled(self.disableControls)
                     .blur(radius: self.interfaceCoordinator.showHomePlateMessageView || self.selectedPlayer.isExpanded ? 8 : 0)
                 
                 // large home plate message view
@@ -132,18 +134,18 @@ struct TestImageProcessingView: View {
             if self.imageID < 11 {
                 self.imageID += 1
             }
-            self.processingCoordinator.processingState = .UserSelectHome
+            //self.processingCoordinator.processingState = .UserSelectHome
             self.selectedPlayer.unselectPlayer()
-            self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-            self.interfaceCoordinator.showHomePlateMessageView = true
+            //self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
+            //self.interfaceCoordinator.showHomePlateMessageView = true
         }, onDecrement: {
             if self.imageID > 1 {
                 self.imageID -= 1
             }
-            self.processingCoordinator.processingState = .UserSelectHome
+            //self.processingCoordinator.processingState = .UserSelectHome
             self.selectedPlayer.unselectPlayer()
-            self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-            self.interfaceCoordinator.showHomePlateMessageView = true
+            //self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
+            //self.interfaceCoordinator.showHomePlateMessageView = true
         }, label: {
             return Text("ImageID: \(self.imageID)")
         })

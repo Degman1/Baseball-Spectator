@@ -21,6 +21,10 @@ class ContourInfo {
         double width;
         double height;
     
+    double getBoundingBoxArea() {
+        return width * height;
+    }
+    
     void printDescription(bool displayContour = false) {
         cout << "{ ";
         if (displayContour) {

@@ -42,7 +42,7 @@ struct DraggableOverlayView: View {
     }
     
     func dragOperation(value: DragGesture.Value) {
-        if self.processingCoordinator.processingState == .Processing && self.fileInterface.playersByPosition.count == 0 { return }
+        if self.processingCoordinator.processingState == .Processing || self.fileInterface.playersByPosition.count == 0 { return }
         
         // click anywhere to deselect player: (include this snippet)
         if self.selectedPlayer.positionID != nil {

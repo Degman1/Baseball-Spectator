@@ -24,6 +24,10 @@ class ImageProcessor {
     cv::Scalar lowerGreen, upperGreen, lowerBrown, upperBrown, lowerDarkBrown, upperDarkBrown;
     Timer timer;
     
+    private:
+    ContourInfo wholeField = ContourInfo();
+    
+    public:
     ImageProcessor() {
         lowerGreen = cv::Scalar(17, 50, 20);
         upperGreen = cv::Scalar(72, 255, 242);
@@ -62,7 +66,7 @@ class ImageProcessor {
         UIImageToMat(image, mat);
         
         // Resize sample images to consistent height of 1080
-        // TODO: Remove this after algorithm testing is complete
+        // TODO: Remove this after algorithm testing is complete and change static cuts to be dynamic based on the image size
         int newHeight = 1080;
         double scalePercent = newHeight / image.size.height;
         int width = int(image.size.width * scalePercent);
@@ -89,9 +93,24 @@ class ImageProcessor {
         // resizedMat wasn't in correct format before, so change it to RGB here for in-color drawing
         cv::cvtColor(hsv, resizedMat, cv::COLOR_HSV2RGB);
         
-        // Get the location of the standard position of each of the fielders
-        vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle, processingState);
+        // do this first so that wholeInfield is set
+        // Get the location of each of the actual players on the field
+        vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
         
+        if (playerContours.empty() or playerContours.size() == 0) {
+            ofstream file;
+            file.open(filePath);
+            file << "no players detected";
+            file.close();
+            return image;
+        }
+        
+        // Get the location of the standard position of each of the fielders
+        vector<vector<cv::Point>> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle, processingState);
+        cv::drawContours(resizedMat, expectedPositions, -1, cv::Scalar(255, 0, 0), 2);
+        UIImage *result = MatToUIImage(resizedMat);
+        return result;
+        /*
         if (expectedPositions.size() == 5) {
             // draw a circle over home, first, second, and third
             
@@ -121,35 +140,24 @@ class ImageProcessor {
         // dark green inside
         cv::circle(resizedMat, expectedPositions[1], 15, cv::Scalar(94, 138, 100), cv::FILLED);
         
-        // Get the location of each of the actual players on the field
-        vector<vector<cv::Point>> playerContours = getPlayerContourLocations(fieldMask);
-        
-        if (playerContours.empty() or playerContours.size() == 0) {
-            ofstream file;
-            file.open(filePath);
-            file << "no players detected";
-            file.close();
-            return image;
-        }
-        
         // Draw contours on image
         cv::drawContours(resizedMat, playerContours, -1, cv::Scalar(255, 0, 0), 5);
         
         // Draw expected positions on image for DEBUG
-        /*int b = 0;
-        int add = int(255 / expectedPositions.size());     // change the color to differentiate the bases
-        for (cv::Point pt : expectedPositions) {
-            cv::circle(resizedMat, pt, 15, cv::Scalar(0, 0, b), cv::FILLED);
-            b += add;
-        }*/
+        //int b = 0;
+        //int add = int(255 / expectedPositions.size());     // change the color to differentiate the bases
+        //for (cv::Point pt : expectedPositions) {
+        //    cv::circle(resizedMat, pt, 15, cv::Scalar(0, 0, b), cv::FILLED);
+        //    b += add;
+        //}
         
         // calculate which players are closest to which positions
         vector<vector<cv::Point>> playersByPosition = getPlayersByPosition(playerContours, expectedPositions);
         
         // print out playersByPosition for debugging
-        /*for ( const auto &p : playersByPosition ) {
-           cout << p.first << '\t' << p.second << "\n";
-        }*/
+        //for ( const auto &p : playersByPosition ) {
+        //   cout << p.first << '\t' << p.second << "\n";
+        //}
         
         // write the resulting data to a file to be read by the swift app code
         writePlayersByPositionToFile(playersByPosition, filePath);
@@ -160,11 +168,11 @@ class ImageProcessor {
         timer.stop();
         //cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
         
-        return result;
+        return result;*/
     }
     
     private:
-    vector<cv::Point> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle, int processingState) {
+    vector<vector<cv::Point>> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle, int processingState) {
         /*
          Sub-processing routine to find the location of each of the game positions
 
@@ -210,20 +218,27 @@ class ImageProcessor {
         }
         
         // Sort the list of contours from biggest area to smallest
-        //sort(infieldContours.begin(), infieldContours.end(), sortByArea);
+        sort(infieldContours.begin(), infieldContours.end(), sortByArea);
         
         ContourInfo infield = ContourInfo();
         infield.x = -1;
         
+        vector<vector<cv::Point>> ret;
+        
         for (ContourInfo cnt : infieldContours) {
             double ratio = cnt.height / cnt.width;
+            double area = cv::contourArea(cnt.contour);
+            double bbArea = cnt.getBoundingBoxArea();
             
-            if (ratio < 0.4 and (infield.x == -1 or cnt.width < infield.width) and cv::contourArea(cnt.contour) > 10000) {
+            if (ratio < 0.4 && ratio > 0.08 && area > 10000 && area < 270000 && area / bbArea > 0.5) {
                 infield = cnt;
-                //cout << "Setting Infield" << "\n";
+                cout << ratio << "\n";
+                ret.push_back(cnt.contour);
             }
         }
         cout << "\n";
+        return ret;
+        /*
         if (infield.x == -1) { return failedVec; }
         
         // use the hull of the infield instead of the original infield contour
@@ -248,7 +263,7 @@ class ImageProcessor {
         vector<cv::Point> expectedPositions = calculateExpectedPositions(bases[1], bases[2], bases[3], bases[4]);
         expectedPositions.insert(expectedPositions.begin(), bases[0]);
         
-        return expectedPositions;
+        return expectedPositions;*/
     }
     
     static bool sortByArea(ContourInfo &struct1, ContourInfo &struct2) {
@@ -278,8 +293,8 @@ class ImageProcessor {
         
         // Only keep the contours which have a certain bounding box area
         vector<ContourInfo> playerContours;
-        ContourInfo field = ContourInfo();
-        field.x = -1;                           // indicates that the variable is empty
+        wholeField = ContourInfo();
+        wholeField.x = -1;                           // indicates that the variable is empty
         
         for (vector<cv::Point> c : contours) {
             cv::Rect rect = cv::boundingRect(c);
@@ -293,18 +308,18 @@ class ImageProcessor {
                 cnt.width = rect.width;
                 cnt.height = rect.height;
                 playerContours.push_back(cnt);
-            } else if (field.x == -1 or (field.width * field.height) < area) {
-                field.contour = c;
-                field.x = rect.x;
-                field.y = rect.y;
-                field.width = rect.width;
-                field.height = rect.height;
+            } else if (wholeField.x == -1 or (wholeField.width * wholeField.height) < area) {
+                wholeField.contour = c;
+                wholeField.x = rect.x;
+                wholeField.y = rect.y;
+                wholeField.width = rect.width;
+                wholeField.height = rect.height;
             }
         }
                 
         vector<vector<cv::Point>> players;
         
-        if (field.x == -1) { return players; }
+        if (wholeField.x == -1) { return players; }
         
         vector<ContourInfo> topPlayers;
         
@@ -319,7 +334,7 @@ class ImageProcessor {
         if (topPlayers.size() == 0) { return players; }
 
         for (ContourInfo cnt : topPlayers) {
-            if (isCandidatePlayerOnField(cnt, field)) {
+            if (isCandidatePlayerOnField(cnt, wholeField)) {
                 players.push_back(cnt.contour);
             }
         }

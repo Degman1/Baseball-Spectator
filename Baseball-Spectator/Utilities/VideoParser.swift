@@ -31,10 +31,12 @@ class VideoParser: ObservableObject {
         return true
     }
     
-    func getAllFrames() -> [UIImage] {
+    func getAllFrames(fps: Float) -> [UIImage] {
         guard let url = videoURL else {
             return []
         }
+        
+        self.fps = fps
         
         let asset: AVAsset = AVAsset(url: url)
         let duration = Float(CMTimeGetSeconds(asset.duration))

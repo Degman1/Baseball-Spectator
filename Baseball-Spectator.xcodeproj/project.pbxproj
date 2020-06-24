@@ -126,9 +126,7 @@
 				636152F7247FFDC60043AFA1 /* TestImageProcessingView.swift */,
 				630E2A0F24858758008DEF17 /* TestVideoProcessingView.swift */,
 				630E2A1424859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift */,
-				630E2A1124858C8E008DEF17 /* VideoParser.swift */,
-				635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */,
-				638826532486DB4500C9FB4E /* TestImageResolutions.swift */,
+				63CBB38824A3E10F00FE4E73 /* TestData */,
 			);
 			path = TestProcessing;
 			sourceTree = "<group>";
@@ -155,13 +153,10 @@
 		638826512486CD4000C9FB4E /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				630E2A1124858C8E008DEF17 /* VideoParser.swift */,
 				63DAA5C9248156930022F9AA /* FileIO.swift */,
 				63D44F99248AD93F00049CD8 /* WebScraper.swift */,
 				63A2F0AF249D185400D8D79A /* ConsoleCommunication.swift */,
-				63DAA5CD248157FF0022F9AA /* CGPointExtension.swift */,
-				63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */,
-				639999D1249D4F260072C5E7 /* IntExtension.swift */,
-				6373CE5E248EEE4F00E43720 /* StringExtension.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -181,6 +176,26 @@
 				63457FAA2491B7E700FDB6D7 /* PlayerExpandedView.swift */,
 			);
 			path = Subviews;
+			sourceTree = "<group>";
+		};
+		63CBB38724A3D72F00FE4E73 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				63DAA5CD248157FF0022F9AA /* CGPointExtension.swift */,
+				63564B4424803F5C00BFAF7B /* AVCaptureExtension.swift */,
+				639999D1249D4F260072C5E7 /* IntExtension.swift */,
+				6373CE5E248EEE4F00E43720 /* StringExtension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		63CBB38824A3E10F00FE4E73 /* TestData */ = {
+			isa = PBXGroup;
+			children = (
+				635AB6E6247EDE9F00E5AC2E /* ExpectedHomePlateAngles.swift */,
+				638826532486DB4500C9FB4E /* TestImageResolutions.swift */,
+			);
+			path = TestData;
 			sourceTree = "<group>";
 		};
 		63D44F94248ACF3200049CD8 /* TeamsAndPlayers */ = {
@@ -224,6 +239,7 @@
 				637AA5B1248D70DA00FC15B8 /* ViewStateCoordinators */,
 				F63EE61F23BFB02400B155B8 /* OpenCVWrapper */,
 				638826512486CD4000C9FB4E /* Utilities */,
+				63CBB38724A3D72F00FE4E73 /* Extensions */,
 				F63EE61123BFAE1300B155B8 /* Assets.xcassets */,
 				637776E624A25A09002883C9 /* sampleVideo.mp4 */,
 				F63EE61623BFAE1300B155B8 /* LaunchScreen.storyboard */,
