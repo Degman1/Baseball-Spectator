@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct TestVideoProcessingView: View {
-    var processingState: ProcessingState = .UserSelectHome
     let fileInterface: FileIO = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
     @ObservedObject var videoParser = VideoParser()
     @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/", debug: true)
@@ -17,7 +16,7 @@ struct TestVideoProcessingView: View {
     @ObservedObject var selectedPlayer = SelectedPlayer()
     @ObservedObject var interfaceCoordinator = InterfaceCoordinator()
     @Environment(\.colorScheme) var colorScheme
-    var imageWidth: CGFloat = 0
+    var originalImageDimensions: CGSize? = nil
     
     init() {
         self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
@@ -27,8 +26,9 @@ struct TestVideoProcessingView: View {
             return
         }
         let _ = self.videoParser.getAllFrames()
-        self.imageWidth = CGFloat(self.videoParser.frames[0].size.width)
-        videoParser.playFrames()
+        
+        self.originalImageDimensions = CGSize(width: self.videoParser.frames[0].size.width, height: self.videoParser.frames[0].size.height)
+        //videoParser.playFrames()
     }
     
     var disableControls: Bool {
@@ -44,12 +44,15 @@ struct TestVideoProcessingView: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .blur(radius: self.interfaceCoordinator.showHomePlateMessageView || self.selectedPlayer.isExpanded ? 8 : 0)
                 
-                DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, imageID: self.$videoParser.imageIndex, imageWidth: self.imageWidth, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
+                if self.originalImageDimensions != nil {
+                    DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, originalImageDimensions: self.originalImageDimensions!, imageID: self.$videoParser.imageIndex, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
                     .disabled(self.selectedPlayer.isExpanded || self.interfaceCoordinator.showHomePlateMessageView)
+                }
                 
                 VStack {
                     HStack {
                         Scoreboard(processingCoordinator: self.processingCoordinator)
+                            .disabled(self.disableControls)
                         Spacer()
                     }
                     
@@ -67,6 +70,7 @@ struct TestVideoProcessingView: View {
                         Spacer()
                         
                         self.getPicker(geometry: geometry)
+                            .disabled(self.disableControls)
                         
                         Spacer()
                         
@@ -74,9 +78,9 @@ struct TestVideoProcessingView: View {
                             self.processingCoordinator.processingState = .UserSelectHome
                             self.selectedPlayer.unselectPlayer()
                         }.opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.3 : 1.0)
+                            .disabled(self.disableControls)
                     }
                 }.padding()
-                    .disabled(self.disableControls)
                     .blur(radius: self.interfaceCoordinator.showHomePlateMessageView || self.selectedPlayer.isExpanded ? 8 : 0)
                 
                 // large home plate message view
@@ -84,10 +88,16 @@ struct TestVideoProcessingView: View {
                     GenericMessageView(message: Text("Please Select the Circle Representing Home Plate"), closableBinding: self.$interfaceCoordinator.showHomePlateMessageView)
                         .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
                 }
-                                
+
                 // player info bar on top of the selected player
-                if !self.selectedPlayer.isExpanded {
-                    PlayerInfoBarViewTesting(geometry: geometry, imageID: self.$videoParser.imageIndex, selectedPlayer: self.selectedPlayer, webScraper: self.webScraper)
+                if !self.selectedPlayer.isExpanded && self.originalImageDimensions != nil {
+                    PlayerInfoBarViewTesting(
+                        viewImageDimensions: CGSize(width: self.originalImageDimensions!.width /                                                            self.originalImageDimensions!.height *
+                                                                geometry.size.height,
+                                                    height: geometry.size.height),
+                        imageID: self.$videoParser.imageIndex,
+                        selectedPlayer: self.selectedPlayer,
+                        webScraper: self.webScraper)
                 }
                 
                 // expanded player statistics view
@@ -129,32 +139,14 @@ struct TestVideoProcessingView: View {
     }
     
     func getStepper() -> some View {
-        Stepper(onIncrement: {
-            if self.videoParser.imageIndex < 11 {
-                self.videoParser.imageIndex += 1
-            }
-            self.processingCoordinator.processingState = .UserSelectHome
-            self.selectedPlayer.unselectPlayer()
-            self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-            self.interfaceCoordinator.showHomePlateMessageView = true
-        }, onDecrement: {
-            if self.videoParser.imageIndex > 1 {
-                self.videoParser.imageIndex -= 1
-            }
-            self.processingCoordinator.processingState = .UserSelectHome
-            self.selectedPlayer.unselectPlayer()
-            self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-            self.interfaceCoordinator.showHomePlateMessageView = true
-        }, label: {
-            return Text("ImageID: \(self.videoParser.imageIndex)")
-        })
+        Stepper("", value: self.$videoParser.imageIndex, in: 0...(self.videoParser.frames.count - 1))
     }
     
     func testProcessing(imageIndex: Int) -> Image {
         if self.videoParser.frames.count == 0 {
             return Image("image1")
         }
-        let res = OpenCVWrapper.processImage(self.videoParser.frames[imageIndex % self.videoParser.frames.count], expectedHomePlateAngle: HOME_PLATE_ANGLES[0], filePath: fileInterface.filePath, processingState: Int32(self.processingState.rawValue))
+        let res = OpenCVWrapper.processImage(self.videoParser.frames[imageIndex % self.videoParser.frames.count], expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: fileInterface.filePath, processingState: Int32(self.processingCoordinator.processingState.rawValue))
         
         try! fileInterface.loadDataIntoPlayersByPosition()
         ConsoleCommunication.printResult(withMessage: "frame \(imageIndex) - \(fileInterface.playersByPosition)", source: "\(#function)")

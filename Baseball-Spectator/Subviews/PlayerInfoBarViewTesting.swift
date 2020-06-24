@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct PlayerInfoBarViewTesting: View {
-    let geometry: GeometryProxy
+    let viewImageDimensions: CGSize
     @Binding var imageID: Int
     @ObservedObject var selectedPlayer: SelectedPlayer
     @ObservedObject var webScraper: WebScraper
@@ -38,13 +38,11 @@ struct PlayerInfoBarViewTesting: View {
             return CGSize(width: 0, height: 0)
         }
         
-        let imageWidth = TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width / TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height * self.geometry.size.height
-        
         // the view starts in the center of the screen, so shift it to be at  (0, 0) of the image and add the player coordinate
-        let x0 = -imageWidth / 2
-        let y0 = -geometry.size.height / 2
+        let x0 = -self.viewImageDimensions.width / 2
+        let y0 = -self.viewImageDimensions.height / 2
         
-        let offset = self.selectedPlayer.viewCoordinate!.y > (self.geometry.size.height / 2) ? CGFloat(-35) : CGFloat(20)
+        let offset = self.selectedPlayer.viewCoordinate!.y > (self.viewImageDimensions.height / 2) ? CGFloat(-35) : CGFloat(20)
         
         return CGSize(width: x0 + self.selectedPlayer.viewCoordinate!.x,
                       height: y0 + self.selectedPlayer.viewCoordinate!.y + offset)

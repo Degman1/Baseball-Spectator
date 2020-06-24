@@ -11,18 +11,29 @@ import SwiftUI
 struct DraggableOverlayView: View {
     let geometry: GeometryProxy
     let fileInterface: FileIO
+    let originalImageDimensions: CGSize
+    let viewImageDimensions: CGSize
     @Binding var imageID: Int
-    let imageWidth: CGFloat
     @ObservedObject var processingCoordinator: ProcessingCoordinator
     @ObservedObject var selectedPlayer: SelectedPlayer
+    
+    init(geometry: GeometryProxy, fileInterface: FileIO, originalImageDimensions: CGSize, imageID: Binding<Int>, processingCoordinator: ProcessingCoordinator, selectedPlayer: SelectedPlayer) {
+        self.geometry = geometry
+        self.fileInterface = fileInterface
+        self.originalImageDimensions = originalImageDimensions
+        self._imageID = imageID
+        self.processingCoordinator = processingCoordinator
+        self.selectedPlayer = selectedPlayer
+        // only need to set this once since the frame size should not change one the app is running
+        self.viewImageDimensions = CGSize(width: self.originalImageDimensions.width / self.originalImageDimensions.height * geometry.size.height,
+                                         height: geometry.size.height)
+    }
     
     var body: some View {
         Rectangle()
             .foregroundColor(.white)
-            .opacity(0.1)
-            .frame(
-                width: self.imageWidth,
-                height: self.geometry.size.height)
+            .opacity(0.01)
+            .frame(width: self.viewImageDimensions.width, height: self.viewImageDimensions.height)
             .gesture(DragGesture(minimumDistance: CGFloat.zero, coordinateSpace: .local)
                 .onEnded { value in
                     self.dragOperation(value: value)
@@ -39,15 +50,11 @@ struct DraggableOverlayView: View {
             return
         }
         
-        let originalResolution = TEST_IMAGE_RESOLUTIONS[self.imageID - 1]
-        let imageDisplayWidth = (originalResolution.width / originalResolution.height) * geometry.size.height
-        
-        if value.location.x < 0 || value.location.y < 0 || value.location.x > imageDisplayWidth || value.location.y > geometry.size.height {
+        if value.location.x < 0 || value.location.y < 0 || value.location.x > self.viewImageDimensions.width || value.location.y > geometry.size.height {
             return
         }
         
-        let viewImageSize = CGSize(width: imageDisplayWidth, height: geometry.size.height)
-        let loc = value.location.scale(from: viewImageSize, to: originalResolution)
+        let loc = value.location.scale(from: self.viewImageDimensions, to: self.originalImageDimensions)
         
         // if the use has not yet selected which base is home plate
         if self.processingCoordinator.processingState == .UserSelectHome {
@@ -65,7 +72,7 @@ struct DraggableOverlayView: View {
                 return
             }
             
-            let viewCoordinate = closestPlayerCoordinateToDrag.scale(from: originalResolution, to: viewImageSize)
+            let viewCoordinate = closestPlayerCoordinateToDrag.scale(from: self.originalImageDimensions, to: self.viewImageDimensions)
             
             for i in 0..<9 {
                 for position in self.fileInterface.playersByPosition[i] {
