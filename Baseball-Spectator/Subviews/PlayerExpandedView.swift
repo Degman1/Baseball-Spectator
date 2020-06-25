@@ -16,9 +16,35 @@ struct PlayerExpandedView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                GenericMessageView(message: self.text, closableBinding: self.$selectedPlayer.isExpanded) {
-                        self.selectedPlayer.unselectPlayer()
+                if self.selectedPlayer.positionID != nil && !self.webScraper.playerInfo.isEmpty && self.webScraper.playerInfo[self.selectedPlayer.positionID!].avg != nil {
+                    GenericMessageView(message:
+                        HStack {
+                            VStack {
+                                Image.load(url: URL(string: "https://images.cdn2.stockunlimited.net/preview1300/silhouette-of-a-baseball-player_1501256.jpg")!)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(height: geometry.size.height / 2.5)
+                                //URL(string: self.webScraper.playerInfo[self.selectedPlayer.positionID!].imageLink!)
+                                Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].name)
+                            }.padding(10)
+                            VStack {
+                            Text("AVG: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].avg!)").padding(5)
+                            Text("RBI: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].rbi!)").padding(5)
+                            Text("OBP: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].obp!)").padding(5)
+                            Text("SLG: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].slg!)").padding(5)
+                            }
+                        },
+                                       closableBinding: self.$selectedPlayer.isExpanded) {
+                            self.selectedPlayer.unselectPlayer()
+                    }
+                } else {
+                    GenericMessageView(message: Text("Loading Statistics..."),
+                                       closableBinding: self.$selectedPlayer.isExpanded) {
+                            self.selectedPlayer.unselectPlayer()
+                    }
+                    
                 }
+                
                 
                 Button(action: {
                     self.selectedPlayer.previousPlayer()
@@ -51,14 +77,6 @@ struct PlayerExpandedView: View {
                     }
                 }.offset(x: (geometry.size.width / 2) - 55, y: (geometry.size.height / 2) - 30)
             }
-        }
-    }
-    
-    var text: Text {
-        if self.selectedPlayer.positionID != nil && !self.webScraper.playerInfo.isEmpty {
-            return Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].detailedDescription)
-        } else {
-            return Text("Currently unable to retrive player statistics")
         }
     }
 }

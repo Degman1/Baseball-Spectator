@@ -14,7 +14,9 @@ struct Player: CustomStringConvertible {
     // reset every x seconds automatically
     let name: String
     let position: String
+    
     let statisticsLink: String
+    var imageLink: String? = nil
     
     // reset when the player is selected
     // just keep the values as strings b/c don't need to do anything with them except display

@@ -76,7 +76,7 @@ class WebScraper: ObservableObject {
     
     private func fetchStatisticsURLSessionTaskHelper(_ html: String) {
         // method to be passed to createURLSessionTask(:, :)
-                
+        
         if self.selectedPlayerIndex == nil { return }
 
         guard let i = html.index(of: "<td _ngcontent-sc") else {
@@ -116,6 +116,7 @@ class WebScraper: ObservableObject {
             self.playerInfo[self.selectedPlayerIndex!].avg = stats[11]
             self.playerInfo[self.selectedPlayerIndex!].obp = stats[12]
             self.playerInfo[self.selectedPlayerIndex!].slg = stats[13]
+            self.playerInfo[self.selectedPlayerIndex!].imageLink = ""
         }
     }
     
