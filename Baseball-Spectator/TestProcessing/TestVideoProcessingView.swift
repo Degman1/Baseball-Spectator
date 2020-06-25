@@ -28,7 +28,7 @@ struct TestVideoProcessingView: View {
         let _ = self.videoParser.getAllFrames(fps: 1.0)
         
         self.originalImageDimensions = CGSize(width: self.videoParser.frames[0].size.width, height: self.videoParser.frames[0].size.height)
-        //videoParser.playFrames()
+        videoParser.playFrames()
     }
     
     var disableControls: Bool {

@@ -106,11 +106,8 @@ class ImageProcessor {
         }
         
         // Get the location of the standard position of each of the fielders
-        vector<vector<cv::Point>> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle, processingState);
-        cv::drawContours(resizedMat, expectedPositions, -1, cv::Scalar(255, 0, 0), 2);
-        UIImage *result = MatToUIImage(resizedMat);
-        return result;
-        /*
+        vector<cv::Point> expectedPositions = getPositionLocations(greenMask, expectedHomePlateAngle, processingState);
+        
         if (expectedPositions.size() == 5) {
             // draw a circle over home, first, second, and third
             
@@ -168,11 +165,11 @@ class ImageProcessor {
         timer.stop();
         //cout << "Processing took " << timer.elapsedMilliseconds() << " milliseconds\n";
         
-        return result;*/
+        return result;
     }
     
     private:
-    vector<vector<cv::Point>> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle, int processingState) {
+    vector<cv::Point> getPositionLocations(cv::Mat greenMask, double expectedHomePlateAngle, int processingState) {
         /*
          Sub-processing routine to find the location of each of the game positions
 
@@ -220,10 +217,7 @@ class ImageProcessor {
         // Sort the list of contours from biggest area to smallest
         sort(infieldContours.begin(), infieldContours.end(), sortByArea);
         
-        ContourInfo infield = ContourInfo();
-        infield.x = -1;
-        
-        vector<vector<cv::Point>> ret;
+        vector<ContourInfo> infieldShapedContours;
         
         for (ContourInfo cnt : infieldContours) {
             double ratio = cnt.height / cnt.width;
@@ -231,14 +225,12 @@ class ImageProcessor {
             double bbArea = cnt.getBoundingBoxArea();
             
             if (ratio < 0.4 && ratio > 0.08 && area > 10000 && area < 270000 && area / bbArea > 0.5) {
-                infield = cnt;
-                cout << ratio << "\n";
-                ret.push_back(cnt.contour);
+                infieldShapedContours.push_back(cnt);
             }
         }
-        cout << "\n";
-        return ret;
-        /*
+        
+        ContourInfo infield = infieldContourEdgeCut(infieldShapedContours);
+        
         if (infield.x == -1) { return failedVec; }
         
         // use the hull of the infield instead of the original infield contour
@@ -263,7 +255,7 @@ class ImageProcessor {
         vector<cv::Point> expectedPositions = calculateExpectedPositions(bases[1], bases[2], bases[3], bases[4]);
         expectedPositions.insert(expectedPositions.begin(), bases[0]);
         
-        return expectedPositions;*/
+        return expectedPositions;
     }
     
     static bool sortByArea(ContourInfo &struct1, ContourInfo &struct2) {
@@ -653,5 +645,54 @@ class ImageProcessor {
         avePoint.y = aveY / points.size();
         
         return avePoint;
+    }
+    
+    float getNumOfPointsOnEdgeOfField(ContourInfo cnt) {
+        //vector<cv::Point> closeWholeField;  // contains the points of the whole field contour that are in the cnt's bounding box
+        int n = 0;
+        
+        for (cv::Point pt : wholeField.contour) {
+            if (pt.x >= cnt.x && pt.x <= cnt.x + cnt.width && pt.y >= cnt.y && pt.y <= cnt.y + cnt.height) {
+                n += 1;
+            }
+        }
+        
+        return n;
+    }
+    
+    ContourInfo infieldContourEdgeCut(vector<ContourInfo> infieldShapedContours) {
+        // return the infield that has the least number of points touching the edge of the field
+        
+        vector<ContourInfo> infields;   // used to check if multiple infields have no touching points
+        ContourInfo infield;
+        infield.x = -1;
+        
+        if (infieldShapedContours.empty() || infieldShapedContours.size() == 0) {
+            return infield;
+        }
+        
+        infield = infieldShapedContours[0];
+        int lowN = -1;
+        
+        for (ContourInfo cnt : infieldShapedContours) {
+            int n = getNumOfPointsOnEdgeOfField(cnt);
+            //cout << cnt.y << ": " << n << "\n";
+            if (lowN == -1 || n < lowN) {
+                lowN = n;
+                infield = cnt;
+            }
+            if (n == 0) {
+                infields.push_back(cnt);
+            }
+        }
+        //cout << " -- " << lowN;
+        //cout << "\n";
+        
+        if (infields.size() > 1) {
+            sort(infields.begin(), infields.end(), sortByArea);
+            return infields[infields.size() - 1];
+        }
+        
+        return infield;         // no infield found is identified by infield.x == -1
     }
 };
