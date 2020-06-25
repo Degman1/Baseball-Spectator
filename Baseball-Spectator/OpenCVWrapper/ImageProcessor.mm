@@ -292,7 +292,7 @@ class ImageProcessor {
             cv::Rect rect = cv::boundingRect(c);
             double area = rect.height * rect.width;
             
-            if (area > 270 and area < 7000) {       //TODO: make these numbers dependant on the infield size
+            if (area > 270 and area < 8000) {       //TODO: make these numbers dependant on the infield size
                 ContourInfo cnt;
                 cnt.contour = c;
                 cnt.x = rect.x;
