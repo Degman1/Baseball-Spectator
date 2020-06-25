@@ -17,6 +17,7 @@ struct TestVideoProcessingView: View {
     @ObservedObject var interfaceCoordinator = InterfaceCoordinator()
     @Environment(\.colorScheme) var colorScheme
     var originalImageDimensions: CGSize? = nil
+    var timer = Timer2()
     
     init() {
         self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
@@ -38,7 +39,7 @@ struct TestVideoProcessingView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                self.testProcessing(imageIndex: self.videoParser.imageIndex)
+                self.testProcessing()
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: geometry.size.width, height: geometry.size.height)
@@ -142,15 +143,22 @@ struct TestVideoProcessingView: View {
         Stepper("", value: self.$videoParser.imageIndex, in: 0...(self.videoParser.frames.count - 1))
     }
     
-    func testProcessing(imageIndex: Int) -> Image {
+    func testProcessing() -> Image {
         if self.videoParser.frames.count == 0 {
             return Image("image1")
         }
-        let res = OpenCVWrapper.processImage(self.videoParser.frames[imageIndex % self.videoParser.frames.count], expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: fileInterface.filePath, processingState: Int32(self.processingCoordinator.processingState.rawValue))
+        
+        timer.startTimer()
+        
+        let res = OpenCVWrapper.processImage(self.videoParser.frames[self.videoParser.imageIndex % self.videoParser.frames.count], expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: fileInterface.filePath, processingState: Int32(self.processingCoordinator.processingState.rawValue))
         
         try! fileInterface.loadDataIntoPlayersByPosition()
-        ConsoleCommunication.printResult(withMessage: "frame \(imageIndex) - \(fileInterface.playersByPosition)", source: "\(#function)")
+        ConsoleCommunication.printResult(withMessage: "frame \(self.videoParser.imageIndex) - \(fileInterface.playersByPosition)", source: "\(#function)")
         
+        timer.endTimer()
+        
+        ConsoleCommunication.printResult(withMessage: "processing took \(timer.elapsedTimems())ms", source: "\(#function)")
+                
         return Image(uiImage: res)
     }
 }

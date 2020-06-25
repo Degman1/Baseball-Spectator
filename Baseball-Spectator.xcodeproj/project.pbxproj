@@ -31,6 +31,7 @@
 		638826542486DB4500C9FB4E /* TestImageResolutions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638826532486DB4500C9FB4E /* TestImageResolutions.swift */; };
 		639999D2249D4F260072C5E7 /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639999D1249D4F260072C5E7 /* IntExtension.swift */; };
 		63A2F0B0249D185400D8D79A /* ConsoleCommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A2F0AF249D185400D8D79A /* ConsoleCommunication.swift */; };
+		63B41A8C24A4E8AB002D2B89 /* Timer2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B41A8B24A4E8AB002D2B89 /* Timer2.swift */; };
 		63C46CAF24887ADF00EC3E67 /* ProcessingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C46CAE24887ADF00EC3E67 /* ProcessingState.swift */; };
 		63D44F96248ACF6600049CD8 /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D44F95248ACF6600049CD8 /* Team.swift */; };
 		63D44F98248AD7EC00049CD8 /* TeamLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D44F97248AD7EC00049CD8 /* TeamLookup.swift */; };
@@ -79,6 +80,7 @@
 		638826532486DB4500C9FB4E /* TestImageResolutions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImageResolutions.swift; sourceTree = "<group>"; };
 		639999D1249D4F260072C5E7 /* IntExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
 		63A2F0AF249D185400D8D79A /* ConsoleCommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleCommunication.swift; sourceTree = "<group>"; };
+		63B41A8B24A4E8AB002D2B89 /* Timer2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer2.swift; sourceTree = "<group>"; };
 		63C46CAE24887ADF00EC3E67 /* ProcessingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingState.swift; sourceTree = "<group>"; };
 		63D44F95248ACF6600049CD8 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
 		63D44F97248AD7EC00049CD8 /* TeamLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamLookup.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 				630E2A1124858C8E008DEF17 /* VideoParser.swift */,
 				63DAA5C9248156930022F9AA /* FileIO.swift */,
 				63D44F99248AD93F00049CD8 /* WebScraper.swift */,
+				63B41A8B24A4E8AB002D2B89 /* Timer2.swift */,
 				63A2F0AF249D185400D8D79A /* ConsoleCommunication.swift */,
 			);
 			path = Utilities;
@@ -381,6 +384,7 @@
 				636FEE53249EFFC100CC3379 /* InterfaceCoordinator.swift in Sources */,
 				F6CA649A24799F7E009721E0 /* Scoreboard.swift in Sources */,
 				63D44F96248ACF6600049CD8 /* Team.swift in Sources */,
+				63B41A8C24A4E8AB002D2B89 /* Timer2.swift in Sources */,
 				63457FA92491B52000FDB6D7 /* PlayerInfoBarView.swift in Sources */,
 				638826542486DB4500C9FB4E /* TestImageResolutions.swift in Sources */,
 				63564B4524803F5C00BFAF7B /* AVCaptureExtension.swift in Sources */,

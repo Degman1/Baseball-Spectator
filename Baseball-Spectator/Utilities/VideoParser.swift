@@ -12,8 +12,8 @@ import SwiftUI
 
 class VideoParser: ObservableObject {
     @Published var imageIndex = 0
-    private var duration: Float? = nil
-    var fps: Float = 1
+    private var duration: Double? = nil
+    var fps: Double = 1.0
     private var videoURL: URL? = nil
     var frames: [UIImage] = []
     private var generator: AVAssetImageGenerator! = nil
@@ -31,7 +31,7 @@ class VideoParser: ObservableObject {
         return true
     }
     
-    func getAllFrames(fps: Float) -> [UIImage] {
+    func getAllFrames(fps: Double) -> [UIImage] {
         guard let url = videoURL else {
             return []
         }
@@ -39,15 +39,15 @@ class VideoParser: ObservableObject {
         self.fps = fps
         
         let asset: AVAsset = AVAsset(url: url)
-        let duration = Float(CMTimeGetSeconds(asset.duration))
+        let duration = Double(CMTimeGetSeconds(asset.duration))
         self.generator = AVAssetImageGenerator(asset:asset)
         self.generator.appliesPreferredTrackTransform = true
         self.frames = []
         
-        var index: Float = 0.0
+        var index: Double = 0.0
         
         while index < duration {
-            self.getFrame(fromTime:Float64(index))
+            self.getFrame(fromTime: Float64(index))
             index += 1 / self.fps
         }
         
@@ -66,7 +66,7 @@ class VideoParser: ObservableObject {
     }
     
     func playFrames() {
-        let queue = DispatchQueue(label: "com.playback.queue", qos: .userInteractive)
+        /*let queue = DispatchQueue(label: "com.playback.queue", qos: .userInteractive)
         
         queue.async {
             while true {
@@ -75,6 +75,9 @@ class VideoParser: ObservableObject {
                     self.imageIndex = (self.imageIndex + 1) % self.frames.count
                 }
             }
+        }*/
+        Timer.scheduledTimer(withTimeInterval: 1.0 / self.fps, repeats: true) { timer in
+            self.imageIndex += 1
         }
     }
 }
