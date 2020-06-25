@@ -26,7 +26,7 @@ struct TestVideoProcessingView: View {
         if !res {
             return
         }
-        let _ = self.videoParser.getAllFrames(fps: 2.0)
+        let _ = self.videoParser.getAllFrames(fps: 9.0)
         
         self.originalImageDimensions = CGSize(width: self.videoParser.frames[0].size.width, height: self.videoParser.frames[0].size.height)
         videoParser.playFrames()
@@ -55,6 +55,13 @@ struct TestVideoProcessingView: View {
                         Scoreboard(processingCoordinator: self.processingCoordinator)
                             .disabled(self.disableControls)
                         Spacer()
+                        
+                        GenericButton(label: "Play") {
+                            self.videoParser.playFrames()
+                        }
+                        GenericButton(label: "Pause") {
+                            self.videoParser.pauseFrames()
+                        }
                     }
                     
                     Spacer()

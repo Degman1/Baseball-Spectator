@@ -39,7 +39,7 @@ struct GenericMessageView<Content: View>: View {
                         Spacer()
                     }
                     
-                    self.message
+                    self.message        //TODO: make this into a scroll view just in case the letters don't fit
                         .frame(alignment: self.textAlignment)
                         .padding([.leading, .trailing])
                     

@@ -17,6 +17,7 @@ class VideoParser: ObservableObject {
     private var videoURL: URL? = nil
     var frames: [UIImage] = []
     private var generator: AVAssetImageGenerator! = nil
+    var timer: Timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in }
     
     func getVideoURL() -> URL? {
         return videoURL
@@ -42,13 +43,15 @@ class VideoParser: ObservableObject {
         let duration = Double(CMTimeGetSeconds(asset.duration))
         self.generator = AVAssetImageGenerator(asset:asset)
         self.generator.appliesPreferredTrackTransform = true
+        self.generator.requestedTimeToleranceBefore = CMTimeMake(value: 1, timescale: 100)
+        self.generator.requestedTimeToleranceAfter = CMTimeMake(value: 1, timescale: 100)
         self.frames = []
         
         var index: Double = 0.0
         
         while index < duration {
             self.getFrame(fromTime: Float64(index))
-            index += 1 / self.fps
+            index += 1.0 / self.fps
         }
         
         return self.frames
@@ -66,18 +69,13 @@ class VideoParser: ObservableObject {
     }
     
     func playFrames() {
-        /*let queue = DispatchQueue(label: "com.playback.queue", qos: .userInteractive)
-        
-        queue.async {
-            while true {
-                usleep(UInt32(1000000 / self.fps))
-                DispatchQueue.main.async {
-                    self.imageIndex = (self.imageIndex + 1) % self.frames.count
-                }
-            }
-        }*/
-        Timer.scheduledTimer(withTimeInterval: 1.0 / self.fps, repeats: true) { timer in
+        pauseFrames()
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0 / self.fps, repeats: true) { timer in
             self.imageIndex += 1
         }
+    }
+    
+    func pauseFrames() {
+        self.timer.invalidate()
     }
 }
