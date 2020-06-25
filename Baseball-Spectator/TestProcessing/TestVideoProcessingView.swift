@@ -25,7 +25,7 @@ struct TestVideoProcessingView: View {
         if !res {
             return
         }
-        let _ = self.videoParser.getAllFrames(fps: 1.0)
+        let _ = self.videoParser.getAllFrames(fps: 2.0)
         
         self.originalImageDimensions = CGSize(width: self.videoParser.frames[0].size.width, height: self.videoParser.frames[0].size.height)
         videoParser.playFrames()
@@ -86,7 +86,7 @@ struct TestVideoProcessingView: View {
                 // large home plate message view
                 if self.processingCoordinator.processingState == .UserSelectHome && self.interfaceCoordinator.showHomePlateMessageView {
                     GenericMessageView(message: Text("Please Select the Circle Representing Home Plate"), closableBinding: self.$interfaceCoordinator.showHomePlateMessageView)
-                        .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.8)
+                        .frame(width: geometry.size.width * 0.7, height: geometry.size.height * 0.5)
                 }
 
                 // player info bar on top of the selected player

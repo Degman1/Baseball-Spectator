@@ -41,83 +41,82 @@ struct Scoreboard: View {
     
     @State private var isPressed = false
     @State private var wFrame: CGFloat = 160
-    @State private var hFrame: CGFloat = 90
+    @State private var hFrame: CGFloat = 110
     
     var body: some View {
-            ZStack {
-                HStack {
-                    VStack {
-                        HStack {
-                            VStack {
-                                Text(awayTeam)
-                                Text(homeTeam)
-                            }
-                            ZStack {
-                                VStack {
-                                    Text("\(awayTeamScore)")
-                                    Text("\(homeTeamScore)")
-                                }
-                                if isPressed {
-                                   VStack {
-                                       awayInnings
-                                       homeInnings
-                                   }.background(darkGreen)
-                                }
-                            }
-                            Spacer()
-                        }
-                        .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
-                        .offset(y: 15)
-                        Divider()
-                        HStack {
-                            Spacer()
-                            ballstrikesView
-                            Spacer()
-                            outsView
-                            Spacer()
-                        }
-                        .offset(y: -10)
-                    }
+        ZStack {
+            HStack {
+                VStack {
                     HStack {
-                        Button(action: {
-                            self.isPressed.toggle()
-                            if self.isPressed {
-                                self.wFrame = 250
-                                self.hFrame = 90
-                            } else {
-                                self.wFrame = 160
-                                self.hFrame = 90
-                            }
-                        }) {
-                            Divider().rotationEffect(.degrees(180))
-                            if isPressed {
-                                Image(systemName: "chevron.left")
-                                    .padding(6)
-                                    .foregroundColor(.black)
-                                    .background(Color.white)
-                                    .cornerRadius(cornerRad)
-                                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
-                                    .opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.4 : 0.9)
-                            } else {
-                                Image(systemName: "chevron.right")
-                                    .padding(6)
-                                    .foregroundColor(.black)
-                                    .background(Color.white)
-                                    .cornerRadius(cornerRad)
-                                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
-                                    .opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.4 : 0.9)
-                            }
+                        VStack {
+                            Text(awayTeam)
+                            Text(homeTeam)
+                        }.padding(EdgeInsets(top: self.isPressed ? 21 : 0, leading: 0, bottom: 0, trailing: 0))
+                        VStack {
+                            Text("\(awayTeamScore)")
+                            Text("\(homeTeamScore)")
+                        }.padding(EdgeInsets(top: self.isPressed ? 21 : 0, leading: 0, bottom: 0, trailing: 0))
+                        if self.isPressed {
+                           VStack {
+                               awayInnings
+                               homeInnings
+                           }.background(darkGreen)
+                        }
+                        Spacer()
+                    }
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 0))
+                    .offset(y: 15)
+                    Divider()
+                    HStack {
+                        Spacer()
+                        ballstrikesView
+                        Spacer()
+                        outsView
+                        Spacer()
+                    }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
+                    .offset(y: -10)
+                }
+                HStack {
+                    Button(action: {
+                        self.isPressed.toggle()
+                        if self.isPressed {
+                            self.wFrame = 270
+                            self.hFrame = 110
+                        } else {
+                            self.wFrame = 160
+                            self.hFrame = 110
+                        }
+                    }) {
+                        Divider().rotationEffect(.degrees(180))
+                        if isPressed {
+                            Image(systemName: "chevron.left")
+                                .padding(6)
+                                .foregroundColor(.black)
+                                .background(Color.white)
+                                .cornerRadius(cornerRad)
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
+                                .opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.4 : 1.0)
+                        } else {
+                            Image(systemName: "chevron.right")
+                                .padding(6)
+                                .foregroundColor(.black)
+                                .background(Color.white)
+                                .cornerRadius(cornerRad)
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 7))
+                                .opacity(self.processingCoordinator.processingState == .UserSelectHome ? 0.4 : 1.0)
                         }
                     }
-                }.background(darkGreen.opacity(0.8))
-            }
-            .frame(width: self.wFrame, height: self.hFrame)
-            .cornerRadius(cornerRad)
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRad)
-                    .stroke(Color.white, lineWidth: 5)
-            )
-            .shadow(color: Color.black, radius: 30)
+                }
+            }.background(darkGreen)
+        }
+        .frame(width: self.wFrame, height: self.hFrame)
+        .cornerRadius(cornerRad)
+        .overlay(
+            RoundedRectangle(cornerRadius: cornerRad)
+                .stroke(Color.white, lineWidth: 5)
+        )
+        .shadow(color: Color.black, radius: 30)
+            .opacity(0.9)
     }
     
     var awayInnings: some View {
@@ -158,7 +157,7 @@ struct Scoreboard: View {
                 Text("9")
                 Text("\(awayInningNine)")
             }
-        }
+        }.background(darkGreen)
     }
     
     var homeInnings: some View {
@@ -190,7 +189,7 @@ struct Scoreboard: View {
             VStack {
                 Text("\(homeInningNine)")
             }
-        }
+        }.background(darkGreen)
     }
     
     var ballstrikesView: some View {

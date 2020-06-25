@@ -66,7 +66,7 @@ class VideoParser: ObservableObject {
     }
     
     func playFrames() {
-        let queue = DispatchQueue(label: "com.playback.queue")
+        let queue = DispatchQueue(label: "com.playback.queue", qos: .userInteractive)
         
         queue.async {
             while true {
