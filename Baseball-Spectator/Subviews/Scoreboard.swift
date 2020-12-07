@@ -2,8 +2,8 @@
 //  Scoreboard.swift
 //  Baseball-Spectator
 //
-//  Created by Joey Cohen on 5/23/20.
-//  Copyright © 2020 Joey Cohen. All rights reserved.
+//  Created by David Gerard on 5/23/20.
+//  Copyright © 2020 David Gerard. All rights reserved.
 //
 
 import SwiftUI
