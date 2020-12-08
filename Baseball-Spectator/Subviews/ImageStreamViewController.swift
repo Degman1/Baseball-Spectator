@@ -15,12 +15,12 @@ class ImageStreamViewController: UIViewController, AVCaptureVideoDataOutputSampl
     private var skipFrame = 0;
     private let context = CIContext()
     public var playersByPosition: [[CGPoint]] = []
-    var fileInterface: FileIO
+    var processingResultParser: ProcessingResultParser
     var processingCoordinator: ProcessingCoordinator
     
-    init(fileInterface: FileIO, processingCoordinator: ProcessingCoordinator) {
+    init(processingResultParser: ProcessingResultParser, processingCoordinator: ProcessingCoordinator) {
         self.processingCoordinator = processingCoordinator
-        self.fileInterface = fileInterface
+        self.processingResultParser = processingResultParser
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -76,13 +76,13 @@ class ImageStreamViewController: UIViewController, AVCaptureVideoDataOutputSampl
         
         DispatchQueue.main.async {
             if self.skipFrame % 2 == 0 {
-                self.imageView.image = OpenCVWrapper.processImage(image, expectedHomePlateAngle: HOME_PLATE_ANGLES[4], filePath: self.fileInterface.filePath, processingState: Int32(self.processingCoordinator.processingState.rawValue))
+                self.imageView.image = OpenCVWrapper.processImage(image, expectedHomePlateAngle: HOME_PLATE_ANGLES[4], filePath: self.processingResultParser.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
             }
             
             self.skipFrame += 1
         }
         
-        try! fileInterface.loadDataIntoPlayersByPosition()
+        try! processingResultParser.loadDataIntoPlayersByPosition()
     }
     
     private func getFrames() {

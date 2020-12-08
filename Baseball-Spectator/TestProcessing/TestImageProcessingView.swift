@@ -10,7 +10,7 @@ import SwiftUI
 
 struct TestImageProcessingView: View {
     @State var imageID = 1
-    let fileInterface: FileIO = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
+    let processingResultParser = ProcessingResultParser()
     @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/", debug: true)
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
     @ObservedObject var selectedPlayer = SelectedPlayer()
@@ -38,7 +38,7 @@ struct TestImageProcessingView: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .blur(radius: self.interfaceCoordinator.showHomePlateMessageView || self.selectedPlayer.isExpanded ? 8 : 0)
                 
-                DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, originalImageDimensions: TEST_IMAGE_RESOLUTIONS[self.imageID - 1], imageID: self.$imageID, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
+                DraggableOverlayView(geometry: geometry, processingResultParser: self.processingResultParser, originalImageDimensions: TEST_IMAGE_RESOLUTIONS[self.imageID - 1], imageID: self.$imageID, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
                     .disabled(self.selectedPlayer.isExpanded || self.interfaceCoordinator.showHomePlateMessageView)
                 
                 VStack {
@@ -153,8 +153,8 @@ struct TestImageProcessingView: View {
     
     func testProcessing(imageID: Int) -> Image {
         let uiimage = UIImage(named: "image\(imageID).jpg")!
-        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: self.fileInterface.filePath, processingState: Int32(self.processingCoordinator.processingState.rawValue))
-        try! fileInterface.loadDataIntoPlayersByPosition()
+        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: self.processingResultParser.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
+        try! processingResultParser.loadDataIntoPlayersByPosition()
         return Image(uiImage: res)
     }
 }

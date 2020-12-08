@@ -10,11 +10,11 @@ import Foundation
 import SwiftUI
 
 struct ImageStreamViewControllerRepresentable: UIViewControllerRepresentable {
-    var fileInterface: FileIO
+    var processingResultParser: ProcessingResultParser
     var processingCoordinator: ProcessingCoordinator
     
     func makeUIViewController(context: Context) -> UIViewController {
-        return ImageStreamViewController(fileInterface: fileInterface, processingCoordinator: processingCoordinator)
+        return ImageStreamViewController(processingResultParser: processingResultParser, processingCoordinator: processingCoordinator)
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {

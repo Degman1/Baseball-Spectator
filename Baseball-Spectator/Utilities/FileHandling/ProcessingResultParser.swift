@@ -1,20 +1,18 @@
 //
-//  FileIO.swift
+//  ProcessingResultParser.swift
 //  Baseball-Spectator
 //
-//  Created by David Gerard on 5/29/20.
+//  Created by David Gerard on 12/7/20.
 //  Copyright © 2020 David Gerard. All rights reserved.
 //
 
 import Foundation
 
-class FileIO {
+class ProcessingResultParser: FileIO {
     var playersByPosition: [[CGPoint]] = []
-    var filePath: URL
     
-    init(fileName name: String, fileExtension ext: String) {
-        filePath = FileIO.getDocumentsDirectory().appendingPathComponent(name).appendingPathExtension(ext)
-        try! FileIO.write(filePath, data: "")    // to create the file in the documents directory
+    init() {
+        super.init(fileName: "ProcessingResult", fileExtension: "txt")
     }
     
     func loadDataIntoPlayersByPosition() throws {
@@ -22,7 +20,7 @@ class FileIO {
         
         self.playersByPosition = []
         
-        let contents = try! FileIO.read(from: self.filePath)
+        let contents = try! read()
         
         let splitByPosition = contents.split(separator: "\n")
         
@@ -46,7 +44,7 @@ class FileIO {
                 [], [], [], [], [], [], [], [], []
             ]   //has 9 spots for the 9 field positions
             
-            for i in 0..<splitByPosition.count {
+            for i in 0..<9 {
                 if splitByPosition[i] == "-" {continue}
                 let splitByPlayer = splitByPosition[i].split(separator: " ")
                 for coord in splitByPlayer {
@@ -66,26 +64,5 @@ class FileIO {
         let y = playersByPosition[1][0].y - point.y;   // flip because y goes up as the pixel location goes down
         
         return Double(atan2(y, x)) * (180 / Double.pi)
-    }
-  
-    static func read(from path: URL) throws -> String {
-        return try String(contentsOf: path, encoding: String.Encoding.utf8)
-
-    }
-    
-    static func write(_ path: URL, data: String) throws {
-        try data.write(to: path, atomically: true, encoding: String.Encoding.utf8)
-    }
-    
-    static func getDocumentsDirectory() -> URL {
-        // find all possible documents directories for this user
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-
-        // just send back the first one, which ought to be the only one
-        return paths[0]
-    }
-    
-    enum FileIOError: Error {
-        case badPath
     }
 }

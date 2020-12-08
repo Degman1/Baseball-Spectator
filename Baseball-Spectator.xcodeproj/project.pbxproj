@@ -40,6 +40,7 @@
 		63DAA5CA248156940022F9AA /* FileIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5C9248156930022F9AA /* FileIO.swift */; };
 		63DAA5CE248157FF0022F9AA /* CGPointExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DAA5CD248157FF0022F9AA /* CGPointExtension.swift */; };
 		63F3988B24A046940006884C /* AttributeConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F3988A24A046940006884C /* AttributeConstants.swift */; };
+		63FA7ADA257F0BC300BB044B /* ProcessingResultParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FA7AD9257F0BC300BB044B /* ProcessingResultParser.swift */; };
 		63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24A924799375002D0728 /* InfieldContourFitting.mm */; };
 		63FD24AC247993AF002D0728 /* Timer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AB247993AF002D0728 /* Timer.mm */; };
 		63FD24AE24799445002D0728 /* ImageProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63FD24AD24799445002D0728 /* ImageProcessor.mm */; };
@@ -90,6 +91,7 @@
 		63DAA5C9248156930022F9AA /* FileIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIO.swift; sourceTree = "<group>"; };
 		63DAA5CD248157FF0022F9AA /* CGPointExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGPointExtension.swift; sourceTree = "<group>"; };
 		63F3988A24A046940006884C /* AttributeConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeConstants.swift; sourceTree = "<group>"; };
+		63FA7AD9257F0BC300BB044B /* ProcessingResultParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingResultParser.swift; sourceTree = "<group>"; };
 		63FD24A924799375002D0728 /* InfieldContourFitting.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InfieldContourFitting.mm; sourceTree = "<group>"; wrapsLines = 1; };
 		63FD24AB247993AF002D0728 /* Timer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Timer.mm; sourceTree = "<group>"; };
 		63FD24AD24799445002D0728 /* ImageProcessor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageProcessor.mm; sourceTree = "<group>"; };
@@ -158,7 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				630E2A1124858C8E008DEF17 /* VideoParser.swift */,
-				63DAA5C9248156930022F9AA /* FileIO.swift */,
+				63FA7ADB257F0E3700BB044B /* FileHandling */,
 				63D44F99248AD93F00049CD8 /* WebScraper.swift */,
 				63B41A8B24A4E8AB002D2B89 /* Timer2.swift */,
 				63A2F0AF249D185400D8D79A /* ConsoleCommunication.swift */,
@@ -213,6 +215,15 @@
 				6373CE60248EF44900E43720 /* Player.swift */,
 			);
 			path = TeamsAndPlayers;
+			sourceTree = "<group>";
+		};
+		63FA7ADB257F0E3700BB044B /* FileHandling */ = {
+			isa = PBXGroup;
+			children = (
+				63DAA5C9248156930022F9AA /* FileIO.swift */,
+				63FA7AD9257F0BC300BB044B /* ProcessingResultParser.swift */,
+			);
+			path = FileHandling;
 			sourceTree = "<group>";
 		};
 		F63EE5FF23BFAE0D00B155B8 = {
@@ -363,6 +374,7 @@
 				637AA5B3248D719A00FC15B8 /* ProcessingCoordinator.swift in Sources */,
 				630E2A1524859E8B008DEF17 /* VideoPlayerViewControllerRepresentable.swift in Sources */,
 				630E2A1224858C8E008DEF17 /* VideoParser.swift in Sources */,
+				63FA7ADA257F0BC300BB044B /* ProcessingResultParser.swift in Sources */,
 				F604822B247591A900F71A68 /* MainView.swift in Sources */,
 				63FD24AA24799375002D0728 /* InfieldContourFitting.mm in Sources */,
 				63F3988B24A046940006884C /* AttributeConstants.swift in Sources */,

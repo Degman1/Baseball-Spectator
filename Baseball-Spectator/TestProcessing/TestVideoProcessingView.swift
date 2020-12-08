@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct TestVideoProcessingView: View {
-    let fileInterface: FileIO = FileIO(fileName: "ProcessingResult", fileExtension: "txt")
+    let processingResultParser: ProcessingResultParser = ProcessingResultParser()
     @ObservedObject var videoParser = VideoParser()
     @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/", debug: true)
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
@@ -46,7 +46,7 @@ struct TestVideoProcessingView: View {
                     .blur(radius: self.interfaceCoordinator.showHomePlateMessageView || self.selectedPlayer.isExpanded ? 8 : 0)
                 
                 if self.originalImageDimensions != nil {
-                    DraggableOverlayView(geometry: geometry, fileInterface: self.fileInterface, originalImageDimensions: self.originalImageDimensions!, imageID: self.$videoParser.imageIndex, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
+                    DraggableOverlayView(geometry: geometry, processingResultParser: self.processingResultParser, originalImageDimensions: self.originalImageDimensions!, imageID: self.$videoParser.imageIndex, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
                     .disabled(self.selectedPlayer.isExpanded || self.interfaceCoordinator.showHomePlateMessageView)
                 }
                 
@@ -157,10 +157,10 @@ struct TestVideoProcessingView: View {
         
         timer.startTimer()
         
-        let res = OpenCVWrapper.processImage(self.videoParser.frames[self.videoParser.imageIndex % self.videoParser.frames.count], expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: fileInterface.filePath, processingState: Int32(self.processingCoordinator.processingState.rawValue))
+        let res = OpenCVWrapper.processImage(self.videoParser.frames[self.videoParser.imageIndex % self.videoParser.frames.count], expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: processingResultParser.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
         
-        try! fileInterface.loadDataIntoPlayersByPosition()
-        ConsoleCommunication.printResult(withMessage: "frame \(self.videoParser.imageIndex) - \(fileInterface.playersByPosition)", source: "\(#function)")
+        try! processingResultParser.loadDataIntoPlayersByPosition()
+        ConsoleCommunication.printResult(withMessage: "frame \(self.videoParser.imageIndex) - \(processingResultParser.playersByPosition)", source: "\(#function)")
         
         timer.endTimer()
         

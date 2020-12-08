@@ -10,16 +10,16 @@ import SwiftUI
 
 struct DraggableOverlayView: View {
     let geometry: GeometryProxy
-    let fileInterface: FileIO
+    let processingResultParser: ProcessingResultParser
     let originalImageDimensions: CGSize
     let viewImageDimensions: CGSize
     @Binding var imageID: Int
     @ObservedObject var processingCoordinator: ProcessingCoordinator
     @ObservedObject var selectedPlayer: SelectedPlayer
     
-    init(geometry: GeometryProxy, fileInterface: FileIO, originalImageDimensions: CGSize, imageID: Binding<Int>, processingCoordinator: ProcessingCoordinator, selectedPlayer: SelectedPlayer) {
+    init(geometry: GeometryProxy, processingResultParser: ProcessingResultParser, originalImageDimensions: CGSize, imageID: Binding<Int>, processingCoordinator: ProcessingCoordinator, selectedPlayer: SelectedPlayer) {
         self.geometry = geometry
-        self.fileInterface = fileInterface
+        self.processingResultParser = processingResultParser
         self.originalImageDimensions = originalImageDimensions
         self._imageID = imageID
         self.processingCoordinator = processingCoordinator
@@ -42,7 +42,7 @@ struct DraggableOverlayView: View {
     }
     
     func dragOperation(value: DragGesture.Value) {
-        if self.processingCoordinator.processingState == .Processing && self.fileInterface.playersByPosition.count == 0 { return }
+        if self.processingCoordinator.processingState == .Processing && self.processingResultParser.playersByPosition.count == 0 { return }
         
         // click anywhere to deselect player: (include this snippet)
         if self.selectedPlayer.positionID != nil {
@@ -58,24 +58,24 @@ struct DraggableOverlayView: View {
         
         // if the use has not yet selected which base is home plate
         if self.processingCoordinator.processingState == .UserSelectHome {
-            guard let closestPositionToDrag = loc.getClosestPointFromHere(to: self.fileInterface.playersByPosition[0]) else {
+            guard let closestPositionToDrag = loc.getClosestPointFromHere(to: self.processingResultParser.playersByPosition[0]) else {
                 return
             }
             
-            if let a = try! fileInterface.getExpectedHomePlateAngle(point: closestPositionToDrag) {
+            if let a = try! processingResultParser.getExpectedHomePlateAngle(point: closestPositionToDrag) {
                 self.processingCoordinator.expectedHomePlateAngle = a
                 self.processingCoordinator.processingState = .Processing
                 return
             }
         } else {        // if the app is in the process of processing images
-            guard let closestPlayerCoordinateToDrag = loc.getClosestPointFromHere(to: self.fileInterface.playersByPosition.flatMap{$0}) else {
+            guard let closestPlayerCoordinateToDrag = loc.getClosestPointFromHere(to: self.processingResultParser.playersByPosition.flatMap{$0}) else {
                 return
             }
             
             let viewCoordinate = closestPlayerCoordinateToDrag.scale(from: self.originalImageDimensions, to: self.viewImageDimensions)
             
             for i in 0..<9 {
-                for position in self.fileInterface.playersByPosition[i] {
+                for position in self.processingResultParser.playersByPosition[i] {
                     if position == closestPlayerCoordinateToDrag {
                         self.selectedPlayer.selectPlayer(positionID: i, realCoordinate: closestPlayerCoordinateToDrag, viewCoordinate: viewCoordinate)
                         
