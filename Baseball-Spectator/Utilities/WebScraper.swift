@@ -215,7 +215,7 @@ class WebScraper: ObservableObject {
         
         let tableEndIndices = htmlString.indices(of: "</table>")
         
-        guard let table1 = htmlString.getHTMLsnippetUnknownEndpoint(from: tableStartIndices[0], to: tableEndIndices), let table2 = htmlString.getHTMLsnippetUnknownEndpoint(from: tableStartIndices[1], to: tableEndIndices) else {
+        guard let table1 = htmlString.getSubstringUnknownEndpoint(from: tableStartIndices[0], to: tableEndIndices), let table2 = htmlString.getSubstringUnknownEndpoint(from: tableStartIndices[1], to: tableEndIndices) else {
             ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table end index found", source: #function)
             return nil
         }

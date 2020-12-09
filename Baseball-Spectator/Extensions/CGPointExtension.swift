@@ -32,10 +32,7 @@ extension CGPoint {
         return closestPoint
     }
     
-    func getClosestPointFromHere(to arrayOfPoints: [[CGPoint]]) -> CGPoint? {
-        return nil
-    }
-    
+    // Scales the current point from one frame size to another, keeping the location of the point with respect to the parent view in the same proportions (used to keep the same player position locations on the image when resizing the image to fit the phone screen size)
     func scale(from initialBounds: CGSize, to newBounds: CGSize) -> CGPoint {
         return CGPoint(x: (x / initialBounds.width) * newBounds.width,
                        y: (y / initialBounds.height) * newBounds.height)

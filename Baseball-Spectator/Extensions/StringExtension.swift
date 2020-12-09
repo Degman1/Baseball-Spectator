@@ -9,12 +9,14 @@
 import Foundation
 
 extension String {
+    // removes all the whitespace occurences of the string
     func removeWhiteSpace() -> String {
         return self.components(separatedBy: .whitespacesAndNewlines)
             .filter { !$0.isEmpty }
             .joined(separator: "")
     }
     
+    // finds all indices of a certain substring inside of the string
     func indices(of occurrence: String) -> [Int] {
         var indices = [Int]()
         var position = startIndex
@@ -39,6 +41,7 @@ extension String {
         return indices
     }
     
+    // Finds the first index of a substring in the string
     func index<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> Index? {
         range(of: string, options: options)?.lowerBound
     }
@@ -94,9 +97,8 @@ extension String {
         return substring
     }*/
     
-    func getHTMLsnippetUnknownEndpoint(from startIndex: Int, to endIndices: [Int]) -> String? {
-        // gets the substring range from the start index to the next index in endIndices
-        
+    // Gets the substring range from the start index to the next index in endIndices
+    func getSubstringUnknownEndpoint(from startIndex: Int, to endIndices: [Int]) -> String? {
         var endIndex: Int = -1
         
         for index in endIndices {

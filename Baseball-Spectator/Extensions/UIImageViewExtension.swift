@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 extension Image {
+    // function to load an image from the web onto the view using an seperate thread to load the image without inturrupting the rest of the program
     static func load(url: URL) -> Image {
         var im: Image = Image("sil")
         DispatchQueue.global().async {

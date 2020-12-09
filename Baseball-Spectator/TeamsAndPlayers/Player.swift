@@ -22,7 +22,7 @@ struct Player: CustomStringConvertible {
     // just keep the values as strings b/c don't need to do anything with them except display
     var avg: String? = nil      // batting average
     var slg: String? = nil      // slugging percentage
-    var rbi: String? = nil        // runs batted in
+    var rbi: String? = nil      // runs batted in
     var obp: String? = nil      // on base perentage
     
     var positionID: Int {

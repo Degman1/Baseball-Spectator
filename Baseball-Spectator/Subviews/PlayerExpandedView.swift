@@ -33,7 +33,11 @@ struct PlayerExpandedView: View {
                             Text("OBP: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].obp!)").padding(5)
                             Text("SLG: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].slg!)").padding(5)
                             }
-                        },
+                        }, closableBinding: self.$selectedPlayer.isExpanded) {
+                            self.selectedPlayer.unselectPlayer()
+                    }
+                } else if ConsoleCommunication.encounteredError() {
+                    GenericMessageView(message: Text("ERROR: Please see console for details"),
                                        closableBinding: self.$selectedPlayer.isExpanded) {
                             self.selectedPlayer.unselectPlayer()
                     }
@@ -42,9 +46,7 @@ struct PlayerExpandedView: View {
                                        closableBinding: self.$selectedPlayer.isExpanded) {
                             self.selectedPlayer.unselectPlayer()
                     }
-                    
                 }
-                
                 
                 Button(action: {
                     self.selectedPlayer.previousPlayer()

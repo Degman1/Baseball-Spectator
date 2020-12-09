@@ -13,11 +13,36 @@ import SwiftUI
 class VideoParser: ObservableObject {
     @Published var imageIndex = 0
     private var duration: Double? = nil
-    var fps: Double = 1.0
+    private var fps: Double = 1.0
     private var videoURL: URL? = nil
-    var frames: [UIImage] = []
+    private var frames: [UIImage] = []
     private var generator: AVAssetImageGenerator! = nil
-    var timer: Timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in }
+    private var timer: Timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in }
+    
+    func getCurrentFrame() -> UIImage {
+        return frames[imageIndex]
+    }
+    
+    func getFramesCount() -> Int {
+        return frames.count
+    }
+    
+    func fetchingFramesWasSuccessful() -> Bool {
+        return !frames.isEmpty
+    }
+    
+    func getVideoDimensions() -> CGSize? {
+        if fetchingFramesWasSuccessful() { return self.frames[0].size }
+        return nil
+    }
+    
+    func setFPS(_ fps: Double) {
+        self.fps = fps
+    }
+    
+    func getFPS() -> Double {
+        return fps
+    }
     
     func getVideoURL() -> URL? {
         return videoURL
@@ -32,7 +57,7 @@ class VideoParser: ObservableObject {
         return true
     }
     
-    func getAllFrames(fps: Double) -> [UIImage] {
+    private func getAllFrames(fps: Double) -> [UIImage] {
         guard let url = videoURL else {
             return []
         }

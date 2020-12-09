@@ -23,13 +23,11 @@ struct TestVideoProcessingView: View {
         self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
         
         let res = self.videoParser.setVideoURL(forResource: "sampleVideo", ofType: "mp4")
-        if !res {
-            return
-        }
-        let _ = self.videoParser.getAllFrames(fps: 1.0)
-        
-        self.originalImageDimensions = CGSize(width: self.videoParser.frames[0].size.width, height: self.videoParser.frames[0].size.height)
+        if !res { return }
         videoParser.playFrames()
+        if videoParser.fetchingFramesWasSuccessful() {
+            self.originalImageDimensions = self.videoParser.getVideoDimensions()!
+        }
     }
     
     var disableControls: Bool {
@@ -147,17 +145,17 @@ struct TestVideoProcessingView: View {
     }
     
     func getStepper() -> some View {
-        Stepper("", value: self.$videoParser.imageIndex, in: 0...(self.videoParser.frames.count - 1))
+        Stepper("", value: self.$videoParser.imageIndex, in: 0...(self.videoParser.getFramesCount() - 1))
     }
     
     func testProcessing() -> Image {
-        if self.videoParser.frames.count == 0 {
+        if self.videoParser.getFramesCount() == 0 {
             return Image("image1")
         }
         
         timer.startTimer()
         
-        let res = OpenCVWrapper.processImage(self.videoParser.frames[self.videoParser.imageIndex % self.videoParser.frames.count], expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: processingResultParser.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
+        let res = OpenCVWrapper.processImage(self.videoParser.getCurrentFrame(), expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: processingResultParser.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
         
         try! processingResultParser.loadDataIntoPlayersByPosition()
         ConsoleCommunication.printResult(withMessage: "frame \(self.videoParser.imageIndex) - \(processingResultParser.playersByPosition)", source: "\(#function)")
