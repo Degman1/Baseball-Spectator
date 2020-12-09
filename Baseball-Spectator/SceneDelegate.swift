@@ -10,7 +10,6 @@ import UIKit
 import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
     var window: UIWindow?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -18,8 +17,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
+        // Define object to be set as environment objects
+        let processingCoordinator = ProcessingCoordinator()
+        let interfaceCoordinator = InterfaceCoordinator()
+        let webScraper = WebScraper()
+        // for testing purposes...
+        webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
+        let selectedPlayer = SelectedPlayer()
+        /// Don't include VideoParser in the environement since that's only used when the video setup is running, not in every instance
+        
         // Create the SwiftUI view that provides the window contents.
         let contentView = TestImageProcessingView()
+            .environmentObject(webScraper)
+            .environmentObject(processingCoordinator)
+            .environmentObject(interfaceCoordinator)
+            .environmentObject(selectedPlayer)
+        
         ConsoleCommunication.enterDebugMode()   // TODO: exit debug mode when finished debugging program
 
         // Use a UIHostingController as window root view controller.

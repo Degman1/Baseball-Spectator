@@ -9,8 +9,8 @@
 import SwiftUI
 
 struct PlayerExpandedView: View {
-    @ObservedObject var webScraper: WebScraper
-    @ObservedObject var selectedPlayer: SelectedPlayer
+    @EnvironmentObject var webScraper: WebScraper
+    @EnvironmentObject var selectedPlayer: SelectedPlayer
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -82,7 +82,7 @@ struct PlayerExpandedView: View {
         }
     }
 }
-
+/*
 struct PlayerExpandedView_Previews: PreviewProvider {
     static var previews: some View {
         let player = SelectedPlayer()
@@ -92,3 +92,4 @@ struct PlayerExpandedView_Previews: PreviewProvider {
             .previewLayout(.fixed(width: 1792, height: 828))
     }
 }
+*/

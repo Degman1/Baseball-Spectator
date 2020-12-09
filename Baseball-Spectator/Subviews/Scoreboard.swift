@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct Scoreboard: View {
-    @ObservedObject var processingCoordinator: ProcessingCoordinator
+    @EnvironmentObject var processingCoordinator: ProcessingCoordinator
     
     @State var homeTeam: String = "BOS"
     @State var awayTeam: String = "STL"

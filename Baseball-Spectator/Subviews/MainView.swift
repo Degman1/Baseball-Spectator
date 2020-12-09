@@ -9,15 +9,12 @@
 import SwiftUI
 
 struct MainView: View {
-    let processingResultParser = ProcessingResultParser()
-    @ObservedObject var processingCoordinator = ProcessingCoordinator()
-    
     var body: some View {
         ZStack {
-            ImageStreamViewControllerRepresentable(processingResultParser: processingResultParser, processingCoordinator: processingCoordinator)
+            ImageStreamViewControllerRepresentable()
             VStack {
                 HStack {
-                    Scoreboard(processingCoordinator: self.processingCoordinator)
+                    Scoreboard()
                         .padding(EdgeInsets(top: 11, leading: 10, bottom: 0, trailing: 0))
                     
                     Spacer()
@@ -28,9 +25,9 @@ struct MainView: View {
         }
     }
 }
-
+/*
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView().previewLayout(.fixed(width: 818, height: 414))
     }
-}
+}*/

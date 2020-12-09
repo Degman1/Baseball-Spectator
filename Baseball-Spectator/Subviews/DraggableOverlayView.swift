@@ -10,20 +10,16 @@ import SwiftUI
 
 struct DraggableOverlayView: View {
     let geometry: GeometryProxy
-    let processingResultParser: ProcessingResultParser
     let originalImageDimensions: CGSize
     let viewImageDimensions: CGSize
     @Binding var imageID: Int
-    @ObservedObject var processingCoordinator: ProcessingCoordinator
-    @ObservedObject var selectedPlayer: SelectedPlayer
+    @EnvironmentObject var processingCoordinator: ProcessingCoordinator
+    @EnvironmentObject var selectedPlayer: SelectedPlayer
     
-    init(geometry: GeometryProxy, processingResultParser: ProcessingResultParser, originalImageDimensions: CGSize, imageID: Binding<Int>, processingCoordinator: ProcessingCoordinator, selectedPlayer: SelectedPlayer) {
+    init(geometry: GeometryProxy, originalImageDimensions: CGSize, imageID: Binding<Int>) {
         self.geometry = geometry
-        self.processingResultParser = processingResultParser
         self.originalImageDimensions = originalImageDimensions
         self._imageID = imageID
-        self.processingCoordinator = processingCoordinator
-        self.selectedPlayer = selectedPlayer
         // only need to set this once since the frame size should not change one the app is running
         self.viewImageDimensions = CGSize(width: self.originalImageDimensions.width / self.originalImageDimensions.height * geometry.size.height,
                                          height: geometry.size.height)
@@ -42,7 +38,7 @@ struct DraggableOverlayView: View {
     }
     
     func dragOperation(value: DragGesture.Value) {
-        if self.processingCoordinator.processingState == .Processing && self.processingResultParser.playersByPosition.count == 0 { return }
+        if self.processingCoordinator.processingState == .Processing && self.processingCoordinator.playersByPosition.count == 0 { return }
         
         // click anywhere to deselect player: (include this snippet)
         if self.selectedPlayer.positionID != nil {
@@ -58,17 +54,17 @@ struct DraggableOverlayView: View {
         
         // if the use has not yet selected which base is home plate
         if self.processingCoordinator.processingState == .UserSelectHome {
-            guard let closestPositionToDrag = loc.getClosestPointFromHere(to: self.processingResultParser.playersByPosition[0]) else {
+            guard let closestPositionToDrag = loc.getClosestPointFromHere(to: self.processingCoordinator.playersByPosition[0]) else {
                 return
             }
             
-            if let a = try! processingResultParser.getExpectedHomePlateAngle(point: closestPositionToDrag) {
+            if let a = try! processingCoordinator.getExpectedHomePlateAngle(point: closestPositionToDrag) {
                 self.processingCoordinator.expectedHomePlateAngle = a
                 self.processingCoordinator.processingState = .Processing
                 return
             }
         } else {        // if the app is in the process of processing images
-            guard let closestPlayerCoordinateToDrag = loc.getClosestPointFromHere(to: self.processingResultParser.playersByPosition.flatMap{$0}) else {
+            guard let closestPlayerCoordinateToDrag = loc.getClosestPointFromHere(to: self.processingCoordinator.playersByPosition.flatMap{$0}) else {
                 return
             }
             
@@ -76,7 +72,7 @@ struct DraggableOverlayView: View {
             
             // find the player information associated with the chosen baseball position closest to the drag point
             for i in 0..<9 {        // loop through each position
-                for position in self.processingResultParser.playersByPosition[i] {  // loop through each player found  of the given position (could be multiple contours assigned to the same position)
+                for position in self.processingCoordinator.playersByPosition[i] {  // loop through each player found  of the given position (could be multiple contours assigned to the same position)
                     if position == closestPlayerCoordinateToDrag {
                         self.selectedPlayer.selectPlayer(positionID: i, realCoordinate: closestPlayerCoordinateToDrag, viewCoordinate: viewCoordinate)
                         

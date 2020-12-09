@@ -11,8 +11,8 @@ import SwiftUI
 struct PlayerInfoBarViewTesting: View {
     let viewImageDimensions: CGSize
     @Binding var imageID: Int
-    @ObservedObject var selectedPlayer: SelectedPlayer
-    @ObservedObject var webScraper: WebScraper
+    @EnvironmentObject var selectedPlayer: SelectedPlayer
+    @EnvironmentObject var webScraper: WebScraper
     
     var body: some View {
         ZStack {

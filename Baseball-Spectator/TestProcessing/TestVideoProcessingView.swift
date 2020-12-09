@@ -9,14 +9,12 @@
 import SwiftUI
 
 struct TestVideoProcessingView: View {
-    let processingResultParser: ProcessingResultParser = ProcessingResultParser()
     @ObservedObject var videoParser = VideoParser()
-    @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/")
-    @ObservedObject var processingCoordinator = ProcessingCoordinator()
-    @ObservedObject var selectedPlayer = SelectedPlayer()
-    @ObservedObject var interfaceCoordinator = InterfaceCoordinator()
+    @EnvironmentObject var webScraper: WebScraper
+    @EnvironmentObject var processingCoordinator: ProcessingCoordinator
+    @EnvironmentObject var selectedPlayer: SelectedPlayer
+    @EnvironmentObject var interfaceCoordinator: InterfaceCoordinator
     @Environment(\.colorScheme) var colorScheme
-    var originalImageDimensions: CGSize? = nil
     var timer = Timer2()
     
     init() {
@@ -25,9 +23,6 @@ struct TestVideoProcessingView: View {
         let res = self.videoParser.setVideoURL(forResource: "sampleVideo", ofType: "mp4")
         if !res { return }
         videoParser.playFrames()
-        if videoParser.fetchingFramesWasSuccessful() {
-            self.originalImageDimensions = self.videoParser.getVideoDimensions()!
-        }
     }
     
     var disableControls: Bool {
@@ -43,14 +38,14 @@ struct TestVideoProcessingView: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .blur(radius: self.interfaceCoordinator.showHomePlateMessageView || self.selectedPlayer.isExpanded ? 8 : 0)
                 
-                if self.originalImageDimensions != nil {
-                    DraggableOverlayView(geometry: geometry, processingResultParser: self.processingResultParser, originalImageDimensions: self.originalImageDimensions!, imageID: self.$videoParser.imageIndex, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
+                if self.videoParser.fetchingFramesWasSuccessful() {
+                    DraggableOverlayView(geometry: geometry, originalImageDimensions: self.videoParser.getVideoDimensions()!, imageID: self.$videoParser.imageIndex)
                     .disabled(self.selectedPlayer.isExpanded || self.interfaceCoordinator.showHomePlateMessageView)
                 }
                 
                 VStack {
                     HStack {
-                        Scoreboard(processingCoordinator: self.processingCoordinator)
+                        Scoreboard()
                             .disabled(self.disableControls)
                         Spacer()
                         
@@ -96,19 +91,16 @@ struct TestVideoProcessingView: View {
                 }
 
                 // player info bar on top of the selected player
-                if !self.selectedPlayer.isExpanded && self.originalImageDimensions != nil {
+                if !self.selectedPlayer.isExpanded && self.videoParser.getVideoDimensions() != nil {
                     PlayerInfoBarViewTesting(
-                        viewImageDimensions: CGSize(width: self.originalImageDimensions!.width /                                                            self.originalImageDimensions!.height *
-                                                                geometry.size.height,
+                        viewImageDimensions: CGSize(width: self.videoParser.getVideoDimensions()!.width / self.videoParser.getVideoDimensions()!.height * geometry.size.height,
                                                     height: geometry.size.height),
-                        imageID: self.$videoParser.imageIndex,
-                        selectedPlayer: self.selectedPlayer,
-                        webScraper: self.webScraper)
+                        imageID: self.$videoParser.imageIndex)
                 }
                 
                 // expanded player statistics view
                 if self.selectedPlayer.isExpanded {
-                    PlayerExpandedView(webScraper: self.webScraper, selectedPlayer: self.selectedPlayer)
+                    PlayerExpandedView()
                         .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.7)
                 }
             }
@@ -155,10 +147,10 @@ struct TestVideoProcessingView: View {
         
         timer.startTimer()
         
-        let res = OpenCVWrapper.processImage(self.videoParser.getCurrentFrame(), expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: processingResultParser.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
+        let res = OpenCVWrapper.processImage(self.videoParser.getCurrentFrame(), expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: self.processingCoordinator.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
         
-        try! processingResultParser.loadDataIntoPlayersByPosition()
-        ConsoleCommunication.printResult(withMessage: "frame \(self.videoParser.imageIndex) - \(processingResultParser.playersByPosition)", source: "\(#function)")
+        try! self.processingCoordinator.loadDataIntoPlayersByPosition()
+        ConsoleCommunication.printResult(withMessage: "frame \(self.videoParser.imageIndex) - \(self.processingCoordinator.playersByPosition)", source: "\(#function)")
         
         timer.endTimer()
         

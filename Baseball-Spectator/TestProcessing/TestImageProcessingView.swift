@@ -10,16 +10,11 @@ import SwiftUI
 
 struct TestImageProcessingView: View {
     @State var imageID = 1
-    let processingResultParser = ProcessingResultParser()
-    @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/")
-    @ObservedObject var processingCoordinator = ProcessingCoordinator()
-    @ObservedObject var selectedPlayer = SelectedPlayer()
-    @ObservedObject var interfaceCoordinator = InterfaceCoordinator()
+    @EnvironmentObject var webScraper: WebScraper
+    @EnvironmentObject var processingCoordinator: ProcessingCoordinator
+    @EnvironmentObject var selectedPlayer: SelectedPlayer
+    @EnvironmentObject var interfaceCoordinator: InterfaceCoordinator
     @Environment(\.colorScheme) var colorScheme
-    
-    init() {
-        self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-    }
     
     var disableControls: Bool {
         return self.selectedPlayer.isExpanded || self.processingCoordinator.processingState == .UserSelectHome
@@ -38,12 +33,12 @@ struct TestImageProcessingView: View {
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .blur(radius: self.interfaceCoordinator.showHomePlateMessageView || self.selectedPlayer.isExpanded ? 8 : 0)
                 
-                DraggableOverlayView(geometry: geometry, processingResultParser: self.processingResultParser, originalImageDimensions: TEST_IMAGE_RESOLUTIONS[self.imageID - 1], imageID: self.$imageID, processingCoordinator: self.processingCoordinator, selectedPlayer: self.selectedPlayer)
+                DraggableOverlayView(geometry: geometry, originalImageDimensions: TEST_IMAGE_RESOLUTIONS[self.imageID - 1], imageID: self.$imageID)
                     .disabled(self.selectedPlayer.isExpanded || self.interfaceCoordinator.showHomePlateMessageView)
                 
                 VStack {
                     HStack {
-                        Scoreboard(processingCoordinator: self.processingCoordinator)
+                        Scoreboard()
                             .disabled(self.disableControls)
                         Spacer()
                     }
@@ -84,20 +79,22 @@ struct TestImageProcessingView: View {
                 // player info bar on top of the selected player
                 if !self.selectedPlayer.isExpanded {
                     PlayerInfoBarViewTesting(
-                        viewImageDimensions: CGSize(width: TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width /                                                 TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height *
-                                                                geometry.size.height,
-                                                    height: geometry.size.height), imageID: self.$imageID,
-                            selectedPlayer: self.selectedPlayer,
-                            webScraper: self.webScraper)
+                        viewImageDimensions: CGSize(width: TEST_IMAGE_RESOLUTIONS[self.imageID - 1].width / TEST_IMAGE_RESOLUTIONS[self.imageID - 1].height * geometry.size.height,
+                                                    height: geometry.size.height),
+                        imageID: self.$imageID)
                 }
                 
                 // expanded player statistics view
                 if self.selectedPlayer.isExpanded {
-                    PlayerExpandedView(webScraper: self.webScraper, selectedPlayer: self.selectedPlayer)
+                    PlayerExpandedView()
                         .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.7)
                 }
             }
-        }
+        }.onAppear(perform: loadRedSoxInfo)
+    }
+    
+    func loadRedSoxInfo() { // for debug purposes
+        self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
     }
     
     func getResetHomePlateSelectionButton(geometry: GeometryProxy) -> some View {
@@ -134,18 +131,14 @@ struct TestImageProcessingView: View {
             if self.imageID < 11 {
                 self.imageID += 1
             }
-            //self.processingCoordinator.processingState = .UserSelectHome
             self.selectedPlayer.unselectPlayer()
-            //self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-            //self.interfaceCoordinator.showHomePlateMessageView = true
+            self.loadRedSoxInfo()
         }, onDecrement: {
             if self.imageID > 1 {
                 self.imageID -= 1
             }
-            //self.processingCoordinator.processingState = .UserSelectHome
             self.selectedPlayer.unselectPlayer()
-            //self.webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
-            //self.interfaceCoordinator.showHomePlateMessageView = true
+            self.loadRedSoxInfo()
         }, label: {
             return Text("ImageID: \(self.imageID)")
         })
@@ -153,15 +146,16 @@ struct TestImageProcessingView: View {
     
     func testProcessing(imageID: Int) -> Image {
         let uiimage = UIImage(named: "image\(imageID).jpg")!
-        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: self.processingResultParser.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
-        try! processingResultParser.loadDataIntoPlayersByPosition()
+        let res = OpenCVWrapper.processImage(uiimage, expectedHomePlateAngle: self.processingCoordinator.expectedHomePlateAngle, filePath: self.processingCoordinator.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
+        try! processingCoordinator.loadDataIntoPlayersByPosition()
         return Image(uiImage: res)
     }
 }
-
+/*
 struct TestProcessingView_Previews: PreviewProvider {
     static var previews: some View {
         TestImageProcessingView()
             .previewLayout(.fixed(width: 1792, height: 828))
     }
 }
+*/

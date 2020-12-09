@@ -31,9 +31,9 @@ struct GenericButton: View {
         }
     }
 }
-
+/*
 struct GenericButton_Previews: PreviewProvider {
     static var previews: some View {
         GenericButton(label: "Testing Mode", action: {print("Testing Mode")})
     }
-}
+}*/

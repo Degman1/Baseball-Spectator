@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import SwiftUI
 
 class ImageStreamViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var captureSession: AVCaptureSession = AVCaptureSession()
@@ -15,12 +16,9 @@ class ImageStreamViewController: UIViewController, AVCaptureVideoDataOutputSampl
     private var skipFrame = 0;
     private let context = CIContext()
     public var playersByPosition: [[CGPoint]] = []
-    var processingResultParser: ProcessingResultParser
-    var processingCoordinator: ProcessingCoordinator
+    @EnvironmentObject var processingCoordinator: ProcessingCoordinator
     
-    init(processingResultParser: ProcessingResultParser, processingCoordinator: ProcessingCoordinator) {
-        self.processingCoordinator = processingCoordinator
-        self.processingResultParser = processingResultParser
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -76,13 +74,13 @@ class ImageStreamViewController: UIViewController, AVCaptureVideoDataOutputSampl
         
         DispatchQueue.main.async {
             if self.skipFrame % 2 == 0 {
-                self.imageView.image = OpenCVWrapper.processImage(image, expectedHomePlateAngle: HOME_PLATE_ANGLES[4], filePath: self.processingResultParser.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
+                self.imageView.image = OpenCVWrapper.processImage(image, expectedHomePlateAngle: HOME_PLATE_ANGLES[4], filePath: self.processingCoordinator.getPath(), processingState: Int32(self.processingCoordinator.processingState.rawValue))
             }
             
             self.skipFrame += 1
         }
         
-        try! processingResultParser.loadDataIntoPlayersByPosition()
+        try! processingCoordinator.loadDataIntoPlayersByPosition()
     }
     
     private func getFrames() {

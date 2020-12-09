@@ -10,13 +10,13 @@ import Foundation
 import SwiftUI
 
 class WebScraper: ObservableObject {
-    let baseURL: String
+    let baseURL: String = "https://www.lineups.com/mlb/lineups/"
     @Published var playerInfo: [Player] = []
     private var selectedPlayerIndex: Int? = nil        // set when the fetchStatistics method is called to store the selected player index since the selected player index is an observable object in the view
     
-    init(baseURL: String) {
+    /*init(baseURL: String) {
         self.baseURL = baseURL
-    }
+    }*/
     
     func createURLSessionTask(toRun action: @escaping (String) -> Void, withURL url: URL) {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
