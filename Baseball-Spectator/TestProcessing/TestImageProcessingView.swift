@@ -11,7 +11,7 @@ import SwiftUI
 struct TestImageProcessingView: View {
     @State var imageID = 1
     let processingResultParser = ProcessingResultParser()
-    @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/", debug: true)
+    @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/")
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
     @ObservedObject var selectedPlayer = SelectedPlayer()
     @ObservedObject var interfaceCoordinator = InterfaceCoordinator()

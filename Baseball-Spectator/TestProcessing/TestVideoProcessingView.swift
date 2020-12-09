@@ -11,7 +11,7 @@ import SwiftUI
 struct TestVideoProcessingView: View {
     let processingResultParser: ProcessingResultParser = ProcessingResultParser()
     @ObservedObject var videoParser = VideoParser()
-    @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/", debug: true)
+    @ObservedObject var webScraper: WebScraper = WebScraper(baseURL: "https://www.lineups.com/mlb/lineups/")
     @ObservedObject var processingCoordinator = ProcessingCoordinator()
     @ObservedObject var selectedPlayer = SelectedPlayer()
     @ObservedObject var interfaceCoordinator = InterfaceCoordinator()

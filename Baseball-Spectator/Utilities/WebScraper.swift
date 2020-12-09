@@ -11,43 +11,32 @@ import SwiftUI
 
 class WebScraper: ObservableObject {
     let baseURL: String
-    let debug: Bool
     @Published var playerInfo: [Player] = []
-    private var selectedPlayerIndex: Int? = nil        // set when the fetchStatistics method is called
-                                                       // to store the selected player index since an observable object
+    private var selectedPlayerIndex: Int? = nil        // set when the fetchStatistics method is called to store the selected player index since the selected player index is an observable object in the view
     
-    init(baseURL: String, debug: Bool = false) {
+    init(baseURL: String) {
         self.baseURL = baseURL
-        self.debug = debug
     }
     
     func createURLSessionTask(toRun action: @escaping (String) -> Void, withURL url: URL) {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if error != nil {       // don't clear playerInfo, so if not having network connection, it just shows the last data it could fetch from the webpage
-                if self.debug {
-                    ConsoleCommunication.printError(withMessage: "\(error!)", source: "\(#function)")
-                }
+                ConsoleCommunication.printError(withMessage: "\(error!)", source: "\(#function)")
                 return
             }
             
             guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-                if self.debug {
-                    ConsoleCommunication.printError(withMessage: "\(response!)", source: "\(#function)")
-                }
+                ConsoleCommunication.printError(withMessage: "\(response!)", source: "\(#function)")
                 return
             }
             
             guard let data = data else {
-                if self.debug {
-                    ConsoleCommunication.printError(withMessage: "the downloaded HTML data was nil", source: "\(#function)")
-                }
+                ConsoleCommunication.printError(withMessage: "the downloaded HTML data was nil", source: "\(#function)")
                 return
             }
             
             guard let htmlString = String(data: data, encoding: .utf8) else {
-                if self.debug {
-                    ConsoleCommunication.printError(withMessage: "couldn't cast html data into a String", source: "\(#function)")
-                }
+                ConsoleCommunication.printError(withMessage: "couldn't cast html data into a String", source: "\(#function)")
                 return
             }
             
@@ -58,7 +47,7 @@ class WebScraper: ObservableObject {
     }
     
     //------------------------------------------------------------------------------------------------------
-    // Load statistics of selectedplayer
+    // Load statistics of selected player
     
     func fetchStatistics(selectedPlayerIndex: Int) {
         // fetches the html code from the provided player stats
@@ -75,7 +64,7 @@ class WebScraper: ObservableObject {
     }
     
     private func fetchStatisticsURLSessionTaskHelper(_ html: String) {
-        // method to be passed to createURLSessionTask(:, :)
+        // method to be passed to createURLSessionTask(:, :) in the above fetchStatistics(:) method
         
         if self.selectedPlayerIndex == nil { return }
 
@@ -148,13 +137,13 @@ class WebScraper: ObservableObject {
     private func loadPlayerInfoFromLineupTable(html: String, table: String) {
         var playerInfoTemp: [Player] = []
         
-        guard let i = table.index(of: "_ngcontent-sc") else {
-            ConsoleCommunication.printError(withMessage: "could not locate the scNum related to this version of the HTML script", source: "\(#function)")
+        guard let scNumLoc = table.index(of: "_ngcontent-sc") else {
+            ConsoleCommunication.printError(withMessage: "could not locate the scNum related to this version of the HTML script", source: #function)
             return
         }
         
         // this number changes, so must find what it is in the latest download of html script
-        guard let scNum = Int(table.getSubstring(from: table.distance(from: table.startIndex, to: i) + 13, to: "=")) else {
+        guard let scNum = Int(table.getSubstring(from: table.distance(from: table.startIndex, to: scNumLoc) + 13, to: "=")) else {
             ConsoleCommunication.printError(withMessage: "could not convert scNum to an Int", source: "\(#function)")
             return
         }
@@ -170,12 +159,12 @@ class WebScraper: ObservableObject {
         let positionIndices = table.indices(of: positionIdentifier)
         let nameIndices = table.indices(of: nameIdentifier)
         
-        if positionIndices.count != nameIndices.count || positionIndices.count != 9 {
-            ConsoleCommunication.printError(withMessage: "the number of positions and/or player names is incorrect in website stats fetching", source: "\(#function)")
+        if positionIndices.count != nameIndices.count || positionIndices.count < 9 {    // could be more than 9 positions since there could be designated hitters (DH)
+            ConsoleCommunication.printError(withMessage: "the number of positions and/or player names is incorrect in website stats fetching", source: #function)
             return
         }
         
-        for i in 0..<9 {
+        for i in 0..<positionIndices.count {
             let position = table.getSubstring(from: positionIndices[i] + positionIdentifier.count, to: "<")
             let name = table.getSubstring(from: nameIndices[i] + nameIdentifier.count, to: "<")
             
@@ -190,10 +179,8 @@ class WebScraper: ObservableObject {
             playerInfoTemp.append(Player(name: name, position: position, statisticsLink: link))
         }
         
-        if playerInfoTemp.count == 9 {
-            DispatchQueue.main.async {      // cannot mutate published properties in an observed object from a background thread, so must do so in the main thread
-                self.playerInfo = playerInfoTemp.sorted(by: { $0.positionID < $1.positionID })
-            }
+        DispatchQueue.main.async {      // cannot mutate published properties in an observed object from a background thread, so must do so in the main thread
+            self.playerInfo = playerInfoTemp.sorted(by: { $0.positionID < $1.positionID })
         }
     }
     
@@ -222,14 +209,14 @@ class WebScraper: ObservableObject {
         let tableStartIndices = htmlString.indices(of: tableStartID)
         
         if tableStartIndices.count < 2 {
-            ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table start index found", source: "\(#function)")
+            ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table start index found", source: #function)
             return nil
         }
         
         let tableEndIndices = htmlString.indices(of: "</table>")
         
         guard let table1 = htmlString.getHTMLsnippetUnknownEndpoint(from: tableStartIndices[0], to: tableEndIndices), let table2 = htmlString.getHTMLsnippetUnknownEndpoint(from: tableStartIndices[1], to: tableEndIndices) else {
-            ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table end index found", source: "\(#function)")
+            ConsoleCommunication.printError(withMessage: "extracting data from hmtlString failed, there was no table end index found", source: #function)
             return nil
         }
         

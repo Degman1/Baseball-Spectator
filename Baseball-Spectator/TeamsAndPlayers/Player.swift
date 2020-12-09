@@ -45,6 +45,8 @@ struct Player: CustomStringConvertible {
             return 7
         case "RF":
             return 8
+        case "DH":
+            return 9    // 9 = designated hitter
         default:
             return -1
         }

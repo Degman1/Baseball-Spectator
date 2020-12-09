@@ -9,10 +9,14 @@
 import Foundation
 
 class ConsoleCommunication {
-    static var debug = false
+    static private var debug = false
+    
+    static func enterDebugMode() { debug = true }
+    static func exitDebugMode() { debug = false }
     
     static private func printMessage(messageType: String, withMessage: String, source: String) {
-        print("\(messageType): (source: \(source == "" ? "No Source Provided" : source)) \(withMessage)")
+        let seperator = withMessage.contains("\n") ? "...\n" : " "
+        print("\(messageType): (source: \(source == "" ? "No Source Provided" : source))\(seperator)\(withMessage)")
     }
     
     static func printWarning(withMessage: String, source: String = "") {
@@ -26,6 +30,12 @@ class ConsoleCommunication {
     static func printResult(withMessage: String, source: String = "") {
         if debug {
             printMessage(messageType: "✅ RESULT", withMessage: withMessage, source: source)
+        }
+    }
+    
+    static func printDebug(withMessage: String, source: String = "") {
+        if debug {
+            printMessage(messageType: "🐞 DEBUG", withMessage: withMessage, source: source)
         }
     }
     

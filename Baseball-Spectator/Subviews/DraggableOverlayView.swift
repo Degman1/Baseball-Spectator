@@ -74,8 +74,9 @@ struct DraggableOverlayView: View {
             
             let viewCoordinate = closestPlayerCoordinateToDrag.scale(from: self.originalImageDimensions, to: self.viewImageDimensions)
             
-            for i in 0..<9 {
-                for position in self.processingResultParser.playersByPosition[i] {
+            // find the player information associated with the chosen baseball position closest to the drag point
+            for i in 0..<9 {        // loop through each position
+                for position in self.processingResultParser.playersByPosition[i] {  // loop through each player found  of the given position (could be multiple contours assigned to the same position)
                     if position == closestPlayerCoordinateToDrag {
                         self.selectedPlayer.selectPlayer(positionID: i, realCoordinate: closestPlayerCoordinateToDrag, viewCoordinate: viewCoordinate)
                         
