@@ -16,6 +16,25 @@ extension String {
             .joined(separator: "")
     }
     
+    func removeNewLines() -> String {
+        return self.components(separatedBy: .newlines)
+            .filter { !$0.isEmpty }
+            .joined(separator: "")
+    }
+    
+    // converts string into JSON style dictionary
+    func toJSONStyle() -> [String:AnyObject]? {
+        if let data = self.data(using: .utf8) {
+            do {
+                let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String:AnyObject]
+                return json
+            } catch {
+                return nil
+            }
+        }
+        return nil
+    }
+    
     // finds all indices of a certain substring inside of the string
     func indices(of occurrence: String) -> [Int] {
         var indices = [Int]()

@@ -68,7 +68,7 @@ class WebScraper: ObservableObject {
         
         if self.selectedPlayerIndex == nil { return }
 
-        guard let i = html.index(of: "<td _ngcontent-sc") else {
+        /*guard let i = html.index(of: "<td _ngcontent-sc") else {
             ConsoleCommunication.printError(withMessage: "could not locate the scNum related to the current version of the downloaded HTML script", source: "\(#function)")
             return
         }
@@ -77,36 +77,31 @@ class WebScraper: ObservableObject {
         guard let scNum = Int(html.getSubstring(from: html.distance(from: html.startIndex, to: i) + 17, to: "=")) else {
             ConsoleCommunication.printError(withMessage: "could not convert scNum to an Int", source: "\(#function)")
             return
-        }
+        }*/
 
-        let start = """
-            <tr _ngcontent-sc\(scNum)="" class="t-content">
-            """ + "\n                  " + """
-            <td _ngcontent-sc\(scNum)="">
-            """
-            
-        let end = """
-            </td><!---->
-            """ + "\n                " + """
-            </tr><!---->
-            """
+        let start = "nonce=\"STATE_TRANSFER_TOKEN\">window['TRANSFER_STATE'] ="
+        let end = "</script></head>"
+        
         guard let statsString = html.getSubstring(from: start, to: end) else {
             ConsoleCommunication.printError(withMessage: "could not find the player statistics table entries", source: "\(#function)")
             return
         }
         
-        let dividor = """
-            </td><td_ngcontent-sc\(scNum)=\"\">
-            """
-        let stats = statsString.removeWhiteSpace().components(separatedBy: dividor)
+        guard let playerInfo = statsString.toJSONStyle() else {
+            ConsoleCommunication.printError(withMessage: "could not convert player info string to JSON style dictionary")
+            return
+        }
         
-        DispatchQueue.main.async {      // cannot mutate published properties in an observed object from a background thread, so must do so in the main thread
+        let x = playerInfo["https://api.lineups.com/mlb/fetch/players/new/kevin-plawecki"]!["game_stats"]
+        print(x)
+        
+        /*DispatchQueue.main.async {      // cannot mutate published properties in an observed object from a background thread, so must do so in the main thread
             self.playerInfo[self.selectedPlayerIndex!].rbi = stats[8]
             self.playerInfo[self.selectedPlayerIndex!].avg = stats[11]
             self.playerInfo[self.selectedPlayerIndex!].obp = stats[12]
             self.playerInfo[self.selectedPlayerIndex!].slg = stats[13]
             self.playerInfo[self.selectedPlayerIndex!].imageLink = ""
-        }
+        }*/
     }
     
     //------------------------------------------------------------------------------------------------------
@@ -142,7 +137,7 @@ class WebScraper: ObservableObject {
             return
         }
         
-        // this number changes, so must find what it is in the latest download of html script
+        // this seems to change, so must find what it is in the latest download of html script
         guard let scNum = Int(table.getSubstring(from: table.distance(from: table.startIndex, to: scNumLoc) + 13, to: "=")) else {
             ConsoleCommunication.printError(withMessage: "could not convert scNum to an Int", source: "\(#function)")
             return

@@ -36,7 +36,7 @@ struct PlayerExpandedView: View {
                         }, closableBinding: self.$selectedPlayer.isExpanded) {
                             self.selectedPlayer.unselectPlayer()
                     }
-                } else if ConsoleCommunication.encounteredError() {
+                } else if ConsoleCommunication.didErrorOccur() {
                     GenericMessageView(message: Text("ERROR: Please see console for details"),
                                        closableBinding: self.$selectedPlayer.isExpanded) {
                             self.selectedPlayer.unselectPlayer()

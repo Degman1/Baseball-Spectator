@@ -12,7 +12,8 @@ class ConsoleCommunication {
     static private var debug = false
     static private var wasError = false
     
-    static func encounteredError() -> Bool { return wasError }
+    static func didErrorOccur() -> Bool { return wasError }
+    static func encounteredError() { wasError = true }
     static func clearError() { wasError = false }
     
     static func isConsoleInDebugMode() -> Bool { return debug }
