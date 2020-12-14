@@ -20,11 +20,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Define object to be set as environment objects
         let processingCoordinator = ProcessingCoordinator()
         let interfaceCoordinator = InterfaceCoordinator()
+        ConsoleCommunication.setInterfaceCoordinator(coordinator: interfaceCoordinator)
         let webScraper = WebScraper()
-        // for testing purposes...
-        webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
         let selectedPlayer = SelectedPlayer()
         /// Don't include VideoParser in the environement since that's only used when the video setup is running, not in every instance
+        
+        // TODO: for testing purposes ---------------------------------------------------
+        webScraper.fetchLineupInformation(teamLookupName: BOSTON_RED_SOX.lookupName)
+        ConsoleCommunication.enterDebugMode()
+        // ------------------------------------------------------------------------------
         
         // Create the SwiftUI view that provides the window contents.
         let contentView = TestImageProcessingView()
@@ -32,8 +36,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             .environmentObject(processingCoordinator)
             .environmentObject(interfaceCoordinator)
             .environmentObject(selectedPlayer)
-        
-        ConsoleCommunication.enterDebugMode()   // TODO: exit debug mode when finished debugging program
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {

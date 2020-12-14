@@ -37,6 +37,8 @@ class SelectedPlayer: CustomStringConvertible, ObservableObject {
             self.positionID = (self.positionID! + 1) %% 9
             self.realCoordinate = nil
             self.viewCoordinate = nil
+            
+            ConsoleCommunication.clearError()
         }
     }
     

@@ -9,12 +9,33 @@
 import Foundation
 
 class ConsoleCommunication {
+    /*** Static class to print messages to the console. Cannot be ObservableObject since every file in this project must be able to interact with it regaurdless of its interaction with SwiftUI ***/
     static private var debug = false
-    static private var wasError = false
+    // wasError variable is located in the InterfaceCoordinator so that the app UI can actively interact with it
+    static private var interfaceCoordinator: InterfaceCoordinator? = nil
     
-    static func didErrorOccur() -> Bool { return wasError }
-    static func encounteredError() { wasError = true }
-    static func clearError() { wasError = false }
+    static func setInterfaceCoordinator(coordinator: InterfaceCoordinator) {
+        interfaceCoordinator = coordinator
+    }
+    
+    static func didErrorOccur() -> Bool {
+        if interfaceCoordinator == nil { return false }
+        return interfaceCoordinator!.wasError
+    }
+    
+    static func encounteredError() {
+        // Just in case this function is run on a background thread... must change published variable on the main thread
+        DispatchQueue.main.async {
+            if interfaceCoordinator != nil { interfaceCoordinator!.wasError = true }
+        }
+    }
+    
+    static func clearError() {
+        // Just in case this function is run on a background thread... must change published variable on the main thread
+        DispatchQueue.main.async {
+            if interfaceCoordinator != nil { interfaceCoordinator!.wasError = false }
+        }
+    }
     
     static func isConsoleInDebugMode() -> Bool { return debug }
     static func enterDebugMode() { debug = true }

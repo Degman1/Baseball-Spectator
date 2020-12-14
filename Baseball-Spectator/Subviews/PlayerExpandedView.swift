@@ -11,6 +11,7 @@ import SwiftUI
 struct PlayerExpandedView: View {
     @EnvironmentObject var webScraper: WebScraper
     @EnvironmentObject var selectedPlayer: SelectedPlayer
+    @EnvironmentObject var interfaceCoordinator: InterfaceCoordinator
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -36,7 +37,7 @@ struct PlayerExpandedView: View {
                         }, closableBinding: self.$selectedPlayer.isExpanded) {
                             self.selectedPlayer.unselectPlayer()
                     }
-                } else if ConsoleCommunication.didErrorOccur() {    //TODO must make consoleCom an observable object to have this react in real time
+                } else if self.interfaceCoordinator.wasError {    //TODO must make consoleCom an observable object to have this react in real time
                     GenericMessageView(message: Text("ERROR: Please see console for details"),
                                        closableBinding: self.$selectedPlayer.isExpanded) {
                             self.selectedPlayer.unselectPlayer()
@@ -49,6 +50,7 @@ struct PlayerExpandedView: View {
                 }
                 
                 Button(action: {
+                    ConsoleCommunication.clearError()
                     self.selectedPlayer.previousPlayer()
                     self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
                 }) {
@@ -64,8 +66,8 @@ struct PlayerExpandedView: View {
                 }.offset(x: (-geometry.size.width / 2) + 70, y: (geometry.size.height / 2) - 30)
                 
                 Button(action: {
+                    ConsoleCommunication.clearError()
                     self.selectedPlayer.nextPlayer()
-                    
                     self.webScraper.fetchStatistics(selectedPlayerIndex: self.selectedPlayer.positionID!)
                 }) {
                     HStack {

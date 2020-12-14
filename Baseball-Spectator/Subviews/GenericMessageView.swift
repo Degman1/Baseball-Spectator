@@ -50,6 +50,7 @@ struct GenericMessageView<Content: View>: View {
                 
                 if self.isViewShowing != nil {
                     Button(action: {
+                        ConsoleCommunication.clearError()
                         self.isViewShowing!.wrappedValue = false
                         self.closingActions()
                     }) {

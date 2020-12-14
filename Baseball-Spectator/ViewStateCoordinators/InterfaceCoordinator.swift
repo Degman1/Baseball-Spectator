@@ -12,4 +12,7 @@ class InterfaceCoordinator: ObservableObject {
     @Published var showHomePlateMessageView = true
     @Published var disableControls = true
     @Published var selectedTeam: ActiveTeam = .Defense
+    
+    // this published variable is implemented through ConsoleCommunication, but is located here instead to be able to actively affect the UI since ConsoleCommunication is a static class
+    @Published var wasError = false
 }
