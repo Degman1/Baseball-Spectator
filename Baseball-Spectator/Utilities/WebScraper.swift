@@ -67,41 +67,153 @@ class WebScraper: ObservableObject {
         // method to be passed to createURLSessionTask(:, :) in the above fetchStatistics(:) method
         
         if self.selectedPlayerIndex == nil { return }
-
-        /*guard let i = html.index(of: "<td _ngcontent-sc") else {
-            ConsoleCommunication.printError(withMessage: "could not locate the scNum related to the current version of the downloaded HTML script", source: "\(#function)")
-            return
-        }
-
-        // this number changes, so must find what it is in the latest download of html script
-        guard let scNum = Int(html.getSubstring(from: html.distance(from: html.startIndex, to: i) + 17, to: "=")) else {
-            ConsoleCommunication.printError(withMessage: "could not convert scNum to an Int", source: "\(#function)")
-            return
-        }*/
-
-        let start = "nonce=\"STATE_TRANSFER_TOKEN\">window['TRANSFER_STATE'] ="
-        let end = "</script></head>"
+                
+        let start = "class=\"inner-col-switch\" data-title=\"YEAR\">"
+        let end = "</table>"
         
-        guard let statsString = html.getSubstring(from: start, to: end) else {
+        guard let statsTable = html.getSubstring(from: start, to: end) else {
             ConsoleCommunication.printError(withMessage: "could not find the player statistics table entries", source: "\(#function)")
             return
         }
         
-        guard let playerInfo = statsString.toJSONStyle() else {
-            ConsoleCommunication.printError(withMessage: "could not convert player info string to JSON style dictionary")
-            return
+        let statsByYear = statsTable.components(separatedBy: start).map({$0.removeWhiteSpace()})
+        
+        //[year:[statisticName:statisticValue]]
+        var statsDict: [String: [String: String]] = [:]
+        
+        for s in statsByYear {
+            var year = ""
+            var i = 0
+            
+            while s[s.index(s.startIndex, offsetBy: i)] != "<" {
+                year += String(s[s.index(s.startIndex, offsetBy: i)])
+                i += 1
+            }
+            
+            var stats = [String: String]()
+            
+            if year != "Overall" {
+                if let TEAM = s.getSubstring(from: "class=\"link-black-underline\"href=\"/\">", to: "<"){
+                    stats["TEAM"] = TEAM
+                } else {
+                    ConsoleCommunication.printError(withMessage: "could not find statistic (SLG)", source: #function)
+                }
+            }
+            
+            // games played
+            if let GP = s.getSubstring(from: "GP\">", to: "<") {
+                stats["GP"] = GP
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (GP)", source: #function)
+            }
+            
+            // plate appearances
+            if let PA = s.getSubstring(from: "PA\">", to: "<") {
+                stats["PA"] = PA
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (PA)", source: #function)
+            }
+            
+            // hits
+            if let H = s.getSubstring(from: "H\">", to: "<") {
+                stats["H"] = H
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (H)", source: #function)
+            }
+            
+            if let B2 = s.getSubstring(from: "2B\">", to: "<") {
+                stats["2B"] = B2
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (2B)", source: #function)
+            }
+            
+            if let B3 = s.getSubstring(from: "3B\">", to: "<") {
+                stats["3B"] = B3
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (3B)", source: #function)
+            }
+            
+            if let HR = s.getSubstring(from: "HR\">", to: "<") {
+                stats["HR"] = HR
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (HR)", source: #function)
+            }
+            
+            if let R = s.getSubstring(from: "R\">", to: "<") {
+                stats["R"] = R
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (R)", source: #function)
+            }
+            
+            // runs batted in
+            if let RBI = s.getSubstring(from: "RBI\">", to: "<") {
+                stats["RBI"] = RBI
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (RBI)", source: #function)
+            }
+            
+            // stolen bases
+            if let SB = s.getSubstring(from: "SB\">", to: "<") {
+                stats["SB"] = SB
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (SB)", source: #function)
+            }
+            
+            // caught stealing
+            if let CS = s.getSubstring(from: "CS\">", to: "<") {
+                stats["CS"] = CS
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (CS)", source: #function)
+            }
+            
+            // base on balls
+            if let BB = s.getSubstring(from: "BB\">", to: "<") {
+                stats["BB"] = BB
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (BB)", source: #function)
+            }
+            
+            // hit by pitch
+            if let HBP = s.getSubstring(from: "2B\">", to: "<") {
+                stats["HBP"] = HBP
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (HBP)", source: #function)
+                return
+            }
+            
+            if let AVG = s.getSubstring(from: "AVG\">", to: "<") {
+                stats["AVG"] = AVG
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (AVG)", source: #function)
+            }
+            
+            // on base percentage
+            if let OBP = s.getSubstring(from: "OBP\">", to: "<") {
+                stats["OBP"] = OBP
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (OBP)", source: #function)
+            }
+            
+            if let SLG = s.getSubstring(from: "SLG\">", to: "<") {
+                stats["SLG"] = SLG
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (SLG)", source: #function)
+            }
+            
+            // on base percentage and slugging percentage combined
+            if let OPS = s.getSubstring(from: "OPS\">", to: "<") {
+                stats["OPS"] = OPS
+            } else {
+                ConsoleCommunication.printError(withMessage: "could not find statistic (OPS)", source: #function)
+            }
+            
+            statsDict[year] = stats
         }
         
-        let x = playerInfo["https://api.lineups.com/mlb/fetch/players/new/kevin-plawecki"]!["game_stats"]
-        print(x)
-        
-        /*DispatchQueue.main.async {      // cannot mutate published properties in an observed object from a background thread, so must do so in the main thread
-            self.playerInfo[self.selectedPlayerIndex!].rbi = stats[8]
-            self.playerInfo[self.selectedPlayerIndex!].avg = stats[11]
-            self.playerInfo[self.selectedPlayerIndex!].obp = stats[12]
-            self.playerInfo[self.selectedPlayerIndex!].slg = stats[13]
-            self.playerInfo[self.selectedPlayerIndex!].imageLink = ""
-        }*/
+        DispatchQueue.main.async {      // cannot mutate published properties in an observed object from a background thread, so must do so in the main thread
+            self.playerInfo[self.selectedPlayerIndex!].statistics = statsDict
+            self.playerInfo[self.selectedPlayerIndex!].imageLink = ""       //TODO
+        }
     }
     
     //------------------------------------------------------------------------------------------------------

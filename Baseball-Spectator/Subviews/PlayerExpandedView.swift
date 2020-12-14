@@ -16,7 +16,7 @@ struct PlayerExpandedView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                if self.selectedPlayer.positionID != nil && !self.webScraper.playerInfo.isEmpty && self.webScraper.playerInfo[self.selectedPlayer.positionID!].avg != nil {
+                if self.selectedPlayer.positionID != nil && !self.webScraper.playerInfo.isEmpty && self.webScraper.playerInfo[self.selectedPlayer.positionID!].statistics != nil {
                     GenericMessageView(message:
                         HStack {
                             VStack {
@@ -27,16 +27,16 @@ struct PlayerExpandedView: View {
                                 //URL(string: self.webScraper.playerInfo[self.selectedPlayer.positionID!].imageLink!)
                                 Text(self.webScraper.playerInfo[self.selectedPlayer.positionID!].name)
                             }.padding(10)
-                            VStack {
-                            Text("AVG: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].avg!)").padding(5)
-                            Text("RBI: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].rbi!)").padding(5)
-                            Text("OBP: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].obp!)").padding(5)
-                            Text("SLG: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].slg!)").padding(5)
+                            VStack {    //TODO make year change based on current date
+                            Text("AVG: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].statistics!["2020"]!["AVG"]!)").padding(5)
+                            Text("RBI: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].statistics!["2020"]!["RBI"]!)").padding(5)
+                            Text("OBP: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].statistics!["2020"]!["OBP"]!)").padding(5)
+                            Text("SLG: " + "\(self.webScraper.playerInfo[self.selectedPlayer.positionID!].statistics!["2020"]!["SLG"]!)").padding(5)
                             }
                         }, closableBinding: self.$selectedPlayer.isExpanded) {
                             self.selectedPlayer.unselectPlayer()
                     }
-                } else if ConsoleCommunication.didErrorOccur() {
+                } else if ConsoleCommunication.didErrorOccur() {    //TODO must make consoleCom an observable object to have this react in real time
                     GenericMessageView(message: Text("ERROR: Please see console for details"),
                                        closableBinding: self.$selectedPlayer.isExpanded) {
                             self.selectedPlayer.unselectPlayer()

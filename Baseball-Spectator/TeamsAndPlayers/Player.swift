@@ -20,10 +20,8 @@ struct Player: CustomStringConvertible {
     
     // reset when the player is selected
     // just keep the values as strings b/c don't need to do anything with them except display
-    var avg: String? = nil      // batting average
-    var slg: String? = nil      // slugging percentage
-    var rbi: String? = nil      // runs batted in
-    var obp: String? = nil      // on base perentage
+    //[year:[statisticName:statisticValue]]
+    var statistics: [String: [String: String]]? = nil
     
     var positionID: Int {
         switch self.position {
@@ -53,8 +51,9 @@ struct Player: CustomStringConvertible {
     }
     
     var detailedDescription: String {
-        if self.avg != nil {
-            return "\(name), (\(position))\n\tavg: \(avg!), slg: \(slg!), rbi: \(rbi!), obp: \(obp!)"
+        if let s = statistics {
+            let a = s["2020"]!  //TODO change this
+            return "\(name), (\(position))\n\tavg: \(a["AVE"]!), slg: \(a["SLG"]!), rbi: \(a["RBI"]!), obp: \(a["OBP"]!)"
         } else {
             return "\(name) (\(position))"
         }
