@@ -1,3 +1,4 @@
+*** A Working Progress...
 # Baseball-Spectator
 An iOS application to display the location and statistics of MLB players on the field in real-time.
 
