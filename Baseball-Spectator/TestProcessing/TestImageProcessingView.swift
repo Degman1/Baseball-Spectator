@@ -133,12 +133,14 @@ struct TestImageProcessingView: View {
             }
             self.selectedPlayer.unselectPlayer()
             self.loadRedSoxInfo()
+            self.processingCoordinator.processingState = .UserSelectHome
         }, onDecrement: {
             if self.imageID > 1 {
                 self.imageID -= 1
             }
             self.selectedPlayer.unselectPlayer()
             self.loadRedSoxInfo()
+            self.processingCoordinator.processingState = .UserSelectHome
         }, label: {
             return Text("ImageID: \(self.imageID)")
         })

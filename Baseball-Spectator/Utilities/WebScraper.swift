@@ -60,6 +60,8 @@ class WebScraper: ObservableObject {
             return
         }
         
+        print(playerURL)
+        
         self.createURLSessionTask(toRun: fetchStatisticsURLSessionTaskHelper, withURL: playerURL)
     }
     
@@ -67,12 +69,13 @@ class WebScraper: ObservableObject {
         // method to be passed to createURLSessionTask(:, :) in the above fetchStatistics(:) method
         
         if self.selectedPlayerIndex == nil { return }
-                
+        
         let start = "class=\"inner-col-switch\" data-title=\"YEAR\">"
         let end = "</table>"
         
         guard let statsTable = html.getSubstring(from: start, to: end) else {
             ConsoleCommunication.printError(withMessage: "could not find the player statistics table entries", source: "\(#function)")
+            print(html)
             return
         }
         
